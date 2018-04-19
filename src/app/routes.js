@@ -32,6 +32,7 @@ import leaderboard from '../pages/leaderboard/leaderboard.vue'
 import addAdda from '../pages/add_adda/add_adda.vue'
 import listAdda from '../pages/list_adda/list_adda.vue'
 import editAdda from '../pages/edit_adda/edit_adda.vue'
+import promocode from '../pages/promocode/promocode.vue'
 
 const routes = [
     {
@@ -107,6 +108,13 @@ const routes = [
                         component: parentComLayout,
                         children: [
                             {path: '', component: leaderboard},
+                        ]
+                    },
+                    {
+                        path: 'promocode',
+                        component: parentComLayout,
+                        children: [
+                            {path: '', component: promocode},
                         ]
                     }
                 ]

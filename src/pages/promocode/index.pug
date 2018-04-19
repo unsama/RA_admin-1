@@ -1,0 +1,42 @@
+aside.right-side
+    section.content-header
+        h1
+            | Promocode
+        ol.breadcrumb
+            li
+                router-link(to='/admin')
+                    i.fa.fa-dashboard
+                    |  Dashboard
+            li.active Users
+    section.content
+        .box
+            .box-header
+                h3.box-title Promo code information
+
+            .box-body
+                .row
+
+                    .col-md-6
+                        .form-group
+                            label(for='promocode_text') Promo code Text
+                            input.form-control(type='text' id='promocode_text' v-model='promocode_text' placeholder='Eg: FREE50')
+                    .col-md-6
+                        .form-group
+                            label(for='calculation_type') Type
+                            select.form-control(id='calculation_type' v-model='type',v-on:change="myfunction")
+                                option(value='') Select offer calcutation type
+                                option(val="1") Percentage
+                                option(val="2") Rupees
+                    .col-md-6
+                        .form-group
+                            label(for='qty_percent') Amount
+                            input.form-control(type='text' id='qty_percent' v-model='quantity' placeholder='Eg: 40%')
+
+
+                    .box-footer
+                        .text-right
+
+                             button.btn.btn-success.btn-lg(type='button' v-on:click.prevent="insertPromocode") Submit
+
+
+
