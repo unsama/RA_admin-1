@@ -34,6 +34,8 @@ import listAdda from '../pages/list_adda/list_adda.vue'
 import editAdda from '../pages/edit_adda/edit_adda.vue'
 import promocode from '../pages/promocode/promocode.vue'
 
+import advanceSearch from '../pages/advance_search/advance_search.vue'
+
 const routes = [
     {
         path: '/admin',
@@ -115,6 +117,13 @@ const routes = [
                         component: parentComLayout,
                         children: [
                             {path: '', component: promocode},
+                        ]
+                    },
+                    {
+                        path: 'advance_search',
+                        component: parentComLayout,
+                        children: [
+                            {path: '', component: advanceSearch},
                         ]
                     }
                 ]

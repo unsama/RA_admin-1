@@ -1,0 +1,40 @@
+aside.right-side
+    section.content-header
+        h1 Advance Search
+        ol.breadcrumb
+            li
+                router-link(to='/')
+                    i.fa.fa-dashboard
+                    |  Dashboard
+            li.active Advance Search
+    section.content
+        .row
+            .col-xs-12
+                .box
+                    .box-body
+                        h3(style="margin:0 0 20px 0;") Search Box
+                        .row
+                            .col-md-6
+                                .form-group
+                                    label(for='sel_table') Select Table
+                                    select.form-control(id="sel_table" v-model="sel_table")
+                                        option(value="") Select Table
+                                        option(v-for="(t_item, t_key) in table_list" v-bind:value="t_key") {{ t_item.name }}
+                        template(v-if="sel_table !== ''")
+                            hr
+                            pre {{ table_list[sel_table] }}
+                            .row
+                                template(v-for="field in table_list[sel_table].fields")
+                                    .col-md-3
+                                        template(v-if="field.tag_type === 'select'")
+                                            .form-group
+                                                pre {{asyncData[field.ref]}}
+                                                label(:for='field.id') {{field.label}}
+                                                select.form-control(:id="field.id" v-model="field.sel_value")
+                                                    option(value="") {{field.label}}
+                                                    option(v-if="field.options" v-for="(opt_item, opt_key) in field.options" v-bind:value="opt_item.value") {{ opt_item.title }}
+                                                    //option(v-else-if="field.ref" v-for="(opt_item, opt_key) in asyncData[field.ref]" v-bind:value="opt_key") {{ opt_item }}
+                                        
+
+
+            
