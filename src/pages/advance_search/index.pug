@@ -22,18 +22,38 @@ aside.right-side
                                         option(v-for="(t_item, t_key) in table_list" v-bind:value="t_key") {{ t_item.name }}
                         template(v-if="sel_table !== ''")
                             hr
-                            pre {{ table_list[sel_table] }}
+                            //- pre {{ table_list[sel_table] }}
                             .row
                                 template(v-for="field in table_list[sel_table].fields")
                                     .col-md-3
                                         template(v-if="field.tag_type === 'select'")
                                             .form-group
-                                                pre {{asyncData[field.ref]}}
                                                 label(:for='field.id') {{field.label}}
                                                 select.form-control(:id="field.id" v-model="field.sel_value")
                                                     option(value="") {{field.label}}
-                                                    option(v-if="field.options" v-for="(opt_item, opt_key) in field.options" v-bind:value="opt_item.value") {{ opt_item.title }}
-                                                    //option(v-else-if="field.ref" v-for="(opt_item, opt_key) in asyncData[field.ref]" v-bind:value="opt_key") {{ opt_item }}
+                                                    template(v-if="field.options")
+                                                        option(v-for="(opt_item, opt_key) in field.options" v-bind:value="opt_item.value") {{ opt_item.title }}
+                                                    template(v-else-if="field.ref")
+                                                        option(v-for="(opt_item, opt_key) in asyncData[field.ref]" v-bind:value="opt_item.value") {{ opt_item.title }}
+                    .box-footer(v-if="sel_table !== ''")
+                        div
+                            button.btn.btn-primary(type="button" v-on:click="search_table") Search
+            .col-xs-12(v-if="searchHit")
+                .box
+                    .box-body
+                        h3(style="margin:0 0 20px 0;") Search Result
+                        .table-responsive
+                            table_comp
+                                template(slot="thead")
+                                    tr(v-if="searchResult.thead.length > 0")
+                                        th(v-for="val in searchResult.thead") {{ val }}
+                                template(slot="tbody")
+                                    template(v-if="searchResult.tbody")
+                                        tr(v-for="(row, ind) in searchResult.tbody")
+                                            td(v-for="column in row") {{ column }}
+                                    template(v-else)
+                                        tr(v-for="(row, ind) in searchResult")
+                                            td {{ row }}
                                         
 
 

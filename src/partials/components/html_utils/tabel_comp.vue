@@ -39,7 +39,7 @@ export default {
   props: {
     per_page: {
       type: Number,
-      default: 10
+      default: 1000
     }
   },
   mounted() {
