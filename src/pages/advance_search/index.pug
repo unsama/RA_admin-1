@@ -21,8 +21,7 @@ aside.right-side
                                         option(value="") Select Table
                                         option(v-for="(t_item, t_key) in table_list" v-bind:value="t_key") {{ t_item.name }}
                         template(v-if="sel_table !== ''")
-                            hr
-                            //- pre {{ table_list[sel_table] }}
+                            hr(v-if="table_list[sel_table].fields.length > 0")
                             .row
                                 template(v-for="field in table_list[sel_table].fields")
                                     .col-md-3
@@ -50,6 +49,7 @@ aside.right-side
                                 template(slot="tbody")
                                     template(v-if="searchResult.tbody")
                                         tr(v-for="(row, ind) in searchResult.tbody")
+                                            td {{ ind+1 }}
                                             td(v-for="column in row") {{ column }}
                                     template(v-else)
                                         tr(v-for="(row, ind) in searchResult")
