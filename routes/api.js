@@ -13,6 +13,7 @@ var forgotPassToken = db.ref("forgot_pass_token");
 var sessionsRef = db.ref("sessions");
 var completeReqRef = db.ref("complete_requests");
 var bidRef = db.ref("driver_bids");
+var promoRef = db.ref("promo_code");
 
 var twilioCred = require('../config/private').twilio;
 // var RestClient = require('twilio').RestClient;
@@ -381,7 +382,8 @@ router.post('/login', function (req, res, next) {
         if (errors.length > 0) {
             return res.json({status: "failed", message: errors[0].msg});
         } else {
-            userLoginCheck('mob_no', params, function (err, uid) {
+            userLo
+            ginCheck('mob_no', params, function (err, uid) {
                 if (err) {
                     userLoginCheck('email', params, function (err, uid) {
                         if (err) {
@@ -409,6 +411,55 @@ router.post('/login', function (req, res, next) {
         }
     });
 });
+
+router.post('/promocode', function (req, res, next) {
+    var params = req.body.promocode_text;
+   
+    req.assert('promocode_text', 'Please Enter Promo Code!').notEmpty();
+
+  
+    req.getValidationResult().then(function (result) {
+        errors = result.useFirstErrorOnly().array();
+        if(errors.length > 0) {
+           res.json(errors);
+        }
+        else{
+            promoRef.orderByChild('promo').equalTo(params).once('value').then(function (userSnap){
+                let userData = userSnap.val();
+                if(userData !== null)
+                {
+                    let keys = Object.keys(userData);
+            let type_check = false;
+            keys.forEach(function (key) {
+                let row = userData[key];
+        
+
+      
+                var abc = moment(row.expdate,'x');
+                var actaldate = abc.format('DD/MM/YYYY');
+
+                var todayDate = moment();
+                var todayDateFormat = todayDate.format("DD/MM/YYYY");
+                if(todayDateFormat > actaldate){
+                    res.json("This Promo Code is Expired");
+                }else{
+                    res.json(userData);
+                }
+            });
+                  
+                    
+                    
+                }
+                else{
+                    res.json("Invalid Promo Code !!!");
+                }
+                
+
+            });
+        }
+    });
+});
+
 
 router.get('/get_top_10', customTokenMW, function (req, res) {
     if(req.query.date && req.query.date !== "") {
