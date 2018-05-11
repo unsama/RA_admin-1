@@ -61,6 +61,15 @@ module.exports  = {
     getPercentAmount: function (amount, per) {
         return (amount*per)/100;
     },
+    getDiscountAmount: function (amount, discount) {
+        if(discount!=0){
+            return (amount-discount);
+        }else{
+            return 0;
+        }
+        
+    },
+    
     getBalance: function (oldBal, debit, credit) {
         return (debit-credit)+oldBal;
     },
