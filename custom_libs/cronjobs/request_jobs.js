@@ -96,7 +96,6 @@ var jobs = {
                                         commission_amount: func.getPercentAmount(user_invoice_record['amount'], comData),
                                         
                                     };
-                                    console.log(amount);
                                     self.insertDriverComInvoice(driver_com_invoice_record, function (d_invoice_key) {
                                         var commission_record = {
                                             credit: 0,
