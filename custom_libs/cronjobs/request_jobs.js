@@ -59,7 +59,7 @@ var jobs = {
             }
         });
     },
-   driver_submit_job: function(){
+    driver_submit_job: function(){
         var self = this;
         user_active_req_ref.on('child_changed', function (actSnap) {
             var actData = actSnap.val();
@@ -71,7 +71,6 @@ var jobs = {
                         driver_uid: actData.driver_uid,
                         req_id: actData.req_id,
                         amount: 0,
-                        
                   
                     };
                     driver_bids_ref.child(user_invoice_record.req_id+'/'+user_invoice_record.driver_uid).once('value').then(function (bidSnap) {
@@ -103,7 +102,7 @@ var jobs = {
                                         user_invoice_id: u_invoice_key,
                                         apply_commission: parseInt(comData),
                                         commission_amount: func.getPercentAmount(user_invoice_record['amount'], comData),
-                                        discount_amount: func.getPercentAmount(user_invoice_record['discountPrice'], comData),
+                                        discount_amount: func.getDiscountAmount(user_invoice_record['amount'], user_invoice_record['discountPrice']),
                                        
                                     };
                                 
