@@ -76,7 +76,6 @@ var jobs = {
                     driver_bids_ref.child(user_invoice_record.req_id+'/'+user_invoice_record.driver_uid).once('value').then(function (bidSnap) {
                         var bidData = bidSnap.val();
                         user_invoice_record['amount'] = parseInt(bidData.amount);
-                        user_invoice_record['discountPrice'] = parseInt(bidData.discountPrice);
                         user_req_invoices.orderByChild('invoice_no').limitToLast(1).once('value').then(function(userInvSnap){
                             if(userInvSnap.val() !== null){
                                 var userInvData = userInvSnap.val();
@@ -98,7 +97,6 @@ var jobs = {
                                         
                                     };
                                     console.log(amount);
-                                    console.log(discountPrice);
                                     self.insertDriverComInvoice(driver_com_invoice_record, function (d_invoice_key) {
                                         var commission_record = {
                                             credit: 0,
