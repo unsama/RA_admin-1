@@ -71,14 +71,14 @@ var jobs = {
                         driver_uid: actData.driver_uid,
                         req_id: actData.req_id,
                         amount: 0,
-                        discountPrice: 0,
+                        
                   
                     };
                     driver_bids_ref.child(user_invoice_record.req_id+'/'+user_invoice_record.driver_uid).once('value').then(function (bidSnap) {
                         var bidData = bidSnap.val();
                         user_invoice_record['amount'] = parseInt(bidData.amount);
                     
-                        if(discountPrice != null) {
+                        if(bidData.discountPrice != null) {
                             user_invoice_record['discountPrice'] = parseFloat(bidData.discountPrice);
                         }
                         else{
