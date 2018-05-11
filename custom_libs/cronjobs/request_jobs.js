@@ -71,6 +71,7 @@ var jobs = {
                         driver_uid: actData.driver_uid,
                         req_id: actData.req_id,
                         amount: 0,
+                        discountPrice: 0,
                   
                     };
                     driver_bids_ref.child(user_invoice_record.req_id+'/'+user_invoice_record.driver_uid).once('value').then(function (bidSnap) {
