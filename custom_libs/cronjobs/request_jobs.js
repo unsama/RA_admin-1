@@ -71,12 +71,10 @@ var jobs = {
                         driver_uid: actData.driver_uid,
                         req_id: actData.req_id,
                         amount: 0,
-                        discountPrice: 50
                     };
                     driver_bids_ref.child(user_invoice_record.req_id+'/'+user_invoice_record.driver_uid).once('value').then(function (bidSnap) {
                         var bidData = bidSnap.val();
                         user_invoice_record['amount'] = parseInt(bidData.amount);
-                        user_invoice_record['discountPrice'] = parseInt(bidData.discountPrice);
                         user_req_invoices.orderByChild('invoice_no').limitToLast(1).once('value').then(function(userInvSnap){
                             if(userInvSnap.val() !== null){
                                 var userInvData = userInvSnap.val();
@@ -95,12 +93,12 @@ var jobs = {
                                         user_invoice_id: u_invoice_key,
                                         apply_commission: parseInt(comData),
                                         commission_amount: func.getPercentAmount(user_invoice_record['amount'], comData),
-                                        discount_amount: func.getPercentAmount(user_invoice_record['discountPrice'], comData)
+                                       
                                     };
                                 
                                     self.insertDriverComInvoice(driver_com_invoice_record, function (d_invoice_key) {
                                         var commission_record = {
-                                            credit: driver_com_invoice_record['discount_amount'],
+                                            credit: 54,
                                             debit: driver_com_invoice_record['commission_amount'],
                                             uid: driver_com_invoice_record['driver_uid'],
                                             narration: "Commission Entry from this order #"+func.getSetInvoiceNo(u_invoice_key, user_invoice_record['invoice_no'], "U"),
