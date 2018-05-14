@@ -226,7 +226,8 @@ export default {
                                     req_data: reqData,
                                     createdAt: func.set_date_ser(new Date(func.decode_key(row))),
                                     invoice_no: func.getSetInvoiceNo(row, invoice_data.invoice_no, "U"),
-                                    amount: invoice_data.amount
+                                    amount: invoice_data.amount,
+                                    discountPrice : invoice_data.discountPrice
                                 };
                                 processItem++;
                                 if (processItem === key_length) {

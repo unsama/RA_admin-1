@@ -1,35 +1,36 @@
 <template lang="pug">
     div
         // Modal
-        #parcel_details.modal.fade.bs-example-modal-lg(role='dialog')
+        #parcel_detailss.modal.fade.bs-example-modal-lg(role='dialog')
             .modal-dialog.modal-lg
                 // Modal content
                 .modal-content
                     .modal-header
                         button.close(type='button', data-dismiss='modal') ×
-                        h4.modal-title Parcel Details
+                        h4.modal-title New Request Parcel Details 
                     .modal-body
                         template(v-if="Object.keys(parcel_obj).length > 0")
                             h3 Parcel Info
-                            h4 Created Time:&nbsp;
-                                b {{ parcel_obj.req_data['createdAt'] }}
-                            h4 Origin:&nbsp;
-                                b {{ parcel_obj.req_data['orgText'] }}
-                            h4 Destination:&nbsp;
-                                b {{ parcel_obj.req_data['desText'] }}
-                            h4 Est. Time:&nbsp;
-                                b {{ parcel_obj.req_data['durText'] }}
-                            h4 Est. Distance:&nbsp;
-                                b {{ parcel_obj.req_data['disText'] }}
-                            h4 Floor:&nbsp;
-                                b {{ parcel_obj.req_data['floors'] }}
-                            h4 Labour:&nbsp;
-                                b {{ parcel_obj.req_data['labours'] }}
-                            h4 Vehicle Required:&nbsp;
-                                b {{ parcel_obj.req_data['vecType'] }}
+                            //- h4 Created Time:&nbsp;
+                            //-     b {{ parcel_obj.req_data['createdAt'] }}
+                            //- h4 Origin:&nbsp;
+                            //-     b {{ parcel_obj.req_data['orgText'] }}
+                            //- h4 Destination:&nbsp;
+                            //-     b {{ parcel_obj.req_data['desText'] }}
+                            //- h4 Est. Time:&nbsp;
+                            //-     b {{ parcel_obj.req_data['durText'] }}
+                            //- h4 Est. Distance:&nbsp;
+                            //-     b {{ parcel_obj.req_data['disText'] }}
+                            //- h4 Floor:&nbsp;
+                            //-     b {{ parcel_obj.req_data['floors'] }}
+                            //- h4 Labour:&nbsp;
+                            //-     b {{ parcel_obj.req_data['labours'] }}
+                            //- h4 Vehicle Required:&nbsp;
+                            //-     b {{ parcel_obj.req_data['vecType'] }}
                             h4 Parcel Images:&nbsp;
                                 button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#pDetailImgPP' v-on:click='openImagePP(parcel_obj.req_data["parcelUriArray"])')
                                     i.fa.fa-eye
+                            
                             h3 Client Info
                             template(v-if="!loaders.client")
                                 h4 Client:&nbsp;
@@ -51,7 +52,7 @@
         components: {
             'parcel_images': parcelImages,
         },
-        name: "parcel_details",
+        name: "parcel_detailss",
         props: {
             parcel_obj: {
                 type: Object,
@@ -97,6 +98,7 @@
                     self.loaders['driver'] = false;
                 });
             },
+      
             async clientDataLoad (uid) {
                 const self = this;
                 await self.userRef.child(uid).once('value', function (snap) {
@@ -105,7 +107,6 @@
                     self.data['client'] = item;
                     self.loaders['client'] = false;
                 });
-                
             },
             openImagePP (images) {
                 this.sel_images = images;

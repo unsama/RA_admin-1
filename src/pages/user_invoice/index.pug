@@ -132,10 +132,20 @@ aside.right-side
                                                                             h4(style="margin: 0;padding: 10px;text-align: center;font-size: 27px;color: #fcd519;") Order Details
                                                                         th(style="border: 2px solid;min-width: 150px;width: auto;")
                                                                             h4(style="margin: 0;padding: 10px;text-align: center;font-size: 27px;color: #fcd519;") Amount
+                                                                        th(style="border: 2px solid;min-width: 150px;width: auto;")
+                                                                            h4(style="margin: 0;padding: 10px;text-align: center;font-size: 27px;color: #fcd519;") Discount
+                                                                        th(style="border: 2px solid;min-width: 150px;width: auto;")
+                                                                            h4(style="margin: 0;padding: 10px;text-align: center;font-size: 27px;color: #fcd519;") Payable         
                                                                 tbody
                                                                     tr
                                                                         td(style="border: 2px solid;padding: 5px;text-align:center;") From({{ invData.req_data.orgText }}) To({{ invData.req_data.desText }}) User({{ invData.client_data.first_name }}) Driver({{ invData.driver_data.first_name }})
                                                                         td(style="border: 2px solid;padding: 5px;text-align:center;") Rs.{{ invData.inv_data.amount }}
+                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;")(v-if='invData.inv_data.discountPrice < 1') Rs.0
+                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;")(v-else ) Rs.{{invData.inv_data.amount - invData.inv_data.discountPrice}}
+                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;")(v-if='invData.inv_data.discountPrice < 1') Rs.{{invData.inv_data.amount}}
+                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;")(v-else) Rs.{{invData.inv_data.discountPrice}}
+
+                                                                        
                                                     tr
                                                         td
                                                             div(style="padding: 10px;")

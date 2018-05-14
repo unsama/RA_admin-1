@@ -15,10 +15,13 @@
                                 th Date
                                 th Request ID
                                 th User
+                                th Cell no
                                 th Origin
                                 th Destination
                                 th Distance
                                 th Duration
+                                th labour
+                                th floor
                                 th Parcel
                                 th Require Vehicle
                                 th Number Of Bids
@@ -29,20 +32,25 @@
                                 td {{ row.createdAt }}
                                 td {{ row.id }}
                                 td {{ row.username }}
+                                td {{ row.mob_no}}
                                 td {{ row.orgText }}
                                 td {{ row.desText }}
                                 td {{ row.disText }}
                                 td {{ row.durText }}
+                                td {{ row.labours}}
+                                td {{ row.floors}}
                                 td
                                     button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#parcel_images' v-on:click='openImagePP(row.parcelUriArray)' style="margin-bottom: 5px;margin-right: 5px;")
                                         i.fa.fa-eye
                                 td {{ row.vecType }}
                                 td {{ row.num_bids }}
                                 td
+                                    
                                     button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.id)' style="margin-bottom: 5px;margin-right: 5px;") Push Bids
-                                    button.btn.btn-sm.btn-danger(type="button" v-on:click='cancelReq(row.id)') Cancel
+                                    button.btn.btn-sm.btn-danger(type="button" style="width: 71px;" v-on:click='cancelReq(row.id)') Cancel
         push_bids(v-bind:sel_req_id="assign_req_id_md")
         parcel_images(v-bind:images="sel_images")
+        newparcel(v-bind:parcel_obj="sel_parcel_obj")
 </template>
 
 <script>
@@ -53,13 +61,18 @@
     import pushBids from '../modals/push_bids.vue'
     import parcelImages from '../modals/parcel_images.vue'
     import tableComp from '../html_utils/tabel_comp.vue'
+    import newreqmodal from '../modals/request-parcel.vue'
+ 
 
     export default {
         name: "new_request",
         components: {
             'push_bids': pushBids,
             'parcel_images': parcelImages,
-            'table_comp': tableComp
+            'table_comp': tableComp,
+            'newparcel': newreqmodal,
+        
+
         },
         watch: {
             all (val) {
@@ -90,7 +103,7 @@
                 driverBidsRef: db.ref('/driver_bids'),
 
                 sel_images: [],
-
+                sel_parcel_obj: {},
                 dataLoad: true,
                 all: [],
                 assign_req_id_md: ''
@@ -116,9 +129,11 @@
                                         reqData['username'] = userData.first_name + " " + userData.last_name;
                                         reqData["liveReqKey"] = liveReq.key;
                                         reqData["num_bids"] = 0;
+                                        reqData["mob_no"] = userData.mob_no;
 
                                         grab_data.push(reqData);
-
+                                        
+                                        console.log(reqData);
                                         if (self.dataLoad) {
                                             process_complete++;
                                             if (snap.numChildren() === process_complete) {
@@ -131,6 +146,7 @@
                                     self.dataLoad = false;
                                 }
                             });
+                        
                         });
                     } else {
                         self.dataLoad = false;
@@ -152,6 +168,9 @@
             },
             openImagePP (images) {
                 this.sel_images = images;
+            },
+             openDetailPP (row) {
+                this.sel_parcel_obj = row;
             }
         }
     }

@@ -28,6 +28,9 @@ aside.right-side
                                             th Details
                                             th Invoice#
                                             th Spent
+                                            th Discount
+                                            th Payable
+                                        
                                     template(slot="tbody")
                                         tr(v-for="(row, key, ind) in invoiceReqData")
                                             td {{ ind+1 }}
@@ -36,6 +39,12 @@ aside.right-side
                                             td
                                                 router-link(v-bind:to="'/admin/invoice/'+key") {{ row.invoice_no }}
                                             td {{ row.amount }}
+                                            td(v-if='row.discountPrice > 0') {{ row.amount-row.discountPrice }}
+                                            td(v-else ) 0
+                                            td(v-if='row.discountPrice < 1') {{row.amount}}
+                                            td(v-else)  {{row.discountPrice}}
+                                        
+                                         
                                     tfoot(slot="tfoot")
                                         tr
                                             td.text-right(colspan='4') Total

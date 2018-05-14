@@ -8,6 +8,7 @@ export default {
         self.userReqRef = db.ref('/user_requests');
         self.userRef = db.ref('/users');
         self.userReqInvoiceRef = db.ref('/user_request_invoices');
+        self.walletRef = db.ref('/wallet');
         self.userReqInvoiceRef.child(self.$route.params.id).once('value').then(function (invSnap) {
             let invData = invSnap.val();
             if(invData !== null){
@@ -15,8 +16,15 @@ export default {
                     let clientData = clientSnap.val();
                     self.userRef.child(invData.driver_uid).once('value').then(function (driverSnap) {
                         let driverData = driverSnap.val();
+                        self.walletRef.child(invData.driver_uid).once('value').then(function (walletSnap) {
+                            let walletData = walletSnap.val();
+
+                           
+
                         self.userReqRef.child(invData.client_uid+"/"+invData.req_id).once('value').then(function (reqSnap) {
                             let reqData = reqSnap.val();
+
+                            var total = 
 
                             invData['createdAt'] = func.set_date_ser(new Date(func.decode_key(invSnap.key)));
                             invData['invoice_no'] = func.getSetInvoiceNo(invSnap.key, invData.invoice_no, 'U');
@@ -28,11 +36,18 @@ export default {
                                 client_data: clientData,
                                 driver_data: driverData,
                                 req_data: reqData,
+                                wallet_data : walletData,
                             };
+                                                      
+
                             self.dataLoad = false;
+                        
+
                         });
+                        
                     });
                 });
+            });
             }else{
                 self.invData = null;
                 self.dataLoad = false;
@@ -45,7 +60,10 @@ export default {
             invData: null,
             userReqInvoiceRef: null,
             userReqRef: null,
-            userRef: null
+            userRef: null,
+            walletRef: null,
+            afterdis: '',
+            disprice: '',
         }
     },
     methods: {

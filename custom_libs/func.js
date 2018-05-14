@@ -58,6 +58,7 @@ module.exports  = {
     getSetInvoiceNo: function (key, invoice_no, char) {
         return this.setDateInvoice(new Date(this.decode_key(key)))+char+invoice_no;
     },
+    
     getPercentAmount: function (amount, per) {
         return (amount*per)/100;
     },
