@@ -30,6 +30,14 @@
                             h4 Parcel Images:&nbsp;
                                 button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#pDetailImgPP' v-on:click='openImagePP(parcel_obj.req_data["parcelUriArray"])')
                                     i.fa.fa-eye
+                            h3 Driver Info
+                            template(v-if="!loaders.driver")
+                                h4 Driver:&nbsp;
+                                    router-link(v-bind:to="'/admin/drivers/profile/'+data.driver['uid']" target="_blank")
+                                        b {{ data.driver['first_name'] }} {{ data.driver['last_name'] }}
+                                h4 Number:&nbsp;
+                                    b {{ data.driver['mob_no'] }}
+                            b(v-else) Loading...
                             h3 Client Info
                             template(v-if="!loaders.client")
                                 h4 Client:&nbsp;
