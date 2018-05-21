@@ -382,8 +382,7 @@ router.post('/login', function (req, res, next) {
         if (errors.length > 0) {
             return res.json({status: "failed", message: errors[0].msg});
         } else {
-            userLo
-            ginCheck('mob_no', params, function (err, uid) {
+            userLoginCheck('mob_no', params, function (err, uid) {
                 if (err) {
                     userLoginCheck('email', params, function (err, uid) {
                         if (err) {
