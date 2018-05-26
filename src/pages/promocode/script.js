@@ -1,6 +1,9 @@
 import firebase from "firebase";
 import moment from 'moment';
 import SimpleVueValidation from "simple-vue-validator";
+import Promise from "bluebird";
+import _ from "lodash";
+import bcrypt from "bcrypt-nodejs";
 
 const Validator = SimpleVueValidation.Validator;
 
@@ -26,8 +29,10 @@ export default {
             promoRef: db.ref("promo_code"),
             promocode_text: "",
             type: "",
-            quantity: 0,
+            quantity: "",
             expdate: "",
+            status: 0,
+            v_list: ["Percentage", "Rupees"],
 
 
         }
@@ -36,16 +41,35 @@ export default {
         promocode_text(value) {
           return Validator.value(value)
             .required()
+            // .custom(function() {
+            //       if (!Validator.isEmpty(value)) {
+            //           return Promise.delay(1000).then(function() {
+            //               return self.promoRef.orderByChild("promo").equalTo(value).once("value").then(function(snap) {
+            //                       let snapData = snap.val();
+            //                       if (snapData !== null) {
+            //                           if (_.find(snapData, { type: "percentage" })) {
+            //                               return "Already taken!";
+            //                           }
+            //                       }
+            //                   });
+            //           });
+            //       }
+            //   });
+        },
+        type(value) {
+          return Validator.value(value)
+            .required()
+            .in(this.v_list, "Invalid Value!");
         },
         quantity(value) {
           return Validator.value(value)
-            .digit()
+              .required().digit()
         },
         expdate(value) {
             return Validator.value(value)
             .required()
         },
-        
+
       },
     methods: {
         insertPromocode() {
@@ -54,17 +78,50 @@ export default {
             // var date = parseInt(moment({expdate}).format('x'))
             var date = new Date(self.expdate);
             var abc = moment(date,'dd/mm/yyyy');
-            var actaldate = abc.format('x')  
-            key.set({
-                id: key.key,
-                promo: self.promocode_text,
-                expdate: actaldate,
-                type: self.type,
-                quantity: self.quantity,
-
+            var actaldate = abc.format('x')
+            self.$validate().then(function (success) {
+               if(success){
+                   key.set({
+                       id: key.key,
+                       promo: self.promocode_text,
+                       expdate: actaldate,
+                       type: self.type,
+                       quantity: self.quantity,
+                       status: self.status
+                   });
+               }
             });
-        
+
+
 
         },
+        // form_submit: function () {
+        //     let self = this;
+        //     self.formStatus = true;
+        //     self.$validate().then(function (success) {
+        //         if(success){
+        //             self.userRef.child(self.sel_uid).update({
+        //                 'promo': self.formdata.pname,
+        //                 'quantity': self.formdata.amount,
+        //                 'type': self.formdata.type,
+        //                 'expdate': self.formdata.expdate,
+        //
+        //             }, function (err) {
+        //                 if(err){
+        //                     self.errMsg = err.message;
+        //                 }else{
+        //                     self.errMsg = "";
+        //                     self.sucMsg = "Successfully updated data!";
+        //                     setTimeout(function () {
+        //                         self.sucMsg = "";
+        //                     }, 1500);
+        //                 }
+        //                 self.formStatus = false;
+        //             });
+        //         }else{
+        //             self.formStatus = false;
+        //         }
+        //     });
+        // }
       }
 }

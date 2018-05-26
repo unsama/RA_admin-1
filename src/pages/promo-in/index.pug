@@ -1,0 +1,38 @@
+aside.right-side
+    section.content-header
+        h1 Promo code
+        ol.breadcrumb
+            li
+                a(href='/')
+                    i.fa.fa-dashboard
+                    |  Dashboard
+            li.active Promo code
+    section.content
+       .row
+            .col-xs-12
+                .col-md-8.col-md-offset-2
+                    .box
+                        .box-body
+                            div.text-center(v-if='dataLoad')
+                                i.fa.fa-refresh.fa-spin.fa-3x.fa-fw
+                            .row(v-if='!dataLoad')
+                                .col-xs-12
+
+                                    .col-xs-12.text-right
+                                        router-link.btn.btn-primary( v-bind:to="'/admin/promocode/edit_promo/'+userData.key") Edit Profile
+
+                                    .col-md-12
+                                        .col-xs-6
+                                            p Promocode Name
+                                        .col-xs-6
+                                            p {{userData.promo}}
+                                    .col-md-12
+                                        .col-xs-6
+                                            p Amount
+                                        .col-xs-6
+                                            p {{userData.quantity}}
+                                    .col-md-12
+                                        .col-xs-6
+                                            p Type
+                                        .col-xs-6
+                                            p {{userData.type}}

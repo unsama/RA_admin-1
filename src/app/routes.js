@@ -33,6 +33,9 @@ import addAdda from '../pages/add_adda/add_adda.vue'
 import listAdda from '../pages/list_adda/list_adda.vue'
 import editAdda from '../pages/edit_adda/edit_adda.vue'
 import promocode from '../pages/promocode/promocode.vue'
+import promolist from '../pages/promo_list/promo_list.vue'
+import promoin from '../pages/promo-in/promo-in.vue'
+import edit_promo from '../pages/edit_promo/edit_promo.vue'
 
 import advanceSearch from '../pages/advance_search/advance_search.vue'
 
@@ -117,6 +120,9 @@ const routes = [
                         component: parentComLayout,
                         children: [
                             {path: '', component: promocode},
+                            {path: 'promolist', component: promolist},
+                            {path: 'promoin/:id', component: promoin},
+                            {path: 'edit_promo/:id', component: edit_promo},
                         ]
                     },
                     {

@@ -74,8 +74,6 @@ export default {
             } else {
                 self.dataLoad1 = false;
             }
-            console.log(walletReqSnap);
-            console.log(userReqInvoiceData);
         });
         });
         // self.walletRef.orderByChild('uid').once('value').then(function (walletSnap) {

@@ -1,0 +1,34 @@
+form(v-on:submit.prevent="form_submit")
+    .row
+        .col-md-12
+            h4.page-header General Information
+            p.alert.alert-success(v-if='sucMsg !== ""') {{ sucMsg }}
+            p.alert.alert-danger(v-if='errMsg !== ""') {{ errMsg }}
+        .col-md-12
+            .row
+                .col-md-6
+                    .form-group
+                        label(for='pname') PromoCode
+                        input.form-control(type='text' autocomplete='off' id='pname' v-model='formdata.pname' placeholder='Eg: free32')
+                        p.text-danger.text-right(v-if='validation.hasError("formdata.pname")') {{ validation.firstError('formdata.pname') }}
+                .col-md-6
+                    .form-group
+                        label(for='amount') Amount
+                        input.form-control(type='text' autocomplete='off' id='amount' v-model='formdata.amount' placeholder='Eg: 34')
+                        p.text-danger.text-right(v-if='validation.hasError("formdata.amount")') {{ validation.firstError('formdata.amount') }}
+                .col-md-6
+                    .form-group
+                        label(for='type') Type
+                        input.form-control(type='text' autocomplete='off' id='type' v-model='formdata.type')
+                        p.text-danger.text-right(v-if='validation.hasError("formdata.lname")') {{ validation.firstError('formdata.lname') }}
+                .col-md-6
+                    .form-group
+                        label(for='expdate') Expiry Date
+                        input.form-control(type='date' id='expdate' v-model='expdate' placeholder='05/29/2018')
+                        p.text-danger.text-right(v-if='validation.hasError("formdata.lname")') {{ validation.firstError('formdata.lname') }}
+
+        .col-md-12
+            .form-group.text-center
+                button.btn.btn-success.btn-lg(type='submit' v-if="!formStatus") Update
+                button.btn.btn-success.btn-lg(type='button' disabled='disabled' v-if="formStatus")
+                    i.fa.fa-refresh.fa-spin.fa-fw

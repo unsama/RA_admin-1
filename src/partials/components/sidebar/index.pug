@@ -90,10 +90,22 @@ aside.left-side.sidebar-offcanvas
                 router-link(to='/admin/leaderboard')
                     i.fa.fa-certificate
                     span Leader Board
-            li
-                router-link(to='/admin/promocode')
-                    i.fa.fa-certificate
+        
+            li.treeview
+                a(href='#')
+                    i.fa.fa-dollar
                     span Promo Code
+                    i.fa.fa-angle-left.pull-right
+                ul.treeview-menu
+                    li
+                        router-link(to='/admin/promocode/promolist')
+                            i.fa.fa-angle-double-right
+                            |  Promocode list
+                    li
+                        router-link(to='/admin/promocode')
+                            i.fa.fa-angle-double-right
+                            |  Add Promocode
+                    
             li
                 router-link(to='/admin/advance_search')
                     i.fa.fa-search

@@ -425,32 +425,40 @@ router.post('/promocode', function (req, res, next) {
         else{
             promoRef.orderByChild('promo').equalTo(params).once('value').then(function (userSnap){
                 let userData = userSnap.val();
+                let new_snap = _.filter(userData);
                 if(userData !== null)
                 {
                     let keys = Object.keys(userData);
+
             let type_check = false;
+
             keys.forEach(function (key) {
                 let row = userData[key];
-        
-
-      
                 var abc = moment(row.expdate,'x');
                 var actaldate = abc.format('DD/MM/YYYY');
 
                 var todayDate = moment();
                 var todayDateFormat = todayDate.format("DD/MM/YYYY");
                 if(todayDateFormat > actaldate){
-                    res.json("This Promo Code is Expired");
+                    res.json({status: "failed", message: "This Promo Code is Expired!"});
+
                 }else{
-                    res.json(userData);
+                    if (row.status === 1){
+                        res.json({status: "failed", message: "This Promo Code is not exist!"});
+                    }
+                    else {
+                        res.json({status: "ok", data: new_snap});
+                    }
                 }
+
             });
+
                   
                     
                     
                 }
                 else{
-                    res.json("Invalid Promo Code !!!");
+                    res.json({status: "failed", message: "Invalid Promo Code!"});
                 }
                 
 
