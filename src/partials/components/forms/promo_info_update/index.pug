@@ -24,7 +24,8 @@ form(v-on:submit.prevent="form_submit")
                 .col-md-6
                     .form-group
                         label(for='expdate') Expiry Date
-                        input.form-control(type='text' autocomplete='off' id='expdate' v-model='formdata.expdate')
+                        input.form-control(type='date' autocomplete='off' id='expdate' v-model='formdata.expdate')
+
                         p.text-danger.text-right(v-if='validation.hasError("formdata.lname")') {{ validation.firstError('formdata.lname') }}
 
         .col-md-12

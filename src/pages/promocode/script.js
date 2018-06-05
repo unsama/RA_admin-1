@@ -33,7 +33,12 @@ export default {
             expdate: "",
             status: 0,
             v_list: ["Percentage", "Rupees"],
-
+            formUtil: {
+                submitted: false,
+                err: "",
+                suc: "",
+                process: false
+            },
 
         }
     },
@@ -72,29 +77,64 @@ export default {
 
       },
     methods: {
+        // insertPromocode() {
+        //     const self = this;
+        //     let key = self.promoRef.push();
+        //     // var date = parseInt(moment({expdate}).format('x'))
+        //     var date = new Date(self.expdate);
+        //     var abc = moment(date, 'dd/mm/yyyy');
+        //     var actaldate = abc.format('x')
+        //     self.$validate().then(function (success) {
+        //         if (success) {
+        //             key.set({
+        //                 id: key.key,
+        //                 promo: self.promocode_text,
+        //                 expdate: actaldate,
+        //                 type: self.type,
+        //                 quantity: self.quantity,
+        //                 status: self.status
+        //             });
+        //         }
+        //     });
+        // },
         insertPromocode() {
             const self = this;
+            self.formUtil.process = true;
+            self.formUtil.err = "";
             let key = self.promoRef.push();
             // var date = parseInt(moment({expdate}).format('x'))
             var date = new Date(self.expdate);
-            var abc = moment(date,'dd/mm/yyyy');
+            var abc = moment(date, 'dd/mm/yyyy');
             var actaldate = abc.format('x')
-            self.$validate().then(function (success) {
-               if(success){
-                   key.set({
-                       id: key.key,
-                       promo: self.promocode_text,
-                       expdate: actaldate,
-                       type: self.type,
-                       quantity: self.quantity,
-                       status: self.status
-                   });
-               }
+            self.$validate().then(function(success) {
+                if (success) {
+                    key.set({
+                            id: key.key,
+                            promo: self.promocode_text,
+                            expdate: actaldate,
+                            type: self.type,
+                            quantity: self.quantity,
+                            status: self.status
+                        },
+                        function(err) {
+                            if (err) {
+                                self.formUtil.err = err.message;
+                            } else {
+                                self.formUtil.submitted = true;
+                                self.formUtil.err = "";
+                                self.formUtil.suc = "Successfully insert data!";
+                                setTimeout(function() {
+                                    self.formUtil.suc = "";
+                                }, 1500);
+                            }
+                            self.formUtil.process = false;
+                        }
+                    );
+                } else {
+                    self.formUtil.process = false;
+                }
             });
-
-
-
-        },
+        }
         // form_submit: function () {
         //     let self = this;
         //     self.formStatus = true;

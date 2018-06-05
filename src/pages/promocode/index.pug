@@ -13,9 +13,46 @@ aside.right-side
             .box-header
                 h3.box-title Promo code information
 
+            //.box-body
+            //    .row
+            //
+            //        .col-md-6
+            //            .form-group
+            //                label(for='promocode_text') Promo code Text
+            //                input.form-control(type='text' id='promocode_text' v-model='promocode_text' placeholder='Eg: FREE50')
+            //                div.text-right(v-if='validation.isValidating("promocode_text")')
+            //                    i.fa.fa-spinner.fa-spin
+            //                p.text-danger.text-right(v-if='validation.hasError("promocode_text")') {{ validation.firstError('promocode_text') }}
+            //        .col-md-6
+            //            .form-group
+            //                label(for='calculation_type') Type
+            //                select.form-control(id='calculation_type' v-model='type',v-on:change="myfunction")
+            //                    option(value='') Select offer calcutation type
+            //                    option(v-for="v in v_list" v-bind:value='v') {{ v }}
+            //                p.text-danger.text-right(v-if='validation.hasError("type")') {{ validation.firstError('type') }}
+            //        .col-md-6
+            //            .form-group
+            //                label(for='qty_percent') Amount
+            //                input.form-control(type='text' id='qty_percent' v-model='quantity' placeholder='Eg: 40%')
+            //                p.text-danger.text-right(v-if='validation.hasError("quantity")') {{ validation.firstError('quantity') }}
+            //
+            //        .col-md-6
+            //            .form-group
+            //                label(for='qty_percent') Expiry Date
+            //                input.form-control(type='date' v-model='expdate' placeholder='05/29/2018')
+            //                p.text-danger.text-right(v-if='validation.hasError("expdate")') {{ validation.firstError('expdate') }}
+            //
+            //        .box-footer
+            //            .text-right
+            //
+            //                 button.btn.btn-success.btn-lg(type='button' v-on:click.prevent="insertPromocode" ) Submit
+            //
+            //
             .box-body
                 .row
-
+                    .col-md-12(v-if="formUtil.err !== '' || formUtil.suc !== ''")
+                        p.alert.alert-danger(v-if="formUtil.err !== ''") {{ formUtil.err }}
+                        p.alert.alert-success(v-if="formUtil.suc !== ''") {{ formUtil.suc }}
                     .col-md-6
                         .form-group
                             label(for='promocode_text') Promo code Text
@@ -31,20 +68,20 @@ aside.right-side
                                 option(v-for="v in v_list" v-bind:value='v') {{ v }}
                             p.text-danger.text-right(v-if='validation.hasError("type")') {{ validation.firstError('type') }}
                     .col-md-6
-                        .form-group
-                            label(for='qty_percent') Amount
-                            input.form-control(type='text' id='qty_percent' v-model='quantity' placeholder='Eg: 40%')
-                            p.text-danger.text-right(v-if='validation.hasError("quantity")') {{ validation.firstError('quantity') }}
+                            .form-group
+                                label(for='qty_percent') Amount
+                                input.form-control(type='text' id='qty_percent' v-model='quantity' placeholder='Eg: 40%')
+                                p.text-danger.text-right(v-if='validation.hasError("quantity")') {{ validation.firstError('quantity') }}
 
                     .col-md-6
-                        .form-group
-                            label(for='qty_percent') Expiry Date
-                            input.form-control(type='date' v-model='expdate' placeholder='05/29/2018')
-                            p.text-danger.text-right(v-if='validation.hasError("expdate")') {{ validation.firstError('expdate') }}
-
-                    .box-footer
-                        .text-right
-
-                             button.btn.btn-success.btn-lg(type='button' v-on:click.prevent="insertPromocode" ) Submit
-
-
+                            .form-group
+                                label(for='qty_percent') Expiry Date
+                                input.form-control(type='date' v-model='expdate' placeholder='05/29/2018')
+                                p.text-danger.text-right(v-if='validation.hasError("expdate")') {{ validation.firstError('expdate') }}
+            .box-footer
+                .text-right(v-if="!formUtil.submitted")
+                    button(type='button' v-on:click.prevent="insertPromocode" v-if="!formUtil.process").btn.btn-success Submit
+                    button(type='button' disabled v-else).btn.btn-success
+                        i.fa.fa-refresh.fa-spin.fa-2x.fa-fw
+                .text-right(v-else)
+                    button(type='button' disabled).btn.btn-info Submitted!

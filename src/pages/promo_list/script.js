@@ -30,7 +30,7 @@ export default {
                     if (val.length === 20) {
                         item['expdate'] = func.set_date_ser(new Date(func.decode_key(val)));
                     } else if (item.hasOwnProperty("createdAt")) {
-                        item['expdate'] = moment(item.createdAt).format("hh:mm A DD/MM/YYYY");
+
                     }
                     grabData.push(item);
                     process_item++;

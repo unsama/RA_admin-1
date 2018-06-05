@@ -32,9 +32,9 @@
                                 td {{ row.req_data.vecType }}
                                 td
                                     button.btn.btn-info.mr-10(data-toggle='modal' data-target='#parcel_details' v-on:click='openDetailPP(row)') Details
-                                    template(v-if="row.pend_req_data.status === 'req.pending'")
-                                        button.btn.btn-info(v-on:click='statusChange(row.pend_req_data.status, row.pend_req_data.user_uid)') Accept
                                     template(v-if="row.pend_req_data.status === 'req.accept'")
+                                        button.btn.btn-info(v-on:click='statusChange(row.pend_req_data.status, row.pend_req_data.user_uid)') Reached
+                                    template(v-if="row.pend_req_data.status === 'req.pickup'")
                                         button.btn.btn-info(v-on:click='statusChange(row.pend_req_data.status, row.pend_req_data.user_uid)') Pick Up
                                     template(v-if="row.pend_req_data.status === 'req.active'")
                                         button.btn.btn-info(v-on:click='statusChange(row.pend_req_data.status, row.pend_req_data.user_uid)') Delivered
@@ -104,15 +104,15 @@
                 const self = this;
                 let setParams = {};
                 switch (status) {
-                    case 'req.pending':
-                        setParams = {
-                            accept_time: firebase.database.ServerValue.TIMESTAMP,
-                            status: 'req.accept'
-                        };
-                        break;
                     case 'req.accept':
                         setParams = {
                             active_time: firebase.database.ServerValue.TIMESTAMP,
+                            status: 'req.pickup'
+                        };
+                        break;
+                    case 'req.pickup':
+                        setParams = {
+                            complete_time: firebase.database.ServerValue.TIMESTAMP,
                             status: 'req.active'
                         };
                         break;

@@ -386,7 +386,7 @@ var jobs = {
                             let payload = {
                                 data: {
                                     title: "Request Active",
-                                    body: name+" aapka parcel lene ke liye araha hay."
+                                    body: name+" aapka parcel lene ke liye araha hai."
                                 }
                             };
                             self.sendDevNotifFunc(userNotiData.token, payload);
@@ -394,7 +394,15 @@ var jobs = {
                             let payload = {
                                 data: {
                                     title: "Request In Progress",
-                                    body: name+" ne aapka parcel utha liya hay."
+                                    body: name+" ne aapka parcel utha liya hai."
+                                }
+                            };
+                            self.sendDevNotifFunc(userNotiData.token, payload);
+                        }else if(actReqData.status === "req.pickup"){
+                            let payload = {
+                                data: {
+                                    title: "Reached pickup point",
+                                    body: name+" aapka parcel uthanay k liye phonch gaya hai."
                                 }
                             };
                             self.sendDevNotifFunc(userNotiData.token, payload);
@@ -402,7 +410,7 @@ var jobs = {
                             let payload = {
                                 data: {
                                     title: "Request Complete",
-                                    body: name + " ne aapka parcel pohcha dia hay. "+name+" ko rating dein."
+                                    body: name + " ne aapka parcel pohcha dia hai. "+name+" ko rating dein."
                                 }
                             };
                             self.sendDevNotifFunc(userNotiData.token, payload);
@@ -444,7 +452,7 @@ var jobs = {
                                 let payload = {
                                     data: {
                                         title: "Request Rating",
-                                        body: name+" ne aapko "+compReqData.rating+" rating di."
+                                        body: name+" ne aapko "+compReqData.rating+" rating di hai."
                                     }
                                 };
                                 self.sendDevNotifFunc(userNotiData.token, payload);
