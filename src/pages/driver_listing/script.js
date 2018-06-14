@@ -153,8 +153,9 @@ export default {
         self.userRef = db.ref('/users');
         self.addaListRef = db.ref('/adda_list');
 
-        self.userRef.orderByChild('type').equalTo('driver').on('value', function (snap) {
-            self.addaListRef.orderByChild('place_name').on('value', function (addasnap) {
+        self.userRef.orderByChild('type').equalTo('driver').once('value', function (snap) {
+            self.addaListRef.orderByChild('place_name').once('value', function (addasnap) {
+
                 let addadata = addasnap.val();
 
                 let renderData = snap.val();

@@ -33,6 +33,7 @@ export default {
             self.unReadMsg = _.size(_.filter(snapVal, {seen: false}));
 
             self.notiLoader = false;
+
         },
         notiClick (data) {
             if(data.seen === false) {

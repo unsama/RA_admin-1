@@ -29,7 +29,7 @@ header.header
                                 // inner menu: contains the actual data
                                 ul.menu
                                     li(v-for="noti in notiData" v-on:click="notiClick(noti)")
-                                        router-link(:to="noti.link" v-bind:class="{read:noti.seen}")
+                                        router-link(:to="noti.link" v-bind:class="{read:noti.seen}")(v-if='noti.seen == false')
                                             i.ion.ion-ios7-person.info
                                             span {{ noti.body }}
                                                 small.date ({{ genDate(noti.created_at) }})
