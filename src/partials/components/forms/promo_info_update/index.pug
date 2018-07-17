@@ -18,14 +18,20 @@ form(v-on:submit.prevent="form_submit")
                         p.text-danger.text-right(v-if='validation.hasError("formdata.amount")') {{ validation.firstError('formdata.amount') }}
                 .col-md-6
                     .form-group
-                        label(for='type') Type
-                        input.form-control(type='text' autocomplete='off' id='type' v-model='formdata.type')
-                        p.text-danger.text-right(v-if='validation.hasError("formdata.lname")') {{ validation.firstError('formdata.lname') }}
+                        label(for='calculation_type') Type
+                            select.form-control(id='calculation_type' v-model='formdata.type',v-on:change="myfunction")
+                                option(value='') Select offer calcutation type
+                                option(v-for="v in v_list" v-bind:value='v') {{ v }}
+                            p.text-danger.text-right(v-if='validation.hasError("type")') {{ validation.firstError('type') }}
+
+                        //
+                        //label(for='type') Type
+                        //input.form-control(type='text' autocomplete='off' id='type' v-model='formdata.type')
+                        //p.text-danger.text-right(v-if='validation.hasError("formdata.lname")') {{ validation.firstError('formdata.lname') }}
                 .col-md-6
                     .form-group
                         label(for='expdate') Expiry Date
                         input.form-control(type='date' autocomplete='off' id='expdate' v-model='formdata.expdate')
-
                         p.text-danger.text-right(v-if='validation.hasError("formdata.lname")') {{ validation.firstError('formdata.lname') }}
 
         .col-md-12

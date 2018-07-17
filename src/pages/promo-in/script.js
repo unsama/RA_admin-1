@@ -25,7 +25,7 @@ export default {
             } else {
                 self.$router.push('/admin');
             }
-            console.log(self.userData);
+
         });
         // self.PromoRef.on('value', function(snap){
         //     let renderData = snap.val();

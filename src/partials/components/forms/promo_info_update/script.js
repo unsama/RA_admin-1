@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import _ from 'lodash'
+import moment from 'moment';
 import func from '../../../../../custom_libs/func.js'
 
 import Promise from 'bluebird'
@@ -30,7 +31,8 @@ export default {
             addaListData: [],
             formStatus: false,
             sucMsg: "",
-            errMsg: ""
+            errMsg: "",
+            v_list: ["Percentage", "Rupees"],
         }
 
     },
@@ -52,6 +54,9 @@ export default {
     methods: {
         form_submit: function () {
             let self = this;
+            var date = new Date(self.formdata.expdate);
+            var abc = moment(date, 'dd/mm/yyyy');
+            var actaldate = abc.format('x')
             self.formStatus = true;
             self.$validate().then(function (success) {
                 if(success){
@@ -59,7 +64,7 @@ export default {
                         'promo': self.formdata.pname,
                         'quantity': self.formdata.amount,
                         'type': self.formdata.type,
-                        'expdate': self.formdata.expdate,
+                        'expdate': actaldate,
 
                     }, function (err) {
                         if(err){

@@ -26,12 +26,7 @@ export default {
                 renderDataKeys.forEach(function (val) {
                     let item = renderData[val];
                     item['key'] = val;
-                    item['expdate'] = "";
-                    if (val.length === 20) {
-                        item['expdate'] = func.set_date_ser(new Date(func.decode_key(val)));
-                    } else if (item.hasOwnProperty("createdAt")) {
-
-                    }
+                    item['expdate'] = func.set_date_ser(new Date(func.decode_key(val)));
                     grabData.push(item);
                     process_item++;
                     if (process_item === renderDataKeys.length) {
