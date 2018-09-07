@@ -77,7 +77,7 @@ export default {
                 let mapOptions = {
                     center: latlng,
                     zoom: 12,
-                    styles: googleStyle,
+                   // styles: googleStyle,
                     streetViewControl: false,
                 };
                 self.map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -99,13 +99,18 @@ export default {
                             self.addaMarkers[key] = new google.maps.Marker({
                                 position: selLL,
                                 map: self.map,
-                                label: userSnap.numChildren() + '',
+                                
+                                label:{
+                                    text:userSnap.numChildren() + '',
+                                    fontWeight:"bold",
+                                    fontSize:"9px"
+                                },
                                 icon: {
                                     url: "/images/icons/warehouse.png",
-                                    scaledSize: new google.maps.Size(50, 50)
-                                }
+                                    scaledSize: new google.maps.Size(20, 25)
+                                },
                             });
-
+                            
                             google.maps.event.clearListeners(self.addaMarkers[key], 'click');
                             self.addaMarkers[key].addListener('click', function () {
                                 self.map.setZoom(18);

@@ -64,6 +64,12 @@ aside.right-side
                                             .col-xs-6
                                                 p {{ userData.driving_license }}
                                         .col-md-12
+                                            .col-xs-6
+                                                p Adda Name
+                                            .col-xs-6
+                                                // Edited By Awais
+                                                p {{ getAddaName(userData.adda_ref) }} 
+                                        .col-md-12
                                             h4  Vehicle Information
                                             .col-xs-6
                                                 p Vehicle Type
@@ -336,6 +342,7 @@ aside.right-side
                                             th Debit
                                             th Credit
                                             th Balance
+                                            th Delete
                                     tbody
                                         tr(v-for="(row, key, ind) in walletData")
                                             td {{ ind+1 }}
@@ -344,6 +351,8 @@ aside.right-side
                                             td {{ row.debit }}
                                             td {{ row.credit }}
                                             td {{ row.balance }}
+                                            td
+                                                a(href="/#") #[img(src='../../../images/trashcan.png', alt='Delete', width='20', height='20')] 
                                     tfoot
                                         tr
                                             td.text-right(colspan='3')

@@ -13,21 +13,75 @@ aside.right-side
     section.content
         .row
             .col-xs-12
-                .box
-                    .box-header
-                        h3.box-title Drivers List
-                        .box-tools.text-right
-                            router-link.btn.btn-sm.btn-success(to='/admin/drivers/add_driver' style='color:white')
-                                i.fa.fa-plus
+                .box    
+
+                    .row
+                        .box-header
+                            h4.box-title Drivers List
+                            .box-tools.text-right
+                                router-link.btn.btn-sm.btn-success(to='/admin/drivers/add_driver' style='color:white')
+                                    i.fa.fa-plus
+                        .col-md-3
+                            .form-group
+                                select.form-control(v-model='selectedAdda')
+                                    option Choose Adda
+                                    option(v-for='option in addaList', v-bind:value='option.id') {{ option.name }}
+                                
+
+                        .col-md-3
+                            .form-group
+                                select.form-control(v-model='selectedVehicle')
+                                    option Choose Vehicle
+                                    option Pickup
+                                    option Car
+                                    option Truck
+                                    option Bike
+                        .col-md-2    
+                            //date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimumview="'day'", :maximumview="'month'", :initialview="'month'", placeholder='Select From Date', v-model='FromDate')
+                            //date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimumview="'day'", :maximumview="'month'", :initialview="'month'", placeholder='Select To Date', v-model='ToDate')
+
+                        .col-md-2
+                            label
+                                input(type='radio', v-model='UsersAOption',  value='All')
+                                | All Users
+                            br
+                            label
+                                input(type='radio', v-model='UsersAOption',  value='Actived')
+                                | Actived Users
+                            br
+                            label
+                                input(type='radio', v-model='UsersAOption',  value='InActived')
+                                | Deactived Users
+                        .col-md-2
+                            label
+                                input(type='radio', v-model='UsersBOption', value='All')
+                                | All Users
+                            br
+                            label
+                                input(type='radio', v-model='UsersBOption',  value='Blocked')
+                                | Blocked Users
+                            br
+                            label
+                                input(type='radio', v-model='UsersBOption',  value='UnBlocked')
+                                | Unblocked Users
+                            br
+                            input(type="button", value="Search", @click="changeSearch()")
+
+
                     .box-body.table-responsive
-                        div.text-center(v-if='dataLoad')
+                        div.text-center(v-if='dataLoad')                            
+
                             i.fa.fa-refresh.fa-spin.fa-3x.fa-fw
                         h3.text-center(style='margin: 15px 0;' v-if='!dataLoad && data1.length === 0')
                             | No Active Driver Found!
                         template(v-if='!dataLoad && data1.length > 0')
-                            table_comp(v-bind:per_page="10")
+
+
+                            table_comp(v-bind:per_page='pPage')
                                 template(slot="thead")
                                     tr
+                                        th
+                                            input(type="checkbox")
                                         th S.No#
                                         th Driver Name
                                         th Driver Email
@@ -41,6 +95,9 @@ aside.right-side
                                         th Status
                                 template(slot="tbody")
                                     tr.open_row(v-for="(row, ind) in data1" v-bind:data-url="'/admin/drivers/profile/'+row.key")
+                                        td(data-indx="selected" v-bind:data-search="(typeof row.selected === true) ? false :true ")
+                                            input(type="checkbox" v-on:click.prevent='unselect(row.key, ind, $event)' value='row.first_name' v-if='row.selected === true' checked)
+                                            input(type="checkbox" v-on:click.prevent='select(row.key, ind, $event)' value='row.first_name' v-else)
                                         td {{ ind+1 }}
                                         td {{ row.first_name }} {{ row.last_name }}
                                         td {{ row.email }}

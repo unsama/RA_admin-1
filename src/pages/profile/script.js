@@ -32,7 +32,20 @@ export default {
         self.userReqRef = db.ref('/user_requests');
         self.driverBidsRef = db.ref('/driver_bids');
         self.userRef = db.ref('/users');
+        self.addaListRef= db.ref('adda_list'); //// Awais Added
+        
 
+            self.addaListRef.orderByChild('id').equalTo('10a').once("value", function(snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    var value = childSnapshot.val();
+
+                    console.log (value.place_name);
+                  //  AddaName = value.place_name;
+                });
+            });
+
+
+            
         self.userRef.child(self.$route.params.id).on('value', function (snap) {
             self.dataLoad = false;
             let renderData = snap.val();
@@ -54,6 +67,8 @@ export default {
             dataLoad5: true,
             // loaded in variables
             userData: {},
+            AddaName:'-', //// Added by Awais
+
             completeReqData: {},
             pendingReqData: {},
             invoiceReqData: {},
@@ -77,6 +92,7 @@ export default {
             totCredit: 0,
             // database reference
             userRef: null,
+            addaListRef:null, /////Added By Awais
             completeReqRef: null,
             activeReqRef: null,
             userReqRef: null,
@@ -129,6 +145,10 @@ export default {
                 self.driver_com_invoices(self, val.key);
                 self.driver_wallet(self, val.key);
                 self.getImgs(self, val.key);
+               self.getAddaName(val.key); ///// Change By Awais
+
+
+
             }
         }
     },
@@ -157,6 +177,7 @@ export default {
                 });
             }
         },
+
         complete_req_driver: function (self, uid, driver_data) {
             self.completeReqRef.orderByChild('driver_uid').equalTo(uid).once('value').then(function (snap) {
                 let com_req_data = snap.val();
@@ -368,6 +389,21 @@ export default {
             let key_length = keys.length;
             return obj[keys[key_length - 1]];
         },
+        /////// Added Function By Awais
+        getAddaName:function (AddaID) {/*
+           var AddaName;
+           var  db =  firebase.database();
+            db.ref('adda_list').orderByChild('id').equalTo(AddaID).on("value", function(snapshot) {
+               
+                snapshot.forEach(function (childSnapshot) {
+                    var value = childSnapshot.val();
+                    AddaName = value.place_name;
+                });
+            });*/
+            return  'a';// AddaName; 
+            
+        },
+
         getImgs: function (self, uid) {
             const storage = firebase.storage();
             if(self.profileImgLoad){

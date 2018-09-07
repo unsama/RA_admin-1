@@ -3,15 +3,7 @@
       .row
         .col-md-3.col-md-offset-9
             .form-group
-              input.form-control(type='text' placeholder='Search' v-model='search_table')
-            .form-group
-              label(style="margin-right:15px;")
-                input.cusCheckBox(type='radio' v-model="r_radio_btn" value="or")
-                | &nbsp;&nbsp;OR
-              label
-                input.cusCheckBox(type='radio' v-model="r_radio_btn" value="and")
-                | &nbsp;&nbsp;AND
-                  
+              input.form-control(type='text' placeholder='Search' v-model='search_table')      
       table.table.table-hover.table-click(ref='table')
           thead
               slot(name="thead")
@@ -31,7 +23,6 @@
                   button.btn.btn-sm(v-else disabled='disabled')
                       i.fa.fa-chevron-right
 </template>
-
 <script>
 import _ from "lodash";
 export default {
@@ -39,7 +30,7 @@ export default {
   props: {
     per_page: {
       type: Number,
-      default: 1000
+      default: 10
     }
   },
   mounted() {
@@ -57,10 +48,10 @@ export default {
     });
   },
   watch: {
-    r_radio_btn (val) {
-      this.s_restrict = (val === "or") ? false:true;
+    r_radio_btn(val) {
+      this.s_restrict = val === "or" ? false : true;
     },
-    s_restrict (val) {
+    s_restrict(val) {
       this.search_row(this.search_table);
     },
     search_table(val) {
