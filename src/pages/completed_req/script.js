@@ -4,10 +4,12 @@ import moment from 'moment'
 import _ from 'lodash'
 
 import tableComp from '../../partials/components/html_utils/tabel_comp.vue'
+import ListBids from '../../partials/components/modals/list_bids.vue' 
 
 export default {
     components: {
-        'table_comp': tableComp
+        'table_comp': tableComp,
+        'list_bids': ListBids
     },
     created: function () {
         let self = this;
@@ -16,6 +18,7 @@ export default {
         self.userRef = db.ref('/users');
         self.userReqRef = db.ref('/user_requests');
         self.completeReqRef = db.ref('/complete_requests');
+        self.driverBidsRef =  db.ref('/driver_bids'),
 
         self.completeRequestListener();
     },
@@ -31,11 +34,17 @@ export default {
             userRef: null,
             userReqRef: null,
             completeReqRef: null,
+            driverBidsRef:null,                
+            assign_req_id_md: '',
         }
     },
     methods: {
         dateFormat(ms) {
             return moment(ms).format("hh:mm A, DD/MM/YYYY")
+        },
+        openBidsReq(req_id) {
+            this.assign_req_id_md = req_id;
+            console.log(req_id);
         },
         genWeekDays() {
             let grabDates = []
@@ -62,14 +71,24 @@ export default {
                     // compReqSnap means inner item in complete request list
                     await Promise.all(_.map(snap.val(), async (compReqData, key) => {
                         let reqSnap = await self.userReqRef.child(compReqData.client_uid + "/" + key).once('value')
+                       // console.log(reqSnap.id)
                         let clientSnap = await self.userRef.child(compReqData.client_uid).once('value')
                         let driverSnap = await self.userRef.child(compReqData.driver_uid).once('value')
-
+                        let BidsSnap = await self.driverBidsRef.child(reqSnap.key).once('value')
+                        let CountBids = 0;
+                        try{
+                            CountBids = Object.values( BidsSnap.val()).length;}
+                            catch(ex){ }
+                            if(CountBids ===null){
+                                CountBids = 0;
+                            }
                         grabData.push({
                             compReqData,
                             reqData: reqSnap.val(),
                             clientData: clientSnap.val(),
-                            driverData: driverSnap.val()
+                            driverData: driverSnap.val(),
+                            BidsData : BidsSnap.val(),
+                            Bids : CountBids
                         });
                     }))
 

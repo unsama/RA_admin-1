@@ -12,7 +12,7 @@
           slot(name="tfoot")
       .row
           .col-sm-12.text-center.mt-15
-              label.mr-10 Page: {{curPage}}/{{ gen_pages }}
+              label.mr-10 Page: {{curPage}}/{{ gen_pages }} 
               .btn-group
                   button.btn.btn-sm(v-if='curPage>1' v-on:click='prevPage')
                       i.fa.fa-chevron-left
@@ -80,7 +80,29 @@ export default {
       }
     };
   },
+
+  created: function() {
+    this.$parent.$on("update", this.sea);
+  },
+ 
   methods: {
+    sea() {
+      const self = this;
+      self.table = self.$refs.table;
+      self.search_row("");
+
+      $(function() {
+        $("body").on("click", ".open_row", function() {
+          let grabLink = $(this).attr("data-url");
+          if (grabLink !== "") {
+            self.$router.push(grabLink);
+          }
+        });
+      });
+      console.log(111);
+      this.changePage();
+    },
+
     search_row(val) {
       const self = this;
       const $table = $(self.table);

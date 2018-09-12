@@ -33,9 +33,12 @@ aside.right-side
                                             template(slot="thead")
                                                 tr
                                                     th S.No#
-                                                    th Date
+                                                    th Created Date
+                                                    th Canceled Date
+                                                    th Bids
                                                     th Request No.
                                                     th Client Name
+                                                    th Client Number
                                                     th Origin
                                                     th Destination
                                                     th Distance
@@ -45,8 +48,12 @@ aside.right-side
                                                 tr(v-for='(row, ind) in today')
                                                     td {{ ind+1 }}
                                                     td {{ dateFormat(row.reqData.createdAt) }}
+                                                    td {{ dateFormat(row.reqData.canceledAt) }}
+                                                    td 
+                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
                                                     td {{ row.reqData.id }}
                                                     td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
+                                                    td +{{row.clientData.mob_no}}
                                                     td {{ row.reqData.orgText }}
                                                     td {{ row.reqData.desText }}
                                                     td {{ row.reqData.disText }}
@@ -64,9 +71,12 @@ aside.right-side
                                             template(slot="thead")
                                                 tr
                                                     th S.No#
-                                                    th Date
+                                                    th Created Date
+                                                    th Canceled Date
+                                                    th Bids
                                                     th Request No.
                                                     th Client Name
+                                                    th Client Number
                                                     th Origin
                                                     th Destination
                                                     th Distance
@@ -76,8 +86,12 @@ aside.right-side
                                                 tr(v-for='(row, ind) in week')
                                                     td {{ ind+1 }}
                                                     td {{ dateFormat(row.reqData.createdAt) }}
+                                                    td {{ dateFormat(row.reqData.canceledAt) }}
+                                                    td
+                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
                                                     td {{ row.reqData.id }}
                                                     td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
+                                                    td +{{row.clientData.mob_no}}
                                                     td {{ row.reqData.orgText }}
                                                     td {{ row.reqData.desText }}
                                                     td {{ row.reqData.disText }}
@@ -95,22 +109,30 @@ aside.right-side
                                             template(slot="thead")
                                                 tr
                                                     th S.No#
-                                                    th Date
+                                                    th Created Date
+                                                    th Canceled Date
+                                                    th Bids
                                                     th Request No.
                                                     th Client Name
+                                                    th Client Number
                                                     th Origin
                                                     th Destination
                                                     th Distance
                                                     th Duration
-                                                    th Required Vehicle
+                                                    th Required Vehicle 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in all')
                                                     td {{ ind+1 }}
                                                     td {{ dateFormat(row.reqData.createdAt) }}
+                                                    td {{ dateFormat(row.reqData.canceledAt) }}
+                                                    td
+                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
                                                     td {{ row.reqData.id }}
                                                     td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
+                                                    td +{{row.clientData.mob_no}}
                                                     td {{ row.reqData.orgText }}
                                                     td {{ row.reqData.desText }}
                                                     td {{ row.reqData.disText }}
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
+                        list_bids(v-bind:sel_req_id="assign_req_id_md")

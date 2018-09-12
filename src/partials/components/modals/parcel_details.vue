@@ -30,6 +30,10 @@
                             h4 Parcel Images:&nbsp;
                                 button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#pDetailImgPP' v-on:click='openImagePP(parcel_obj.req_data["parcelUriArray"])')
                                     i.fa.fa-eye
+                            h4 Start Time:&nbsp;
+                                b {{ formatDate( parcel_obj.pend_req_data['active_time'] )}}
+                            h4 Reach Time:&nbsp;
+                                b {{ formatDate( parcel_obj.pend_req_data['complete_time']) }}
                             h3 Driver Info
                             template(v-if="!loaders.driver")
                                 h4 Driver:&nbsp;
@@ -52,7 +56,7 @@
 
 <script>
     import firebase from 'firebase'
-
+    import moment from 'moment'
     import parcelImages from '../modals/parcel_images.vue'
 
     export default {
@@ -90,6 +94,9 @@
             }
         },
         methods: {
+            formatDate(val){
+                return moment(val).format('hh:mm A DD/MM/YYYY');
+            },
             async dataLoad (pReqData) {
                 this.loaders['driver'] = true;
                 this.loaders['client'] = true;

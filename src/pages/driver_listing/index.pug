@@ -28,7 +28,7 @@ aside.right-side
                                     option(v-for='option in addaList', v-bind:value='option.id') {{ option.name }}
                                 
 
-                        .col-md-3
+                        .col-md-2
                             .form-group
                                 select.form-control(v-model='selectedVehicle')
                                     option Choose Vehicle
@@ -37,8 +37,9 @@ aside.right-side
                                     option Truck
                                     option Bike
                         .col-md-2    
-                            //date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimumview="'day'", :maximumview="'month'", :initialview="'month'", placeholder='Select From Date', v-model='FromDate')
-                            //date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimumview="'day'", :maximumview="'month'", :initialview="'month'", placeholder='Select To Date', v-model='ToDate')
+                            date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimumview="'day'", :maximumview="'month'", :initialview="'month'", placeholder='Select From Date', v-model='FromDate')
+                            br
+                            date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimumview="'day'", :maximumview="'month'", :initialview="'month'", placeholder='Select To Date', v-model='ToDate')
 
                         .col-md-2
                             label
@@ -64,8 +65,9 @@ aside.right-side
                             label
                                 input(type='radio', v-model='UsersBOption',  value='UnBlocked')
                                 | Unblocked Users
-                            br
-                            input(type="button", value="Search", @click="changeSearch()")
+
+                        .col-md-1
+                             input(type="button", value="Search", @click="changeSearch()")
 
 
                     .box-body.table-responsive
@@ -80,8 +82,8 @@ aside.right-side
                             table_comp(v-bind:per_page='pPage')
                                 template(slot="thead")
                                     tr
-                                        th
-                                            input(type="checkbox")
+                                        th Select
+                                            //input(type="checkbox")
                                         th S.No#
                                         th Driver Name
                                         th Driver Email
@@ -93,11 +95,11 @@ aside.right-side
                                         th Created Time
                                         th Action
                                         th Status
+                                        th Profile
                                 template(slot="tbody")
-                                    tr.open_row(v-for="(row, ind) in data1" v-bind:data-url="'/admin/drivers/profile/'+row.key")
-                                        td(data-indx="selected" v-bind:data-search="(typeof row.selected === true) ? false :true ")
-                                            input(type="checkbox" v-on:click.prevent='unselect(row.key, ind, $event)' value='row.first_name' v-if='row.selected === true' checked)
-                                            input(type="checkbox" v-on:click.prevent='select(row.key, ind, $event)' value='row.first_name' v-else)
+                                    tr.open_row(v-for="(row, ind) in data1" )
+                                        td
+                                            input(type="checkbox" :value='row.key'  v-model="selectedIDs")
                                         td {{ ind+1 }}
                                         td {{ row.first_name }} {{ row.last_name }}
                                         td {{ row.email }}
@@ -112,7 +114,11 @@ aside.right-side
                                         td(data-indx="status" v-bind:data-search="row.status")
                                             button.btn.btn-success.btn-xs(v-on:click.prevet='active(row.key, ind, $event)' v-if='row.status === 0') Activate
                                             button.btn.btn-danger.btn-xs(v-on:click.prevet='deActive(row.key, ind, $event)' v-else) Deactivate
-
                                         td(data-indx="blocked" v-bind:data-search="(typeof row.blocked === 'undefined') ? 'false':row.blocked+''")
                                             button.btn.btn-primary.btn-sm(type="button", v-on:click.prevent='unblock(row.key, ind, $event)' v-if='row.blocked === true') UnBlock
                                             button.btn.btn-primary.btn-sm(type="button", v-on:click.prevent='block(row.key, ind, $event)' v-else ) Block
+                                        td
+                                            p
+                                                |
+                                                a(v-bind:href="'/admin/drivers/profile/'+row.key")
+                                                    span.glyphicon.glyphicon-user

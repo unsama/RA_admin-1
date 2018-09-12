@@ -4,10 +4,12 @@ import moment from 'moment'
 import _ from 'lodash'
 
 import tableComp from '../../partials/components/html_utils/tabel_comp.vue'
+import ListBids from '../../partials/components/modals/list_bids.vue' 
 
 export default {
     components: {
-        'table_comp': tableComp
+        'table_comp': tableComp,
+        'list_bids': ListBids
     },
     created: function () {
         let self = this;
@@ -15,6 +17,7 @@ export default {
         const db = firebase.database();
         self.userRef = db.ref('/users');
         self.userReqRef = db.ref('/user_requests');
+        self.driverBidsRef =  db.ref('/driver_bids'), 
 
         self.cancelRequestListener();
 
@@ -30,11 +33,17 @@ export default {
             today: [],
             userRef: null,
             userReqRef: null,
+            driverBidsRef:null,                
+            assign_req_id_md: '',
         }
     },
     methods: {
         dateFormat(ms) {
             return moment(ms).format("hh:mm A, DD/MM/YYYY")
+        },
+        openBidsReq(req_id) {
+            this.assign_req_id_md = req_id;
+            console.log(req_id);
         },
         genWeekDays() {
             let grabDates = []
@@ -62,15 +71,36 @@ export default {
                     await Promise.all(_.map(snap.val(), async (userReqs, key) => {
                         await Promise.all(_.map(userReqs, async (reqs) => {
                             if (reqs.hasOwnProperty("canceledAt")) {
-                                let clientSnap = await self.userRef.child(key).once('value')
+                                
+                                let BidsSnap = await self.driverBidsRef.child(reqs.id).once('value');
+                                let clientSnap = await self.userRef.child(key).once('value') ;
+
+                                let CountBids = 0;
+
+                                try{
+                                CountBids = Object.values( BidsSnap.val()).length;}
+                                catch(ex){ }
+                                if(CountBids ===null){
+                                    CountBids = 0;
+                                }
                                 grabData.push({
                                     clientData: clientSnap.val(),
-                                    reqData: reqs
+                                    reqData: reqs,
+                                    BidsData : BidsSnap.val(),
+                                    Bids : CountBids
+                                    
                                 })
+                                //console.log( clientSnap.val() );
+                               // console.log( Object.values( BidsSnap.val()).length  );
+                                //console.log(reqs.id);
+                               // console.log(key); 
+                                
                             }
                         }))
                     }))
-
+ 
+                 //  console.log(_.size(grabData[1].Bids));
+                  //  console.log(grabData[2].Bids);
                     // sorted here desc/asc
                     self.all = await _.orderBy(grabData, function (row) { return row.reqData.createdAt }, ['desc'])
 

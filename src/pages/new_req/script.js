@@ -1,7 +1,7 @@
 import firebase from 'firebase'
 import moment from 'moment'
 import func from '../../../custom_libs/func'
-import googleStyle from './style_json.json'
+//import googleStyle from './style_json.json'
 import _ from 'lodash'
 
 import newRequestListing from '../../partials/components/lists/new_request.vue'
@@ -39,7 +39,7 @@ export default {
                 try {
                     let suc = document.execCommand('copy');
                     msg = suc ? 'Copied!' : 'Copy Text';
-                }catch (err) {
+                } catch (err) {
                     msg = 'Oops unable to copy!';
                 }
                 window.getSelection().removeAllRanges();
@@ -53,7 +53,9 @@ export default {
         const db = firebase.database();
         return {
             liveDriverData: {},
-
+            TotalliveDrivers: 0,
+            TotalliveDriverList: [],
+            selectedDriver: "Drivers List",
             userRef: db.ref('/users'),
             userReqRef: db.ref('/user_requests'),
             driverBidsRef: db.ref('/driver_bids'),
@@ -70,6 +72,16 @@ export default {
         }
     },
     methods: {
+        ShowPopUp: function (row) {
+            let self = this;
+            if (row == "Drivers List") {} else {
+                self.map.setCenter(self.dMarkers[row].getPosition());
+                self.infoWindows.setContent("<div id='map_content'><i class='fa fa-refresh fa-2x fa-spin'></i></div>");
+                self.infoWindows.open(self.map, self.dMarkers[row]);
+                self.loadDriverInfo(row);
+
+            }
+        },
         mapInit: function () {
             let self = this;
             setTimeout(function () {
@@ -77,7 +89,7 @@ export default {
                 let mapOptions = {
                     center: latlng,
                     zoom: 12,
-                   // styles: googleStyle,
+                    // styles: googleStyle,
                     streetViewControl: false,
                 };
                 self.map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -99,22 +111,22 @@ export default {
                             self.addaMarkers[key] = new google.maps.Marker({
                                 position: selLL,
                                 map: self.map,
-                                
-                                label:{
-                                    text:userSnap.numChildren() + '',
-                                    fontWeight:"bold",
-                                    fontSize:"9px"
+                                label: {
+                                    text: userSnap.numChildren() + '',
+                                    fontWeight: "bold",
+                                    fontSize: "8px"
                                 },
                                 icon: {
                                     url: "/images/icons/warehouse.png",
+                                    setOpacity: 0.2,
                                     scaledSize: new google.maps.Size(20, 25)
                                 },
                             });
-                            
-                            google.maps.event.clearListeners(self.addaMarkers[key], 'click');
-                            self.addaMarkers[key].addListener('click', function () {
-                                self.map.setZoom(18);
-                                self.map.setCenter(self.addaMarkers[key].getPosition());
+
+                            google.maps.event.clearListeners(self.addaMarkers[key], 'mouseover');
+                            self.addaMarkers[key].addListener('mouseover', function () {
+                                //self.map.setZoom(12);
+                                //self.map.setCenter(self.addaMarkers[key].getPosition());
                                 self.infoWindows.setContent(
                                     `<div id='map_content'>
 <p><b>Adda Name: </b>${func.toTitleCase(row.place_name)}</p>
@@ -177,11 +189,27 @@ export default {
         loadLiveDriver: function () {
             let self = this;
             self.onlineDriversRef.on('value', function (snap) {
+
                 let data = snap.val();
                 if (data !== null) {
                     self.liveDriverData = data;
+                    self.TotalliveDrivers = Object.values(data).length;
+                    let dataDriver = Object.values(data);
+                    self.TotalliveDriverList = [];
+                    dataDriver.forEach(function (Driver) {
+                        self.userRef.child(Driver.uid).on('value', function (Driversnap) {
+
+                            var obj = {};
+                            obj = Driversnap.val();
+                            obj["id"] = Driver.uid;
+                            // console.log(obj );
+                            self.TotalliveDriverList.push(obj);
+                        })
+                    });
                 } else {
                     self.liveDriverData = {};
+                    self.TotalliveDriverList = [];
+                    self.TotalliveDrivers = 0;
                 }
                 self.driverMarkerChange();
             });
@@ -217,10 +245,11 @@ export default {
                                 icon: pin
                             });
                         }
-                        google.maps.event.clearListeners(self.dMarkers[row], 'click');
-                        self.dMarkers[row].addListener('click', function () {
-                            self.map.setZoom(18);
-                            self.map.setCenter(self.dMarkers[row].getPosition());
+                        google.maps.event.clearListeners(self.dMarkers[row], 'mouseover');
+
+                        self.dMarkers[row].addListener('mouseover', function () {
+                            //self.map.setZoom(12);
+                            //self.map.setCenter(self.dMarkers[row].getPosition());
                             self.infoWindows.setContent("<div id='map_content'><i class='fa fa-refresh fa-2x fa-spin'></i></div>");
                             self.infoWindows.open(self.map, self.dMarkers[row]);
                             self.loadDriverInfo(row);
@@ -235,6 +264,7 @@ export default {
                 self.checkMarker(obj, self.markers);
                 if (obj !== null) {
                     let keys = Object.keys(obj);
+                    //console.log(obj);
                     //let key_length = keys.length;
                     //let processItem = 0;
                     let pin = {
@@ -252,10 +282,10 @@ export default {
                         });
                         boundbox.extend(selLL);
 
-                        google.maps.event.clearListeners(self.markers[row], 'click');
-                        self.markers[row].addListener('click', function () {
-                            self.map.setZoom(18);
-                            self.map.setCenter(self.markers[row].getPosition());
+                        google.maps.event.clearListeners(self.markers[row], 'mouseover');
+                        self.markers[row].addListener('mouseover', function () {
+                            //self.map.setZoom(12);
+                            //self.map.setCenter(self.markers[row].getPosition());
                             self.infoWindows.setContent(
                                 `<div id='map_content'>
 <p><b>Request ID: </b><a href="#" data-toggle="tooltip" data-placement="left" title="Copy Text" class="link_copy">${row}</a></p>
@@ -305,7 +335,7 @@ export default {
                 }
             });
             await self.completeRequestsRef.orderByChild('driver_uid').equalTo(key).once('value', function (snap) {
-                if(snap.val() !== null) {
+                if (snap.val() !== null) {
                     _.map(snap.val(), function (obj) {
                         let jobDate = moment(obj.active_time).format('DD/MM/YYYY');
                         if (date === jobDate) {

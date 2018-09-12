@@ -10,8 +10,12 @@ aside.right-side
     section.content
         .row
             .col-xs-12
-                div.map_container
-                    #map(ref="map")
+                p 
+                    b Online Drivers : {{TotalliveDrivers}}  
+                    select(v-model="selectedDriver",@change="ShowPopUp(selectedDriver)")
+                        option Drivers List
+                        option(v-for='Driver in TotalliveDriverList', v-bind:value='Driver.id' ) {{ Driver.first_name }} {{ Driver.last_name }} 
+                #map(ref="map")
                 new_request
                 progress_request
 

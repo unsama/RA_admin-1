@@ -67,11 +67,12 @@ export default {
                         });
                     }
                     var bar = Object.keys(item).length;
-                    var percent = (bar * 100) / 20;
+                    var percent = (bar * 100) / 22; //////
                     self.progressValue[process_item] = percent
 
                     if (val.length === 20) {
-                        item['time'] = moment(func.set_date_ser(new Date(func.decode_key(val)))).format("MM/DD/YYYY");
+                        //item['time'] = moment(func.set_date_ser(new Date(func.decode_key(val)))).format("MM/DD/YYYY");
+                        item['time'] = moment(new Date(func.decode_key(val))).format("MM/DD/YYYY");
                     } else if (item.hasOwnProperty("createdAt")) {
                         item['time'] = moment(item.createdAt).format("MM/DD/YYYY");
                     }
@@ -118,19 +119,24 @@ export default {
         }
     },
     methods: {
+
+
+
         customFormatter(date) {
             return moment(date).format("MM/DD/YYYY");
         },
-        al: function (v) {
-            console.log(v);
-        },
-        changeSearch: function (e) {
  
-            var UsersAO= this.UsersAOption ;
-            var UsersBO= this.UsersBOption ;
+        changeSearch: function (e) {
+
+
+            var startDate = this.FromDate;
+            var endDate = this.ToDate;
+
+            var UsersAO = this.UsersAOption;
+            var UsersBO = this.UsersBOption;
             var SelectedAddaId = this.selectedAdda;
             var selectedVehicleID = this.selectedVehicle;
- 
+
             let self = this;
 
             const db = firebase.database();
@@ -185,48 +191,81 @@ export default {
                             });
                         }
                         var bar = Object.keys(item).length;
-                        var percent = (bar * 100) / 20;
+                        //var percent = (bar * 100) / 20;
+                        var percent = (bar * 100) / 22;
                         self.progressValue[process_item] = percent
 
                         if (val.length === 20) {
-                            item['time'] = func.set_date_ser(new Date(func.decode_key(val)));
+                            //item['time'] = func.set_date_ser(new Date(func.decode_key(val)));
+                            // item['time'] = moment(func.set_date_ser(new Date(func.decode_key(val)))).format("MM/DD/YYYY");
+                            item['time'] = moment(new Date(func.decode_key(val))).format("MM/DD/YYYY");
                         } else if (item.hasOwnProperty("createdAt")) {
                             item['time'] = moment(item.createdAt).format("MM/DD/YYYY");
-                        } 
+                        }
 
  
 
+                        if (startDate == "" && endDate == "") {
+                            a();
+                        } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
+                            a();
+                        }
+
+
+                        function a() {
+                            if (SelectedAddaId == "Choose Adda" && selectedVehicleID == "Choose Vehicle") {
+                                d();
+                            } else if (item['adda_ref'] == SelectedAddaId && selectedVehicleID == item['vehicle']) {
+                                d();
+                            } else if (SelectedAddaId == "Choose Adda" && selectedVehicleID == item['vehicle']) {
+                                d();
+                            } else if (item['adda_ref'] == SelectedAddaId && selectedVehicleID == "Choose Vehicle") {
+                                d();
+                            }
+                        }
+
+                        function d() {
+
+                            if (UsersAO == "All" && UsersBO == "All") {
+                                grabData.push(item);
+                            } else if (UsersAO == "All" && UsersBO == "Blocked") {
+                                if (item['blocked'] == true) {
+                                    grabData.push(item);
+                                }
+                            } else if (UsersAO == "All" && UsersBO == "UnBlocked") {
+                                if (item['blocked'] == false) {
+                                    grabData.push(item);
+                                } ////////////////////
+                            } else if (UsersAO == "Actived" && UsersBO == "All") {
+                                if (item['status'] == 1) {
+                                    grabData.push(item);
+                                }
+                            } else if (UsersAO == "Actived" && UsersBO == "Blocked") {
+                                if (item['status'] == 1 && item['blocked'] == true) {
+                                    grabData.push(item);
+                                }
+                            } else if (UsersAO == "Actived" && UsersBO == "UnBlocked") {
+                                if (item['status'] == 1 && item['blocked'] == false) {
+                                    grabData.push(item);
+                                } ////////////
+                            } else if (UsersAO == "InActived" && UsersBO == "All") {
+                                if (item['status'] == 0) {
+                                    grabData.push(item);
+                                }
+                            } else if (UsersAO == "InActived" && UsersBO == "Blocked") {
+                                if (item['status'] == 0 && item['blocked'] == true) {
+                                    grabData.push(item);
+                                }
+                            } else if (UsersAO == "InActived" && UsersBO == "UnBlocked") {
+                                if (item['status'] == 0 && item['blocked'] == false) {
+                                    grabData.push(item);
+                                } ///////////////////
+                            }
+
+                        }
 
 
 
-      if(SelectedAddaId =="Choose Adda" && selectedVehicleID =="Choose Vehicle"){
-    d();
-}else if(item['adda_ref'] == SelectedAddaId && selectedVehicleID == item['vehicle']){
-    d();
-}else if(SelectedAddaId =="Choose Adda"&& selectedVehicleID == item['vehicle']){
-   d();
-}else if(item['adda_ref'] == SelectedAddaId && selectedVehicleID =="Choose Vehicle"){
-   d();
-}
- 
-
-function d(){
-
-if(UsersAO=="All" && UsersBO=="All"){ grabData.push(item);
-}else if(UsersAO=="All" && UsersBO=="Blocked"){   if (item['blocked'] == true){  grabData.push(item);    }
-}else if(UsersAO=="All" && UsersBO=="UnBlocked"){  if (item['blocked'] == false ){  grabData.push(item);    }////////////////////
-}else if(UsersAO=="Actived" && UsersBO=="All"){  if(item['status'] == 1){   grabData.push(item);   }
-}else if(UsersAO=="Actived" && UsersBO=="Blocked"){ if(item['status'] == 1 && item['blocked'] == true){  grabData.push(item);    }
-}else if(UsersAO=="Actived" && UsersBO=="UnBlocked"){ if(item['status'] == 1 && item['blocked'] == false){  grabData.push(item);    } ////////////
-}else if(UsersAO=="InActived" && UsersBO=="All"){  if(item['status'] == 0  ){   grabData.push(item);   }
-}else if(UsersAO=="InActived" && UsersBO=="Blocked"){  if(item['status'] == 0 && item['blocked'] == true){   grabData.push(item);   }
-}else if(UsersAO=="InActived" && UsersBO=="UnBlocked"){  if(item['status'] == 0 && item['blocked'] == false){ grabData.push(item);     } ///////////////////
-}
- 
-}
- 
-
- 
 
                         self.data2 = item;
                         process_item++;
@@ -237,6 +276,7 @@ if(UsersAO=="All" && UsersBO=="All"){ grabData.push(item);
                     });
                 }
             });
+            this.$emit('update');
         },
 
         deActive: function (key, index, event) {
@@ -252,8 +292,12 @@ if(UsersAO=="All" && UsersBO=="All"){ grabData.push(item);
                 });
             }
         },
-        select: function (key, index, event) {
+        pr:function () {
             event.stopPropagation();
+            console.log(this.selectedIDs);
+        },
+        select: function (key, event) {
+            event.stopPropagation(); /*
             let self = this;
             var IsAvailId = false;
             if (self.selectedIDs.length == 0) {
@@ -279,7 +323,7 @@ if(UsersAO=="All" && UsersBO=="All"){ grabData.push(item);
                 }
 
             }
-            //console.log(self.selectedIDs)
+            console.log(self.selectedIDs); */
 
         },
         unselect: function (key, index, event) {
