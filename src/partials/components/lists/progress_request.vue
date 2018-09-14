@@ -130,7 +130,7 @@
                     }
                 });
             },
-            openDetailPP (row) {
+            openDetailPP (row) { 
                 this.sel_parcel_obj = row;
             }
         }

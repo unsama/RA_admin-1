@@ -30,10 +30,13 @@
                             h4 Parcel Images:&nbsp;
                                 button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#pDetailImgPP' v-on:click='openImagePP(parcel_obj.req_data["parcelUriArray"])')
                                     i.fa.fa-eye
-                            h4 Start Time:&nbsp;
-                                b {{ formatDate( parcel_obj.pend_req_data['active_time'] )}}
                             h4 Reach Time:&nbsp;
+                                b {{ formatDate( parcel_obj.pend_req_data['reach_time']) }}
+                            h4 Pickup Time:&nbsp;
+                                b {{ formatDate( parcel_obj.pend_req_data['active_time'] )}}
+                            h4 Deliverer Time:&nbsp;
                                 b {{ formatDate( parcel_obj.pend_req_data['complete_time']) }}
+
                             h3 Driver Info
                             template(v-if="!loaders.driver")
                                 h4 Driver:&nbsp;
@@ -55,76 +58,77 @@
 </template>
 
 <script>
-    import firebase from 'firebase'
-    import moment from 'moment'
-    import parcelImages from '../modals/parcel_images.vue'
+import firebase from "firebase";
+import moment from "moment";
+import parcelImages from "../modals/parcel_images.vue";
 
-    export default {
-        components: {
-            'parcel_images': parcelImages,
-        },
-        name: "parcel_details",
-        props: {
-            parcel_obj: {
-                type: Object,
-                default: {}
-            }
-        },
-        data () {
-            const db = firebase.database();
-            return {
-                loaders: {
-                    driver: true,
-                    client: true
-                },
-                data: {
-                    driver: {},
-                    client: {}
-                },
-                sel_images: [],
-
-                userRef: db.ref('/users'),
-            }
-        },
-        watch: {
-            parcel_obj (val) {
-                if(val.hasOwnProperty('pend_req_data')) {
-                    this.dataLoad(val.pend_req_data);
-                }
-            }
-        },
-        methods: {
-            formatDate(val){
-                return moment(val).format('hh:mm A DD/MM/YYYY');
-            },
-            async dataLoad (pReqData) {
-                this.loaders['driver'] = true;
-                this.loaders['client'] = true;
-                await this.driverDataLoad(pReqData.driver_uid);
-                await this.clientDataLoad(pReqData.user_uid);
-            },
-            async driverDataLoad (uid) {
-                const self = this;
-                await self.userRef.child(uid).once('value', function (snap) {
-                    let item = snap.val();
-                    item['uid'] = uid;
-                    self.data['driver'] = item;
-                    self.loaders['driver'] = false;
-                });
-            },
-            async clientDataLoad (uid) {
-                const self = this;
-                await self.userRef.child(uid).once('value', function (snap) {
-                    let item = snap.val();
-                    item['uid'] = uid;
-                    self.data['client'] = item;
-                    self.loaders['client'] = false;
-                });
-                
-            },
-            openImagePP (images) {
-                this.sel_images = images;
-            }
-        }
+export default {
+  components: {
+    parcel_images: parcelImages
+  },
+  name: "parcel_details",
+  props: {
+    parcel_obj: {
+      type: Object,
+      default: {}
     }
+  },
+  data() {
+    const db = firebase.database();
+    return {
+      loaders: {
+        driver: true,
+        client: true
+      },
+      data: {
+        driver: {},
+        client: {}
+      },
+      sel_images: [],
+
+      userRef: db.ref("/users")
+    };
+  },
+  watch: {
+    parcel_obj(val) {
+      if (val.hasOwnProperty("pend_req_data")) {
+        this.dataLoad(val.pend_req_data);
+      }
+    }
+  },
+  methods: {
+    formatDate(val) {
+      if (val === undefined) return "";
+      // console.log(val);
+      return moment(val).format("hh:mm A DD/MM/YYYY");
+    },
+    async dataLoad(pReqData) {
+      this.loaders["driver"] = true;
+      this.loaders["client"] = true;
+      await this.driverDataLoad(pReqData.driver_uid);
+      await this.clientDataLoad(pReqData.user_uid);
+    },
+    async driverDataLoad(uid) {
+      const self = this;
+      await self.userRef.child(uid).once("value", function(snap) {
+        let item = snap.val();
+        item["uid"] = uid;
+        self.data["driver"] = item;
+        self.loaders["driver"] = false;
+      });
+    },
+    async clientDataLoad(uid) {
+      const self = this;
+      await self.userRef.child(uid).once("value", function(snap) {
+        let item = snap.val();
+        item["uid"] = uid;
+        self.data["client"] = item;
+        self.loaders["client"] = false;
+      });
+    },
+    openImagePP(images) {
+      this.sel_images = images;
+    }
+  }
+};
 </script>

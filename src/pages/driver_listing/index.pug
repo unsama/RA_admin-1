@@ -13,62 +13,55 @@ aside.right-side
     section.content
         .row
             .col-xs-12
-                .box    
+                .box  
+                    .box-header
+                        h4.box-title Drivers List
+                        .box-tools.text-right
+                            router-link.btn.btn-sm.btn-success(to='/admin/drivers/add_driver' style='color:white')
+                                i.fa.fa-plus
+                    .col-md-3
+                        .form-group  
+                            vue-multiselect(:allow-empty="true",v-model='Addavalues', :options='addaList', :multiple='true', track-by='name', :custom-label='customLabel',placeholder="Select Custom Adda")
+                    .col-md-2
+                        .form-group
+                            select.form-control(v-model='selectedVehicle')
+                                option Choose Vehicle
+                                option Pickup
+                                option Car
+                                option Truck
+                                option Bike
+                    .col-md-2    
+                        date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
+                        br
+                        date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
 
-                    .row
-                        .box-header
-                            h4.box-title Drivers List
-                            .box-tools.text-right
-                                router-link.btn.btn-sm.btn-success(to='/admin/drivers/add_driver' style='color:white')
-                                    i.fa.fa-plus
-                        .col-md-3
-                            .form-group
-                                select.form-control(v-model='selectedAdda')
-                                    option Choose Adda
-                                    option(v-for='option in addaList', v-bind:value='option.id') {{ option.name }}
-                                
+                    .col-md-2
+                        label
+                            input(type='radio', v-model='UsersAOption',  value='All')
+                            | All Users
+                        br
+                        label
+                            input(type='radio', v-model='UsersAOption',  value='Actived')
+                            | Actived Users
+                        br
+                        label
+                            input(type='radio', v-model='UsersAOption',  value='InActived')
+                            | Deactived Users
+                    .col-md-2
+                        label
+                            input(type='radio', v-model='UsersBOption', value='All')
+                            | All Users
+                        br
+                        label
+                            input(type='radio', v-model='UsersBOption',  value='Blocked')
+                            | Blocked Users
+                        br
+                        label
+                            input(type='radio', v-model='UsersBOption',  value='UnBlocked')
+                            | Unblocked Users
 
-                        .col-md-2
-                            .form-group
-                                select.form-control(v-model='selectedVehicle')
-                                    option Choose Vehicle
-                                    option Pickup
-                                    option Car
-                                    option Truck
-                                    option Bike
-                        .col-md-2    
-                            date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimumview="'day'", :maximumview="'month'", :initialview="'month'", placeholder='Select From Date', v-model='FromDate')
-                            br
-                            date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimumview="'day'", :maximumview="'month'", :initialview="'month'", placeholder='Select To Date', v-model='ToDate')
-
-                        .col-md-2
-                            label
-                                input(type='radio', v-model='UsersAOption',  value='All')
-                                | All Users
-                            br
-                            label
-                                input(type='radio', v-model='UsersAOption',  value='Actived')
-                                | Actived Users
-                            br
-                            label
-                                input(type='radio', v-model='UsersAOption',  value='InActived')
-                                | Deactived Users
-                        .col-md-2
-                            label
-                                input(type='radio', v-model='UsersBOption', value='All')
-                                | All Users
-                            br
-                            label
-                                input(type='radio', v-model='UsersBOption',  value='Blocked')
-                                | Blocked Users
-                            br
-                            label
-                                input(type='radio', v-model='UsersBOption',  value='UnBlocked')
-                                | Unblocked Users
-
-                        .col-md-1
-                             input(type="button", value="Search", @click="changeSearch()")
-
+                    .col-md-1
+                            input(type="button", value="Search", @click="changeSearch()")
 
                     .box-body.table-responsive
                         div.text-center(v-if='dataLoad')                            
@@ -78,12 +71,12 @@ aside.right-side
                             | No Active Driver Found!
                         template(v-if='!dataLoad && data1.length > 0')
 
-
+                            
                             table_comp(v-bind:per_page='pPage')
                                 template(slot="thead")
                                     tr
-                                        th Select
-                                            //input(type="checkbox")
+                                        th All
+                                            input(type="checkbox", v-model="selectedAllIDs" ,v-on:click="checkAllDrivers(selectedAllIDs)")
                                         th S.No#
                                         th Driver Name
                                         th Driver Email

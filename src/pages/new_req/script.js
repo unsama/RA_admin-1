@@ -129,11 +129,14 @@ export default {
                                 //self.map.setCenter(self.addaMarkers[key].getPosition());
                                 self.infoWindows.setContent(
                                     `<div id='map_content'>
-<p><b>Adda Name: </b>${func.toTitleCase(row.place_name)}</p>
-<p><b>No. Vehicles: </b>${userSnap.numChildren()}</p>
-</div>`
+                                        <p><b>Adda Name: </b>${func.toTitleCase(row.place_name)}</p>
+                                        <p><b>No. Vehicles: </b>${userSnap.numChildren()}</p>
+                                    </div>`
                                 );
                                 self.infoWindows.open(self.map, self.addaMarkers[key]);
+                            });
+                            self.addaMarkers[key].addListener('mouseout', function () {
+                                self.infoWindows.close();
                             });
 
                         });
@@ -254,6 +257,9 @@ export default {
                             self.infoWindows.open(self.map, self.dMarkers[row]);
                             self.loadDriverInfo(row);
                         });
+                        self.dMarkers[row].addListener('mouseout', function () {
+                            self.infoWindows.close();
+                        });
                     });
                 }
             }
@@ -293,6 +299,9 @@ export default {
                             );
                             self.infoWindows.open(self.map, self.markers[row]);
                             $('[data-toggle="tooltip"]').tooltip();
+                        });
+                        self.markers[row].addListener('mouseout', function () {
+                            self.infoWindows.close();
                         });
                     });
                 }

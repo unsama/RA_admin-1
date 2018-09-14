@@ -6,7 +6,7 @@ import router from 'vue-router'
 
 import tableComp from '../../partials/components/html_utils/tabel_comp.vue'
 import Datepicker from 'vuejs-datepicker';
-
+import vueMultiselect from 'vue-multiselect'; 
 
 
 export default {
@@ -14,6 +14,7 @@ export default {
         'table_comp': tableComp,
         'progress-bar': progressbar,
         'date_picker': Datepicker,
+        'vue-multiselect':vueMultiselect,
     },
     created: function () {
 
@@ -51,7 +52,7 @@ export default {
                 let grabData = [];
                 renderDataKeys.forEach(function (val) {
                     let item = renderData[val];
-                    item['selected'] = false;
+                    //item['selected'] = false;
                     item['key'] = val;
                     item['time'] = "";
                     item['place_name'] = "";
@@ -77,7 +78,7 @@ export default {
                         item['time'] = moment(item.createdAt).format("MM/DD/YYYY");
                     }
                     grabData.push(item);
-                    self.data2 = item;
+                   // self.data2 = item;
                     process_item++;
                     if (process_item === renderDataKeys.length) {
                         self.data1 = grabData;
@@ -91,12 +92,15 @@ export default {
     },
     data: function () {
         return {
+            Addavalues:[],
+            selectedAddaList: [],
             dataLoad: true,
             data1: [],
-            data2: [],
+           // data2: [],
             userRef: null,
             // profile: [],
             selectedIDs: [],
+            selectedAllIDs: false,
             counter: 45,
             max: 100,
             progressValue: [],
@@ -105,7 +109,7 @@ export default {
             info: "",
             addaDataKeys: [],
             addaList: [],
-            selectedAdda: "Choose Adda",
+           // selectedAdda: "Choose Adda",
             selectedVehicle: "Choose Vehicle",
             pPage: 10,
             ActiveUsers: "",
@@ -119,8 +123,20 @@ export default {
         }
     },
     methods: {
-
-
+        customLabel (option) {
+            return `${option.name}`//- ${option.language}
+ 
+          },
+ 
+        checkAllDrivers (v){
+            let self =this;
+            self.selectedIDs = [];
+            if(!v){
+                self.data1.forEach(item => {
+                    self.selectedIDs.push(item.key)
+                }); 
+                }
+        },
 
         customFormatter(date) {
             return moment(date).format("MM/DD/YYYY");
@@ -131,12 +147,13 @@ export default {
 
             var startDate = this.FromDate;
             var endDate = this.ToDate;
-
             var UsersAO = this.UsersAOption;
             var UsersBO = this.UsersBOption;
-            var SelectedAddaId = this.selectedAdda;
+            var SelectedAddaIds =[];
+            this.Addavalues.forEach(addaVal => {
+                SelectedAddaIds.push(addaVal.id);
+            }); 
             var selectedVehicleID = this.selectedVehicle;
-
             let self = this;
 
             const db = firebase.database();
@@ -203,16 +220,29 @@ export default {
                             item['time'] = moment(item.createdAt).format("MM/DD/YYYY");
                         }
 
- 
 
-                        if (startDate == "" && endDate == "") {
-                            a();
-                        } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
-                            a();
-                        }
+                        var SelectedAddaId="Choose Adda";
+                        if(!SelectedAddaIds.length){
 
+                            if (startDate == "" && endDate == "") {
+                                a();
+                               } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
+                                   a();
+                               }
+                        }else{
+                        SelectedAddaIds.forEach(id => {            
+                             SelectedAddaId = id;
+
+                             if (startDate == "" && endDate == "") {
+                                 a();
+                                } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
+                                    a();
+                                }
+                            });}
 
                         function a() {
+
+
                             if (SelectedAddaId == "Choose Adda" && selectedVehicleID == "Choose Vehicle") {
                                 d();
                             } else if (item['adda_ref'] == SelectedAddaId && selectedVehicleID == item['vehicle']) {
@@ -267,7 +297,7 @@ export default {
 
 
 
-                        self.data2 = item;
+                       // self.data2 = item;
                         process_item++;
                         if (process_item === renderDataKeys.length) {
                             self.data1 = grabData;
@@ -294,7 +324,7 @@ export default {
         },
         pr:function () {
             event.stopPropagation();
-            console.log(this.selectedIDs);
+           // console.log(this.selectedIDs);
         },
         select: function (key, event) {
             event.stopPropagation(); /*

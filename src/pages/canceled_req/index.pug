@@ -44,6 +44,7 @@ aside.right-side
                                                     th Distance
                                                     th Duration
                                                     th Required Vehicle
+                                                    th Reason 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in today')
                                                     td {{ ind+1 }}
@@ -59,6 +60,7 @@ aside.right-side
                                                     td {{ row.reqData.disText }}
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
+                                                    td {{ row.reqData.reason }}
                             
                             div.tab-pane#week(role='tabpanel')
                                 div.table-responsive
@@ -82,6 +84,7 @@ aside.right-side
                                                     th Distance
                                                     th Duration
                                                     th Required Vehicle
+                                                    th Reason 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in week')
                                                     td {{ ind+1 }}
@@ -97,6 +100,7 @@ aside.right-side
                                                     td {{ row.reqData.disText }}
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
+                                                    td {{ row.reqData.reason }}
                             
                             div.tab-pane#all(role='tabpanel')
                                 div.table-responsive
@@ -120,6 +124,7 @@ aside.right-side
                                                     th Distance
                                                     th Duration
                                                     th Required Vehicle 
+                                                    th Reason 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in all')
                                                     td {{ ind+1 }}
@@ -135,4 +140,5 @@ aside.right-side
                                                     td {{ row.reqData.disText }}
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
+                                                    td {{ row.reqData.reason }}
                         list_bids(v-bind:sel_req_id="assign_req_id_md")
