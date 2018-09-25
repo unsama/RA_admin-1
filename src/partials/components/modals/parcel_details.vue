@@ -7,52 +7,81 @@
                 .modal-content
                     .modal-header
                         button.close(type='button', data-dismiss='modal') ×
-                        h4.modal-title Parcel Details
+                        h4.modal-title Parcel Details  
+                        //p {{parcel_obj}}
                     .modal-body
                         template(v-if="Object.keys(parcel_obj).length > 0")
-                            h3 Parcel Info
-                            h4 Created Time:&nbsp;
-                                b {{ parcel_obj.req_data['createdAt'] }}
-                            h4 Origin:&nbsp;
-                                b {{ parcel_obj.req_data['orgText'] }}
-                            h4 Destination:&nbsp;
-                                b {{ parcel_obj.req_data['desText'] }}
-                            h4 Est. Time:&nbsp;
-                                b {{ parcel_obj.req_data['durText'] }}
-                            h4 Est. Distance:&nbsp;
-                                b {{ parcel_obj.req_data['disText'] }}
-                            h4 Floor:&nbsp;
-                                b {{ parcel_obj.req_data['floors'] }}
-                            h4 Labour:&nbsp;
-                                b {{ parcel_obj.req_data['labours'] }}
-                            h4 Vehicle Required:&nbsp;
-                                b {{ parcel_obj.req_data['vecType'] }}
-                            h4 Parcel Images:&nbsp;
-                                button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#pDetailImgPP' v-on:click='openImagePP(parcel_obj.req_data["parcelUriArray"])')
-                                    i.fa.fa-eye
-                            h4 Reach Time:&nbsp;
-                                b {{ formatDate( parcel_obj.pend_req_data['reach_time']) }}
-                            h4 Pickup Time:&nbsp;
-                                b {{ formatDate( parcel_obj.pend_req_data['active_time'] )}}
-                            h4 Deliverer Time:&nbsp;
-                                b {{ formatDate( parcel_obj.pend_req_data['complete_time']) }}
+                        .table-responsive
+                            table.table
+                                tbody
+                                    tr
+                                        td Created Time:
+                                        td {{ parcel_obj.req_data['createdAt'] }}
+                                        td Origin:
+                                        td {{ parcel_obj.req_data['orgText'] }}
+                                    tr
+                                        th Destination
+                                        td {{ parcel_obj.req_data['desText'] }}
+                                        th Est. Time
+                                        td {{ parcel_obj.req_data['durText'] }} 
+                                    tr
+                                        td Est. Distance:
+                                        td {{ parcel_obj.req_data['disText'] }}
+                                        td Floor:
+                                        td {{ parcel_obj.req_data['floors'] }}
+                                    tr
+                                        td Labour:
+                                        td {{ parcel_obj.req_data['labours'] }}
+                                        td Vehicle Required:
+                                        td {{ parcel_obj.req_data['vecType'] }}
+                                    tr
+                                        td Parcel Images:
+                                        td 
+                                            button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#pDetailImgPP' v-on:click='openImagePP(parcel_obj.req_data["parcelUriArray"])')
+                                                i.fa.fa-eye
+                                        td Reach Time:
+                                        td {{ formatDate( parcel_obj.pend_req_data['reach_time']) }} 
+                                    tr
+                                        td Pickup Time:
+                                        td {{ formatDate( parcel_obj.pend_req_data['active_time'] )}} 
+                                        td Deliverer Time:
+                                        td {{ formatDate( parcel_obj.pend_req_data['complete_time']) }}
+                                    tr                        
+                                        td Amount:
+                                        td Rs : {{parcel_obj.bid_data['amount']}} 
+                                        td Discount:
+                                        td Rs : {{ parcel_obj.bid_data['discountPrice'] }}
+                                    tr
+                                        td Driver Info:
+                                        td 
+                                            template(v-if="!loaders.driver")
+                                                p Driver:&nbsp;
+                                                    router-link(v-bind:to="'/admin/drivers/profile/'+data.driver['uid']" target="_blank")
+                                                        b {{ data.driver['first_name'] }} {{ data.driver['last_name'] }}
+                                                p Number:&nbsp;
+                                                    b {{ data.driver['mob_no'] }}
+                                            b(v-else) Loading...
+                                            
+                                        td Client Info:
+                                        td 
+                                            template(v-if="!loaders.client")
+                                                p Client:&nbsp;
+                                                    router-link(v-bind:to="'/admin/users/profile/'+data.client['uid']" target="_blank")
+                                                        b {{ data.client['first_name'] }} {{ data.client['last_name'] }}
+                                                p Number:&nbsp;
+                                                    b {{ data.client['mob_no'] }}
+                                            b(v-else) Loading...
+                                    tr 
+                                        th Driver Name
+                                        th Amount
+                                        th Discount
+                                        th Date
+                                    tr(v-for="data in parcel_obj.bidsList") 
+                                        td {{data.first_name}} {{data.last_name}}
+                                        td {{data.amount}}
+                                        td {{data.discountPrice}}
+                                        td {{formatDate(data.first_bid_time)}}
 
-                            h3 Driver Info
-                            template(v-if="!loaders.driver")
-                                h4 Driver:&nbsp;
-                                    router-link(v-bind:to="'/admin/drivers/profile/'+data.driver['uid']" target="_blank")
-                                        b {{ data.driver['first_name'] }} {{ data.driver['last_name'] }}
-                                h4 Number:&nbsp;
-                                    b {{ data.driver['mob_no'] }}
-                            b(v-else) Loading...
-                            h3 Client Info
-                            template(v-if="!loaders.client")
-                                h4 Client:&nbsp;
-                                    router-link(v-bind:to="'/admin/users/profile/'+data.client['uid']" target="_blank")
-                                        b {{ data.client['first_name'] }} {{ data.client['last_name'] }}
-                                h4 Number:&nbsp;
-                                    b {{ data.client['mob_no'] }}
-                            b(v-else) Loading...
         parcel_images(v-bind:images="sel_images" id='pDetailImgPP')
 
 </template>
@@ -99,8 +128,9 @@ export default {
   methods: {
     formatDate(val) {
       if (val === undefined) return "";
+      if (val == 0) return "";
       // console.log(val);
-      return moment(val).format("hh:mm A DD/MM/YYYY");
+      return moment(val).format("hh:mm A DD/MMM/YYYY");
     },
     async dataLoad(pReqData) {
       this.loaders["driver"] = true;

@@ -435,10 +435,10 @@ router.post('/promocode', function (req, res, next) {
             keys.forEach(function (key) {
                 let row = userData[key];
                 var abc = moment(row.expdate,'x');
-                var actaldate = abc.format('DD/MM/YYYY');
+                var actaldate = abc.format('DD/MMM/YYYY');
 
                 var todayDate = moment();
-                var todayDateFormat = todayDate.format("DD/MM/YYYY");
+                var todayDateFormat = todayDate.format("DD/MMM/YYYY");
                 if(todayDateFormat > actaldate){
                     res.json({status: "failed", message: "This Promo Code is Expired!"});
 

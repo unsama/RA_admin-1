@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import func from '../../../custom_libs/func'
+import moment  from 'moment' 
 
 import tableComp from '../../partials/components/html_utils/tabel_comp.vue'
 

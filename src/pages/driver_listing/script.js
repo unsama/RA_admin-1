@@ -72,10 +72,10 @@ export default {
                     self.progressValue[process_item] = percent
 
                     if (val.length === 20) {
-                        //item['time'] = moment(func.set_date_ser(new Date(func.decode_key(val)))).format("MM/DD/YYYY");
-                        item['time'] = moment(new Date(func.decode_key(val))).format("MM/DD/YYYY");
+                        //item['time'] = moment(func.set_date_ser(new Date(func.decode_key(val)))).format("DD/MMM/YYYY");
+                        item['time'] = moment(new Date(func.decode_key(val))).format("DD/MMM/YYYY");
                     } else if (item.hasOwnProperty("createdAt")) {
-                        item['time'] = moment(item.createdAt).format("MM/DD/YYYY");
+                        item['time'] = moment(item.createdAt).format("DD/MMM/YYYY");
                     }
                     grabData.push(item);
                    // self.data2 = item;
@@ -123,6 +123,7 @@ export default {
         }
     },
     methods: {
+
         customLabel (option) {
             return `${option.name}`//- ${option.language}
  
@@ -139,14 +140,15 @@ export default {
         },
 
         customFormatter(date) {
-            return moment(date).format("MM/DD/YYYY");
+            return moment(date).format("DD/MMM/YYYY");
         },
  
         changeSearch: function (e) {
 
 
-            var startDate = this.FromDate;
-            var endDate = this.ToDate;
+            var startDate = this.FromDate ===null ? '':this.FromDate;
+            var endDate = this.ToDate ===null ? '':this.ToDate;
+
             var UsersAO = this.UsersAOption;
             var UsersBO = this.UsersBOption;
             var SelectedAddaIds =[];
@@ -214,10 +216,10 @@ export default {
 
                         if (val.length === 20) {
                             //item['time'] = func.set_date_ser(new Date(func.decode_key(val)));
-                            // item['time'] = moment(func.set_date_ser(new Date(func.decode_key(val)))).format("MM/DD/YYYY");
-                            item['time'] = moment(new Date(func.decode_key(val))).format("MM/DD/YYYY");
+                            // item['time'] = moment(func.set_date_ser(new Date(func.decode_key(val)))).format("DD/MMM/YYYY");
+                            item['time'] = moment(new Date(func.decode_key(val))).format("DD/MMM/YYYY");
                         } else if (item.hasOwnProperty("createdAt")) {
-                            item['time'] = moment(item.createdAt).format("MM/DD/YYYY");
+                            item['time'] = moment(item.createdAt).format("DD/MMM/YYYY");
                         }
 
 

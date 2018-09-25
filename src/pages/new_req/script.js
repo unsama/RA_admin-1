@@ -135,7 +135,7 @@ export default {
                                 );
                                 self.infoWindows.open(self.map, self.addaMarkers[key]);
                             });
-                            self.addaMarkers[key].addListener('mouseout', function () {
+                            self.map.addListener('mouseout', function () {
                                 self.infoWindows.close();
                             });
 
@@ -257,7 +257,7 @@ export default {
                             self.infoWindows.open(self.map, self.dMarkers[row]);
                             self.loadDriverInfo(row);
                         });
-                        self.dMarkers[row].addListener('mouseout', function () {
+                        self.map.addListener('mouseout', function () {
                             self.infoWindows.close();
                         });
                     });
@@ -300,7 +300,7 @@ export default {
                             self.infoWindows.open(self.map, self.markers[row]);
                             $('[data-toggle="tooltip"]').tooltip();
                         });
-                        self.markers[row].addListener('mouseout', function () {
+                        self.map.addListener('mouseout', function () {
                             self.infoWindows.close();
                         });
                     });
@@ -318,7 +318,7 @@ export default {
         },
         async loadDriverInfo(key) {
             const self = this;
-            let date = moment().format('DD/MM/YYYY');
+            let date = moment().format('DD/MMM/YYYY');
             let data = {};
             let num_bids = 0;
             let num_comp_jobs = 0;
@@ -335,7 +335,7 @@ export default {
                     _.map(find_obj, function (obj) {
                         const sel_obj = obj[key];
                         if (sel_obj.hasOwnProperty('first_bid_time')) {
-                            let bidDate = moment(sel_obj.first_bid_time).format('DD/MM/YYYY');
+                            let bidDate = moment(sel_obj.first_bid_time).format('DD/MMM/YYYY');
                             if (date === bidDate) {
                                 num_bids++;
                             }
@@ -346,7 +346,7 @@ export default {
             await self.completeRequestsRef.orderByChild('driver_uid').equalTo(key).once('value', function (snap) {
                 if (snap.val() !== null) {
                     _.map(snap.val(), function (obj) {
-                        let jobDate = moment(obj.active_time).format('DD/MM/YYYY');
+                        let jobDate = moment(obj.active_time).format('DD/MMM/YYYY');
                         if (date === jobDate) {
                             num_comp_jobs++;
                         }

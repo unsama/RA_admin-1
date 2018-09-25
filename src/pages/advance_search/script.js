@@ -15,7 +15,7 @@ export default {
     },
     methods: {
         dateFormat(ms) {
-            return moment(ms).format("hh:mm A, DD/MM/YYYY")
+            return moment(ms).format("hh:mm A, DD/MMM/YYYY")
         },
         async mounted_async() {
             const self = this

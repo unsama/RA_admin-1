@@ -123,7 +123,7 @@
                             self.userReqRef.child(liveReq.key + "/" + liveReq.val().reqId).once('value').then(function (reqSnap) {
                                 let reqData = reqSnap.val();
                                 if (reqData !== null) {
-                                    reqData['createdAt'] = moment(reqData.createdAt).format('hh:mm A DD/MM/YYYY');
+                                    reqData['createdAt'] = moment(reqData.createdAt).format('hh:mm A DD/MMM/YYYY');
                                     self.userRef.child(liveReq.key).once('value').then(function (userSnap) {
                                         let userData = userSnap.val();
                                         reqData['username'] = userData.first_name + " " + userData.last_name;

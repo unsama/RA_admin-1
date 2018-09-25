@@ -23,14 +23,19 @@ export default {
                 let renderDataKeys = Object.keys(renderData);
                 let process_item = 0;
                 let grabData = [];
-                renderDataKeys.forEach(function (val) {
+                renderDataKeys.forEach(function (val) { 
                     let item = renderData[val];
                     item['key'] = val;
-                    item['expdate'] = func.set_date_ser(new Date(func.decode_key(val)));
+                    if (item['expdate'].indexOf('-') > -1)
+                    item['expdate'] = func.set_date_ser( item['expdate'])
+                    else
+                    item['expdate'] = func.set_date_ser(parseInt(item['expdate'])) 
+                   // console.log(item['expdate']);
+                    item['created'] = func.set_date_ser(new Date(func.decode_key(val)));
                     grabData.push(item);
                     process_item++;
                     if (process_item === renderDataKeys.length) {
-                        self.data1 = grabData;
+                        self.data1 = grabData; 
                         self.dataLoad = false;
                     }
                 });

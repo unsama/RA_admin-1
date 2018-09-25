@@ -31,9 +31,9 @@ aside.right-side
                                 option Truck
                                 option Bike
                     .col-md-2    
-                        date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
+                        date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
                         br
-                        date_picker(:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
+                        date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
 
                     .col-md-2
                         label

@@ -30,15 +30,17 @@ aside.right-side
                                     tr
                                         th S.No#
                                         th Promocode Name
+                                        th Created Date
                                         th Amount
                                         th Type
                                         th Expiry Date
-                                        th Action
+                                        th Action 
                                       
                                 template(slot="tbody")
                                     tr.open_row(v-for="(row, ind) in data1" v-bind:data-url="'/admin/promocode/promoin/'+row.key")
                                         td {{ ind+1 }}
                                         td {{ row.promo}} 
+                                        td {{ row.created}} 
                                         td {{ row.quantity }}
                                         td {{ row.type }}
                                         td {{ row.expdate}}

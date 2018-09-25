@@ -126,7 +126,7 @@
     import firebase from 'firebase'
     import moment from 'moment'
 
-    export default {
+    export default { 
         watch: {
             allLogs: function (val) {
                 
@@ -144,12 +144,12 @@
                             let data_set = {};
                             data_set.loginTimeM = moment(item.val().loginTime);
                             data_set.logOutTimeM = moment(item.val().logoutTime);
-                            data_set.loginTime = moment(item.val().loginTime).format("DD/MM/YYYY, hh:mm:ss a");
+                            data_set.loginTime = moment(item.val().loginTime).format("DD/MMM/YYYY, hh:mm:ss a");
                             data_set.logoutTime = "";
                             data_set.duration = moment.duration();
                             
                             if(item.val().hasOwnProperty("logoutTime")){
-                                data_set.logoutTime = moment(item.val().logoutTime).format("DD/MM/YYYY, hh:mm:ss a");
+                                data_set.logoutTime = moment(item.val().logoutTime).format("DD/MMM/YYYY, hh:mm:ss a");
                                 data_set.duration.add(moment.duration(moment(item.val().logoutTime).diff(moment(item.val().loginTime))));
                             }
 

@@ -54,7 +54,7 @@ export default {
             let self = this;
             self.formStatus = true;
             var date = new Date(self.expdate);
-            var abc = moment(date,'dd/mm/yyyy');
+            var abc = moment(date,'dd/mmm/yyyy');
             var actaldate = abc.format('x')
             self.$validate().then(function (success) {
                 if(success){

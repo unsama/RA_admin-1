@@ -43,14 +43,16 @@ aside.right-side
                                                     th Destination
                                                     th Distance
                                                     th Duration
-                                                    th Required Vehicle
+                                                    th Required Vehicle 
                                                     th Reason 
+                                                    th Labours 
+                                                    th Floors 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in today')
                                                     td {{ ind+1 }}
                                                     td {{ dateFormat(row.reqData.createdAt) }}
                                                     td {{ dateFormat(row.reqData.canceledAt) }}
-                                                    td 
+                                                    td
                                                         button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
                                                     td {{ row.reqData.id }}
                                                     td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
@@ -61,6 +63,8 @@ aside.right-side
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
                                                     td {{ row.reqData.reason }}
+                                                    td {{ row.reqData.labours }}
+                                                    td {{ row.reqData.floors }}
                             
                             div.tab-pane#week(role='tabpanel')
                                 div.table-responsive
@@ -83,8 +87,10 @@ aside.right-side
                                                     th Destination
                                                     th Distance
                                                     th Duration
-                                                    th Required Vehicle
+                                                    th Required Vehicle 
                                                     th Reason 
+                                                    th Labours 
+                                                    th Floors 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in week')
                                                     td {{ ind+1 }}
@@ -101,6 +107,8 @@ aside.right-side
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
                                                     td {{ row.reqData.reason }}
+                                                    td {{ row.reqData.labours }}
+                                                    td {{ row.reqData.floors }}
                             
                             div.tab-pane#all(role='tabpanel')
                                 div.table-responsive
@@ -125,6 +133,8 @@ aside.right-side
                                                     th Duration
                                                     th Required Vehicle 
                                                     th Reason 
+                                                    th Labours 
+                                                    th Floors 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in all')
                                                     td {{ ind+1 }}
@@ -141,4 +151,6 @@ aside.right-side
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
                                                     td {{ row.reqData.reason }}
+                                                    td {{ row.reqData.labours }}
+                                                    td {{ row.reqData.floors }}
                         list_bids(v-bind:sel_req_id="assign_req_id_md")

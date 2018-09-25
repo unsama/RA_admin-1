@@ -8,12 +8,14 @@
 }
 
 .bxL{
+    padding-left: 5px;
     padding-top: 5px;
     float: left;
     padding-bottom: 5px;
 }
 .bxR{
 
+    margin-right: 5px;
     padding-top: 5px;
     float: right;
     padding-bottom: 5px;

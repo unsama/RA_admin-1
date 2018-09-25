@@ -68,7 +68,7 @@ aside.right-side
                                                 p Adda Name
                                             .col-xs-6
                                                 // Edited By Awais
-                                                p {{ getAddaName(userData.adda_ref) }} 
+                                                p {{ userData.adda_name}} 
                                         .col-md-12
                                             h4  Vehicle Information
                                             .col-xs-6
@@ -136,8 +136,194 @@ aside.right-side
                                                     i.fa.fa-exclamation
                                                 button.btn.btn-info.btn-sm.mar-bot-5(v-if='letterImgLoad' disabled='disabled')
                                                     i.fa.fa-refresh.fa-spin.fa-fw
+    
+    section.content
+        h2 Search By Date
+        .row
+            .col-xs-3.col-lg-2
+                date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
+            .col-xs-3.col-lg-2
+                date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
+            .col-xs-3.col-lg-2
+                button.btn.btn-default(@click="SearchByDate(FromDate,ToDate)") Search
+            .col-xs-3.col-lg-6 
+                //button.btn.btn-default(@click="showPopup")  Export PDF 
+            export_popup
+                slot
+                    table.table.table--hover
+                        thead
+                            tr
+                                th
+                                    input(type='checkbox', v-model='ckAll' , @click='checkboxToggle(ckAll)')
+                                th
+                                    label(for='checkbox') Check All
+                                th
+                        tbody
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck0')
+                                td 
+                                    label(for='checkbox') Log Today
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck1')
+                                td 
+                                    label(for='checkbox') Log Week
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck2')
+                                td 
+                                    label(for='checkbox') Log All
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck3')
+                                td 
+                                    label(for='checkbox') Log Days
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck4')
+                                td 
+                                    label(for='checkbox') Pending
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck5')
+                                td 
+                                    label(for='checkbox') Completed
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck6')
+                                td 
+                                    label(for='checkbox') Bids
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck7')
+                                td 
+                                    label(for='checkbox') Earnings
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck8')
+                                td 
+                                    label(for='checkbox') Commission
+                            tr
+                                td
+                                    input(type='checkbox', v-model='ck9')
+                                td
+                                    label(for='checkbox') Wallet
+                button.btn.btn-primary(type='footer', slot='footer' , @click='ExportData') Export
+                
 
-    driver-logs-section
+        
+    
+    section.content
+        h2 Logs
+        .row
+            .tab-content
+                ul.nav.nav-tabs(role='tablist')
+                    li(role='tablist')
+                        a(href='#today' aria-controls='today' role='tab' data-toggle='tab') Today
+                    li(role='tablist')
+                        a(href='#week' aria-controls='week' role='tab' data-toggle='tab') Week
+                    li.active(role='tablist')
+                        a(href='#all' aria-controls='all' role='tab' data-toggle='tab') All
+                    li(role='tablist')
+                        a(href='#days' aria-controls='days' role='tab' data-toggle='tab') Days
+            .tab-content
+                //tab today
+                div.tab-pane#today(role='tabpanel')
+                    .col-xs-12
+                        div.table-responsive
+                            div.text-center(v-if='loading')
+                                i.fa.fa-refresh.fa-spin.fa-3x.fa-fw
+                            template(v-else)
+                                h3.text-center(style='margin: 15px 0;' v-if='todayLogs.length < 1')
+                                    | No Data Found!
+                                table.table.table-hover(v-else)
+                                    thead
+                                        tr
+                                            th Login Date/Time
+                                            th Logout Date/Time
+                                            th Duration
+                                    tbody
+                                        tr(v-for="log in todayLogs")
+                                            td {{ log.loginTime }}
+                                            td {{ log.logoutTime }}
+                                            td {{ timeFormat(log.duration) }}
+                                    tfoot
+                                        tr
+                                            td.text-right(colspan='2') Total Spent Time
+                                            td {{ timeFormat(todayLogsTSTime) }}
+                //tab week
+                div.tab-pane#week(role='tabpanel')
+                    .col-xs-12
+                        div.table-responsive
+                            div.text-center(v-if='loading')
+                                i.fa.fa-refresh.fa-spin.fa-3x.fa-fw
+                            template(v-else)
+                                h3.text-center(style='margin: 15px 0;' v-if='weekLogs.length < 1')
+                                    | No Data Found!
+                                table.table.table-hover(v-else)
+                                    thead
+                                        tr
+                                            th Login Date/Time
+                                            th Logout Date/Time
+                                            th Duration
+                                    tbody
+                                        tr(v-for="log in weekLogs")
+                                            td {{ log.loginTime }}
+                                            td {{ log.logoutTime }}
+                                            td {{ timeFormat(log.duration) }}
+                                    tfoot
+                                        tr
+                                            td.text-right(colspan='2') Total Spent Time
+                                            td {{ timeFormat(weekLogsTSTime) }}
+                //tab all
+                div.tab-pane.active#all(role='tabpanel')
+                    .col-xs-12
+                        div.table-responsive
+                            div.text-center(v-if='loading')
+                                i.fa.fa-refresh.fa-spin.fa-3x.fa-fw
+                            template(v-else)
+                                h3.text-center(style='margin: 15px 0;' v-if='allLogs.length < 1')
+                                    | No Data Found!
+                                table.table.table-hover(v-else)
+                                    thead
+                                        tr
+                                            th Login Date/Time
+                                            th Logout Date/Time
+                                            th Duration
+                                    tbody
+                                        tr(v-for="log in dataToShow")
+                                            td {{ log.loginTime }}
+                                            td {{ log.logoutTime }}
+                                            td {{ timeFormat(log.duration) }}
+                                    tfoot
+                                        tr
+                                            td.text-right(colspan='2') Total Spent Time
+                                            td {{ timeFormat(allLogsTSTime)  }} 
+                //tab days
+                div.tab-pane#days(role='tabpanel')
+                    .col-xs-12
+                        div.table-responsive
+                            div.text-center(v-if='loading')
+                                i.fa.fa-refresh.fa-spin.fa-3x.fa-fw
+                            template(v-else)
+                                h3.text-center(style='margin: 15px 0;' v-if='dataa.length < 1')
+                                    | No Data Found!
+                                table.table.table-hover(v-else)
+                                    thead
+                                        tr
+                                            th Date
+                                            th Duration
+                                    tbody
+                                        tr(v-for="dt in dataToShowDAYS")
+                                            td {{ dt.days }}
+                                            td {{ dt.durations }}
+                                    tfoot
+                                        tr
+                                            td.text-right(colspan='2') Total Spent Time
+                                            td {{ totalTimes }}
+
+
     section.content
         h2 Requests History
         .row
@@ -240,6 +426,28 @@ aside.right-side
                                         tr
                                             td.text-right(colspan='10') Total
                                             td Rs.{{ completeReqDataTotal }}
+
+    section.content
+        h2 Driver Bids  
+            small.text-muted.float-right   Bids: {{filterBids}}  / Requests: {{totalRequests}} 
+        table.table
+            thead
+                tr
+                    //th Last Bid Time
+                    //th Last Bid Price
+                    th #
+                    th Bid Time
+                    th Bid Price
+                    th Client Name
+            tbody
+                tr(v-for="(Bdata ,index)  in bidsData") 
+                    //td {{Bdata.last_bid_time}}
+                    //td {{Bdata.old_amount}}
+                    td {{index+1}}  
+                    td {{formatDate(Bdata.first_bid_time)}}  
+                    td {{Bdata.amount}} 
+                    td {{Bdata.clientData.first_name}} {{Bdata.clientData.last_name}}
+                    
     section.content
         h2 Earnings Summary
         .row
@@ -275,8 +483,8 @@ aside.right-side
                                             th Invoice#
                                             th Earn
                                     tbody
-                                        tr(v-for="(row, key, ind) in invoiceReqData")
-                                            td {{ ind+1 }}
+                                        tr(v-for="(row, key, index) in invoiceReqData")
+                                            td {{ index+1 }}
                                             td {{ row.createdAt }}
                                             td From({{ row.req_data.orgText }}) To({{ row.req_data.desText }}) User({{ row.client_data.first_name }}) Driver({{ row.driver_data.first_name }})
                                             td
@@ -308,8 +516,8 @@ aside.right-side
                                             th Apply Commission(%)
                                             th Commission Amount
                                     tbody
-                                        tr(v-for="(row, key, ind) in invoiceComData")
-                                            td {{ ind+1 }}
+                                        tr(v-for="(row, key, index) in invoiceComData")
+                                            td {{ index+1 }}
                                             td {{ row.createdAt }}
                                             td
                                                 router-link(v-bind:to="'/admin/invoice/commission/'+key") {{ row.invoice_no }}
@@ -342,16 +550,16 @@ aside.right-side
                                             th Debit
                                             th Credit
                                             th Balance
-                                            th Delete
+                                            //th Delete
                                     tbody
-                                        tr(v-for="(row, key, ind) in walletData")
-                                            td {{ ind+1 }}
+                                        tr(v-for="(row, key, index) in walletData")
+                                            td {{ index+1 }}
                                             td {{ row.addedAt }}
                                             td {{ row.narration }}
                                             td {{ row.debit }}
                                             td {{ row.credit }}
                                             td {{ row.balance }}
-                                            td
+                                            //td
                                                 a(href="/#") #[img(src='../../../images/trashcan.png', alt='Delete', width='20', height='20')] 
                                     tfoot
                                         tr

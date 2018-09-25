@@ -1,3 +1,5 @@
+
+var moment = require('moment');
 module.exports  = {
     decode_key: function (id) {
         var PUSH_CHARS= "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
@@ -10,6 +12,9 @@ module.exports  = {
         return timestamp;
     },
     set_date_ser: function (date) {
+        return moment(date).format('hh:mm A DD/MMM/YYYY');
+        console.log("Date Function");
+        console.log(date);
         var h_obj = this.get_12_hours(date.getHours());
         return h_obj.hour+":"+("0"+date.getMinutes()).slice(-2)+" "+h_obj.ap+" "+("0"+date.getDate()).slice(-2)+"/"+("0"+(date.getMonth()+1)).slice(-2)+"/"+date.getFullYear();
     },

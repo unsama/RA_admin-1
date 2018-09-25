@@ -32,7 +32,7 @@ aside.right-side
                                         table_comp(v-bind:per_page="10")
                                             template(slot="thead")
                                                 tr
-                                                    th S.No#
+                                                    th S.No# 
                                                     th Date
                                                     th Request No.
                                                     th Client Name
@@ -46,7 +46,12 @@ aside.right-side
                                                     th Duration
                                                     th Required Vehicle
                                                     th Driver Vehicle
-                                                    th Parcel Rating  
+                                                    th Reach Time
+                                                    th Start Time
+                                                    th Completed Time
+                                                    th Parcel Rating
+                                                    th Labours
+                                                    th Floors
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in today')
                                                     td {{ ind+1 }}
@@ -64,7 +69,12 @@ aside.right-side
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
                                                     td {{ row.driverData.vehicle }}
+                                                    td {{ dateFormat(row.compReqData.reach_time )}}
+                                                    td {{ dateFormat(row.compReqData.active_time )}}
+                                                    td {{ dateFormat(row.compReqData.complete_time )}}
                                                     td {{ row.compReqData.rating }}
+                                                    td {{ row.reqData.labours }}
+                                                    td {{ row.reqData.floors }}
                             
                             div.tab-pane#week(role='tabpanel')
                                 div.table-responsive
@@ -76,7 +86,7 @@ aside.right-side
                                         table_comp(v-bind:per_page="10")
                                             template(slot="thead")
                                                 tr
-                                                    th S.No#
+                                                    th S.No# 
                                                     th Date
                                                     th Request No.
                                                     th Client Name
@@ -90,7 +100,12 @@ aside.right-side
                                                     th Duration
                                                     th Required Vehicle
                                                     th Driver Vehicle
-                                                    th Parcel Rating  
+                                                    th Reach Time
+                                                    th Start Time
+                                                    th Completed Time
+                                                    th Parcel Rating
+                                                    th Labours
+                                                    th Floors
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in week')
                                                     td {{ ind+1 }}
@@ -108,7 +123,12 @@ aside.right-side
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
                                                     td {{ row.driverData.vehicle }}
+                                                    td {{ dateFormat(row.compReqData.reach_time )}}
+                                                    td {{ dateFormat(row.compReqData.active_time )}}
+                                                    td {{ dateFormat(row.compReqData.complete_time )}}
                                                     td {{ row.compReqData.rating }}
+                                                    td {{ row.reqData.labours }}
+                                                    td {{ row.reqData.floors }}
                             
                             div.tab-pane#all(role='tabpanel')
                                 div.table-responsive
@@ -120,7 +140,7 @@ aside.right-side
                                         table_comp(v-bind:per_page="10")
                                             template(slot="thead")
                                                 tr
-                                                    th S.No#
+                                                    th S.No# 
                                                     th Date
                                                     th Request No.
                                                     th Client Name
@@ -134,7 +154,12 @@ aside.right-side
                                                     th Duration
                                                     th Required Vehicle
                                                     th Driver Vehicle
-                                                    th Parcel Rating  
+                                                    th Reach Time
+                                                    th Start Time
+                                                    th Completed Time
+                                                    th Parcel Rating
+                                                    th Labours
+                                                    th Floors
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in all')
                                                     td {{ ind+1 }}
@@ -152,5 +177,10 @@ aside.right-side
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
                                                     td {{ row.driverData.vehicle }}
+                                                    td {{ dateFormat(row.compReqData.reach_time )}}
+                                                    td {{ dateFormat(row.compReqData.active_time )}}
+                                                    td {{ dateFormat(row.compReqData.complete_time )}}
                                                     td {{ row.compReqData.rating }}
+                                                    td {{ row.reqData.labours }}
+                                                    td {{ row.reqData.floors }}
                         list_bids(v-bind:sel_req_id="assign_req_id_md")

@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import func from '../../../custom_libs/func'
+import moment  from 'moment' 
 
 export default {
     created: function () {

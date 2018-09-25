@@ -33,8 +33,8 @@ const jobs = {
                             console.log("Autorated shift! "+snap.key);
                         }, parseInt(timeOut_ms)); */
                     }
-                    /* console.log(comp_time.format('DD/MM/YYYY hh:mm:ss'));
-                    console.log(cur_time.format('DD/MM/YYYY hh:mm:ss'));
+                    /* console.log(comp_time.format('hh:mm A DD/MMM/YYYY'));
+                    console.log(cur_time.format('hh:mm A DD/MMM/YYYY'));
                      */
 
                 }

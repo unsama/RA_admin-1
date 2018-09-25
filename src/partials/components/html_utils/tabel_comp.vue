@@ -98,8 +98,7 @@ export default {
             self.$router.push(grabLink);
           }
         });
-      });
-      console.log(111);
+      }); 
       this.changePage();
     },
 

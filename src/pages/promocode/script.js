@@ -82,7 +82,7 @@ export default {
         //     let key = self.promoRef.push();
         //     // var date = parseInt(moment({expdate}).format('x'))
         //     var date = new Date(self.expdate);
-        //     var abc = moment(date, 'dd/mm/yyyy');
+        //     var abc = moment(date, 'dd/mmm/yyyy');
         //     var actaldate = abc.format('x')
         //     self.$validate().then(function (success) {
         //         if (success) {
@@ -104,7 +104,7 @@ export default {
             let key = self.promoRef.push();
             // var date = parseInt(moment({expdate}).format('x'))
             var date = new Date(self.expdate);
-            var abc = moment(date, 'dd/mm/yyyy');
+            var abc = moment(date, 'dd/mmm/yyyy');
             var actaldate = abc.format('x')
             self.$validate().then(function(success) {
                 if (success) {

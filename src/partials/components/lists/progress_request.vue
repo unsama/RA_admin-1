@@ -44,101 +44,141 @@
 </template>
 
 <script>
-    import firebase from 'firebase'
-    import moment from 'moment'
+import firebase from "firebase";
+import moment from "moment";
 
-    import tableComp from '../html_utils/tabel_comp.vue'
-    import parcelDetailsModal from '../modals/parcel_details.vue'
+import tableComp from "../html_utils/tabel_comp.vue";
+import parcelDetailsModal from "../modals/parcel_details.vue";
 
-    export default {
-        name: "progress_request",
-        components: {
-            'table_comp': tableComp,
-            'parcel_details': parcelDetailsModal
-        },
-        created() {
-            this.loadPendRequest();
-        },
-        data() {
-            const db = firebase.database();
-            return {
-                userRef: db.ref('/users'),
-                userReqRef: db.ref('/user_requests'),
-                activeReqRef: db.ref('/user_active_requests'),
+export default {
+  name: "progress_request",
+  components: {
+    table_comp: tableComp,
+    parcel_details: parcelDetailsModal
+  },
+  created() {
+    this.loadPendRequest();
+  },
+  data() {
+    const db = firebase.database();
+    return {
+      userRef: db.ref("/users"),
+      userReqRef: db.ref("/user_requests"),
+      activeReqRef: db.ref("/user_active_requests"),
+      bidsRef: db.ref("/driver_bids"),
 
-                dataLoad: true,
-                all: [],
-                sel_parcel_obj: {}
-            }
-        },
-        methods: {
-            loadPendRequest() {
-                const self = this;
-                self.activeReqRef.on('value', function (snap) {
-                    if (snap.numChildren() > 0) {
-                        let process_complete = 0;
-                        let grabData = [];
-                        snap.forEach(function (pendReqSnap) {
-                            let pendRqData = pendReqSnap.val();
-                            pendRqData['user_uid'] = pendReqSnap.key;
-                            self.userReqRef.child(pendReqSnap.key + "/" + pendRqData.req_id).once('value').then(function (reqSnap) {
-                                let reqData = reqSnap.val();
-                                reqData['createdAt'] = moment(reqData.createdAt).format('hh:mm A DD/MM/YYYY');
-                                grabData.push({
-                                    req_data: reqData,
-                                    pend_req_data: pendRqData
-                                });
-                                process_complete++;
-                                if (snap.numChildren() === process_complete) {
-                                    self.all = grabData;
-                                    self.dataLoad = false;
-                                }
-                            });
-                        });
-                    } else {
-                        self.dataLoad = false;
+      dataLoad: true,
+      all: [],
+      sel_parcel_obj: {}
+    };
+  },
+  methods: {
+    loadPendRequest() {
+      const self = this;
+      self.activeReqRef.on("value", function(snap) {
+        if (snap.numChildren() > 0) {
+          let process_complete = 0;
+          let grabData = [];
+          snap.forEach(function(pendReqSnap) {
+            let pendRqData = pendReqSnap.val();
+            pendRqData["user_uid"] = pendReqSnap.key;
+            self.userReqRef
+              .child(pendReqSnap.key + "/" + pendRqData.req_id)
+              .once("value")
+              .then(function(reqSnap) {
+                let reqData = reqSnap.val();
+
+                self.bidsRef .child(reqData.id + "/" + pendRqData.driver_uid) .once("value", function(BidSnap) {
+                    let BidData = BidSnap.val();
+                    reqData["createdAt"] = moment(reqData.createdAt).format(
+                      "hh:mm A DD/MMM/YYYY"
+                    );
+/////////////////////////////////////////////////////////
+
+
+                self.bidsRef.child(reqData.id).on("value", function(BidsSnap) {
+
+                    let BidsDriversIDs = Object.keys(BidsSnap.val());
+                    let BidsDriversData =  Object.values( BidsSnap.val());
+                    let BidsList = [];
+                    for (let i = 0; i < BidsDriversIDs.length; i++) {
+
+                        self.userRef.child(BidsDriversIDs[i]).on("value",function(DriverSnap){
+
+                            let DriverData = DriverSnap.val();
+                            DriverData['amount'] = BidsDriversData[i].amount;
+                            DriverData['first_bid_time'] = BidsDriversData[i].first_bid_time;
+                            DriverData['discountPrice'] = BidsDriversData[i].discountPrice;
+                            DriverData['last_bid_time'] = BidsDriversData[i].last_bid_time;
+                            DriverData['old_amount '] = BidsDriversData[i].old_amount;
+                            BidsList.push(DriverData);
+                        })
+
                     }
-                });
-            },
-            statusChange(status, uid) {
-                const self = this;
-                let setParams = {};
-                switch (status) {
-                    case 'req.accept':
-                        setParams = {
-                            active_time: firebase.database.ServerValue.TIMESTAMP,
-                            status: 'req.pickup'
-                        };
-                        break;
-                    case 'req.pickup':
-                        setParams = {
-                            complete_time: firebase.database.ServerValue.TIMESTAMP,
-                            status: 'req.active'
-                        };
-                        break;
-                    case 'req.active':
-                        setParams = {
-                            complete_time: firebase.database.ServerValue.TIMESTAMP,
-                            status: 'req.complete'
-                        };
-                        break;
+       
+                     grabData.push({
+                         bidsList:BidsList,
+                         bid_data: BidData,
+                         req_data: reqData,
+                         pend_req_data: pendRqData
+                    });
+                  });
+
+
+
+
+                  });
+                process_complete++;
+                if (snap.numChildren() === process_complete) {
+                  self.all = grabData;
+                  self.dataLoad = false;
                 }
-
-                self.activeReqRef.child(uid).update(setParams, function (err) {
-                    if (err) {
-                        console.log(err.message);
-                    }
-                });
-            },
-            openDetailPP (row) { 
-                this.sel_parcel_obj = row;
-            }
+              });
+          }); 
+        } else {
+          self.dataLoad = false;
         }
+      });
+    },
+    statusChange(status, uid) {
+      const self = this;
+      let setParams = {};
+      switch (status) {
+        case "req.accept":
+          setParams = {
+            active_time: firebase.database.ServerValue.TIMESTAMP,
+            status: "req.pickup"
+          };
+          break;
+        case "req.pickup":
+          setParams = {
+            complete_time: firebase.database.ServerValue.TIMESTAMP,
+            status: "req.active"
+          };
+          break;
+        case "req.active":
+          setParams = {
+            complete_time: firebase.database.ServerValue.TIMESTAMP,
+            status: "req.complete"
+          };
+          break;
+      }
+
+      self.activeReqRef.child(uid).update(setParams, function(err) {
+        if (err) {
+          console.log(err.message);
+        }
+      });
+    },
+    openDetailPP(row) {
+      this.sel_parcel_obj = row;
     }
+  }
+};
 </script>
 
 <style scoped>
-    .mr-10 {
-        margin-right: 10px;
-    }
+.mr-10 {
+  margin-right: 10px;
+}
 </style>

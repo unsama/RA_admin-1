@@ -40,7 +40,7 @@ export default {
     },
     methods: {
         dateFormat(ms) {
-            return moment(ms).format("hh:mm A, DD/MM/YYYY")
+            return moment(ms).format("hh:mm A, DD/MMM/YYYY")
         },
         openBidsReq(req_id) {
             this.assign_req_id_md = req_id;
@@ -49,9 +49,9 @@ export default {
         genWeekDays() {
             let grabDates = []
             let m_date = moment();
-            grabDates.push(m_date.format('DD/MM/YYYY'))
+            grabDates.push(m_date.format('DD/MMM/YYYY'))
             for(let i=1; i < 7; i++){
-                grabDates.push(m_date.subtract(1, 'd').format('DD/MM/YYYY'))
+                grabDates.push(m_date.subtract(1, 'd').format('DD/MMM/YYYY'))
             }
             return grabDates
         },
@@ -97,9 +97,9 @@ export default {
 
                     // grabdata for today date
                     let today_grabData = [];
-                    const today_date = moment().format("DD/MM/YYYY")
+                    const today_date = moment().format("DD/MMM/YYYY")
                     await Promise.all(_.map(self.all, async (row) => {
-                        const req_date = moment(row.reqData.createdAt).format("DD/MM/YYYY");
+                        const req_date = moment(row.reqData.createdAt).format("DD/MMM/YYYY");
                         if(req_date === today_date) {
                             today_grabData.push(row)
                         }
@@ -110,7 +110,7 @@ export default {
                     let week_dates = await self.genWeekDays()
                     let week_grabData = []
                     await Promise.all(_.map(self.all, async (row) => {
-                        const req_date = moment(row.reqData.createdAt).format("DD/MM/YYYY");
+                        const req_date = moment(row.reqData.createdAt).format("DD/MMM/YYYY");
                         const search = await _.find(week_dates, function (date) { return date === req_date })
                         if(typeof search !== 'undefined') {
                             week_grabData.push(row)

@@ -247,7 +247,7 @@ export default {
       if (ms === 0 || ms ===undefined) {
         return '';
       } else {
-        return moment(ms).format("hh:mm A DD/MM/YYYY");
+        return moment(ms).format("hh:mm A DD/MMM/YYYY");
       }
     },
     toTitleCase(str) {
