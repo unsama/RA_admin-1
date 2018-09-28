@@ -6,7 +6,7 @@
             .modal-content
                 .modal-header
                     button.close(type='button', data-dismiss='modal') ×
-                    h4.modal-title Parcel Images
+                    h4.modal-title Parcel Images {{images}}
                 .modal-body
                     .parcelImagesCarousel.carousel.slide(data-ride="carousel" v-if="images.length > 0" v-bind:id="controlID()")
                         ol.carousel-indicators
@@ -43,7 +43,7 @@
             }
         },
         mounted () {
-            const self = this;
+            const self = this; 
             $(function() {
                 $('#'+self.id).on('show.bs.modal', function () {
                     $("#"+self.controlID()).carousel("pause").removeData();
@@ -53,7 +53,7 @@
             });
         },
         methods: {
-            controlID () {
+            controlID () {   
                 return this.id+'_control'
             }
         }

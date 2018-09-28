@@ -19,7 +19,7 @@ aside.right-side
                         .box-tools.text-right
                             router-link.btn.btn-sm.btn-success(to='/admin/drivers/add_driver' style='color:white')
                                 i.fa.fa-plus
-                    .col-md-3
+                    .col-md-4
                         .form-group  
                             vue-multiselect(:allow-empty="true",v-model='Addavalues', :options='addaList', :multiple='true', track-by='name', :custom-label='customLabel',placeholder="Select Custom Adda")
                     .col-md-2
@@ -35,34 +35,45 @@ aside.right-side
                         br
                         date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
 
-                    .col-md-2
+                    .col-md-1.nopadding
                         label
                             input(type='radio', v-model='UsersAOption',  value='All')
-                            | All Users
+                            | All 
                         br
                         label
                             input(type='radio', v-model='UsersAOption',  value='Actived')
-                            | Actived Users
+                            | Active
                         br
                         label
                             input(type='radio', v-model='UsersAOption',  value='InActived')
-                            | Deactived Users
-                    .col-md-2
+                            | Deactive
+                    .col-md-1.nopadding
                         label
                             input(type='radio', v-model='UsersBOption', value='All')
-                            | All Users
+                            | All 
                         br
                         label
                             input(type='radio', v-model='UsersBOption',  value='Blocked')
-                            | Blocked Users
+                            | Block
                         br
                         label
                             input(type='radio', v-model='UsersBOption',  value='UnBlocked')
-                            | Unblocked Users
+                            | Unblock 
 
+                    .col-md-1.nopadding
+                        label
+                            input(type='radio',v-model='UsersCOption', value='All')
+                            |All
+                        br
+                        label
+                            input(type='radio',v-model='UsersCOption',  value='Online')
+                            |Online 
+                        br
+                        label
+                            input(type='radio',v-model='UsersCOption',  value='Offline')
+                            |Offline 
                     .col-md-1
-                            input(type="button", value="Search", @click="changeSearch()")
-
+                        input(type="button", value="Search", @click="changeSearch()")
                     .box-body.table-responsive
                         div.text-center(v-if='dataLoad')                            
 

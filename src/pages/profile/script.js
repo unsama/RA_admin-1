@@ -1,9 +1,11 @@
 import firebase from 'firebase'
 import moment from 'moment'
 import func from '../../../custom_libs/func'
- 
-import exportPopup from '../../partials/components/modals/Export_popup.vue'
 
+import exportPopup from '../../partials/components/modals/Export_popup.vue'
+import jsPDF from 'jspdf'
+require("jspdf-autotable");
+import html2canvas from 'html2canvas'
 import Datepicker from 'vuejs-datepicker';
 import SimpleVueValidation from 'simple-vue-validator'
 const Validator = SimpleVueValidation.Validator;
@@ -11,9 +13,9 @@ const Validator = SimpleVueValidation.Validator;
 //import driverLogsSection from '../../partials/components/sections/driver_logs/index.vue'
 
 export default {
-    components: { 
+    components: {
         'date_picker': Datepicker,
-        export_popup : exportPopup,
+        export_popup: exportPopup,
     },
     created: function () {
         let self = this;
@@ -62,12 +64,12 @@ export default {
                     }
                 })
             })
-            self.totalBids=DataBids.length
-            self.filterBids=self.totalBids
+            self.totalBids = DataBids.length
+            self.filterBids = self.totalBids
             self.userReqRef.on('value', function (userReqSnap) {
-                self.totalRequests=0;
+                self.totalRequests = 0;
                 userReqSnap.forEach(element => {
-                 self.totalRequests += Object.values(element.val()).length;
+                    self.totalRequests += Object.values(element.val()).length;
                 });
                 userReqSnap.forEach(function (childSnapshot) {
                     var item = childSnapshot
@@ -79,7 +81,7 @@ export default {
                         })
                     })
                 })
-            }) 
+            })
             let UsersData = []
             self.userRef.on('value', function (userSnap) {
                 userSnap.forEach(function (childSnapshot) {
@@ -125,17 +127,19 @@ export default {
             counter: 1,
             totalPages: 0,
             // Bids Count
-            totalBids:0,
-            filterBids:0,
+            totalBids: 0,
+            filterBids: 0,
             // Total Request Count
-            totalRequests:0,
-
+            totalRequests: 0,
+            // Search By Date Controller For FIltering
+            searched: false,
             //currentlyShowingDAYS: 0,
             dataToShowDAYS: [],
             isNextAvaliableDAYS: false,
             isPrevAvaliableDAYS: false,
             counterDAYS: 1,
             totalPagesDAYS: 0,
+            //////////////////////////////////////////////////////////////////////////
             ToDate: '',
             FromDate: '',
             dataLoad: true,
@@ -203,17 +207,17 @@ export default {
             search_table3: '',
             search_table4: '',
             search_table5: '',
-            ckAll:false,
-            ck0:false,
-            ck1:false,
-            ck2:false,
-            ck3:false,
-            ck4:false,
-            ck5:false,
-            ck6:false,
-            ck7:false,
-            ck8:false,
-            ck9:false,
+            ckAll: false,
+            ck0: false,
+            ck1: false,
+            ck2: false,
+            ck3: false,
+            ck4: false,
+            ck5: false,
+            ck6: false,
+            ck7: false,
+            ck8: false,
+            ck9: false,
         }
 
     },
@@ -247,7 +251,7 @@ export default {
                     });
                     self.dataToShow = self.allLogs;
                     self.isPrevAvaliable = false;
-                    
+
                 }
                 self.loading = false;
             });
@@ -258,8 +262,7 @@ export default {
     },
     watch: {
         allLogs: function (val) {
-
-            this.filterLogs(this, val);
+            this.filterLogs(this, val, this.ToDate, this.FromDate);
         },
         search_table1: function (val) {
             func.tableSearch(this.$refs.table1, val);
@@ -289,28 +292,283 @@ export default {
             }
         }
     },
-    methods: { 
-        ExportData:function(){
-            
+    methods: {
+        ExportData: function () {
+
+
+            let columnsReqCompleted = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Driver Name",
+                    dataKey: "driverName"
+                },
+                {
+                    title: "Client Name",
+                    dataKey: "clientName"
+                },
+                {
+                    title: "Origin",
+                    dataKey: "origin"
+                },
+                {
+                    title: "Destination",
+                    dataKey: "destination"
+                },
+                {
+                    title: "Distance",
+                    dataKey: "distance"
+                },
+                {
+                    title: "Duration",
+                    dataKey: "duration"
+                },
+                {
+                    title: "Created At",
+                    dataKey: "createdAt"
+                },
+                {
+                    title: "Vehicle Type",
+                    dataKey: "vehicleType"
+                },
+                {
+                    title: "Amount",
+                    dataKey: "amount"
+                },
+            ];
+
+            let rowsReqCompleted = [];
+
+
+            Object.values(this.completeReqData).forEach((data, index) => {
+
+                rowsReqCompleted.push({
+                    "iD": index + 1,
+                    "driverName": data.driver_data.first_name + ' ' + data.driver_data.last_name,
+                    "clientName": data.client_data.first_name + ' ' + data.client_data.last_name,
+                    "origin": data.request_data.orgText,
+                    "destination": data.request_data.desText,
+                    "distance": data.request_data.disText,
+                    "duration": data.request_data.durText,
+                    "createdAt": data.request_data.createdAt,
+                    "vehicleType": data.driver_data.vehicle,
+                    "amount": data.bid_data.amount,
+                });
+            });
+
+            let columnsLogDays = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Date",
+                    dataKey: "date"
+                },
+                {
+                    title: "Duration",
+                    dataKey: "D"
+                }
+            ];
+            let rowsLogDays = [];
+            this.dataToShowDAYS.forEach((data, index) => {
+                rowsLogDays.push({
+                    'iD': index + 1,
+                    'date': data.days,
+                    'D': data.durations
+                });
+            });
+
+            var columns = [{
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Login Date/Time",
+                    dataKey: "LiT"
+                },
+                {
+                    title: "Logout Date/Time",
+                    dataKey: "LoT"
+                },
+                {
+                    title: "Duration",
+                    dataKey: "D"
+                }
+            ];
+            var rows = [];
+            this.dataToShow.forEach((dataP, index) => {
+                rows.push({
+                    'iD': index + 1,
+                    'LiT': dataP.loginTime,
+                    'LoT': dataP.logoutTime,
+                    'D': this.timeFormat(dataP.duration)
+                });
+            });
+            var doc = new jsPDF("p", "pt");
+
+            var img = new Image;
+
+            var userProfile = {
+                FullName: this.userData['first_name'].charAt(0).toUpperCase() + this.userData['first_name'].substr(1) + " " + this.userData['last_name'].charAt(0).toUpperCase() + this.userData['last_name'].substr(1),
+                MobileNumber: this.userData['mob_no'].replace(/(\d{2})(\d{3})(\d{4})/, "0$2 $3"),
+                AddaName: this.userData['adda_name'].toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' '),
+            }
+            let point = 150;
+            img.onload = function () {
+                doc.addImage(this, 10, 10, 60, 80);
+                doc.addFont('Arial');
+                doc.setFont('Arial');
+                doc.setFontSize(10);
+                doc.text(75, 25, 'Driver Name      : ' + userProfile.FullName);
+                doc.text(75, 55, 'Mobile Number : ' + userProfile.MobileNumber);
+                doc.text(75, 85, 'Adda Name       : ' + userProfile.AddaName);
+                doc.setFontSize(16);
+                doc.text(10, 120, 'Data Filtered From   _____________________ To _____________________ ');
+                doc.text(150, 120, '02/Jan/2018');
+                doc.text(344, 120, '02/Feb/2018');
+
+                doc.autoTable(columns, rows, {
+
+                    styles: {
+                        fontSize: 8,
+                    },
+                    headerStyles: {
+                        fontSize: 8,
+                    },
+                    bodyStyles: {
+                        fontSize: 8,
+                    },
+                    showHeader: 'firstPage',
+                    drawRow: function (row, data) {
+                        point = data.row.y;
+                    },
+                    startY: point,
+
+                    margin: {
+                        top: 10,
+                        bottom: 10,
+                        left: 40,
+                        right: 40,
+                    },
+                    theme: 'plain'
+                });
+
+                doc.text(10, point += 30, "Next Data");
+                doc.autoTable(columnsLogDays, rowsLogDays, {
+
+                    styles: {
+                        fontSize: 8,
+                    },
+                    headerStyles: {
+                        fontSize: 8,
+                    },
+                    bodyStyles: {
+                        fontSize: 8,
+                    },
+                    showHeader: 'firstPage',
+
+                    drawRow: function (row, data) {
+                        point = data.row.y;
+                    },
+                    startY: point,
+
+                    margin: {
+                        top: 10,
+                        bottom: 10,
+                        left: 40,
+                        right: 40,
+                    },
+                    theme: 'plain'
+                });
+                point+=30; 
+                doc.autoTable(columnsReqCompleted, rowsReqCompleted, {
+                    tableWidth: 'wrap', // 'auto', 'wrap'
+                    styles: {
+                        fontSize: 8,
+                    },
+                    headerStyles: {
+                        fontSize: 8,
+                    },
+                    bodyStyles: {
+                        fontSize: 8,
+                    },
+                    showHeader: 'firstPage',
+
+                    drawRow: function (row, data) {
+                        point = data.row.y;
+                    },
+                    startY: point,
+
+                    margin: {
+                        top: 10,
+                        bottom: 10,
+                        left: 40,
+                        right: 40,
+                    },
+                    theme: 'plain'
+                });
+                doc.save("Profile" + ".pdf");
+            };
+            img.crossOrigin = "https://firebasestorage.googleapis.com"; // for demo as we are at different origin than image
+            (this.profileImgURL != '') ? img.src = this.profileImgURL: img.src = 'https://s3-eu-west-1.amazonaws.com/philips-future-health-index/wp-content/uploads/2016/05/20132859/user.png'; // some random imgur image
+
+
         },
-        checkboxToggle(val){
+        checkboxToggle(val) {
             let self = this;
-            if(val){
-            self.ck0=false;self.ck1=false;self.ck2=false;self.ck3=false;self.ck4=false;self.ck5=false;self.ck6=false;self.ck7=false;self.ck8=false;self.ck9=false;
-            }else{
-                self.ck0=!false;self.ck1=!false;self.ck2=!false;self.ck3=!false;self.ck4=!false;self.ck5=!false;self.ck6=!false;self.ck7=!false;self.ck8=!false;self.ck9=!false;
+            if (val) {
+                self.ck0 = false;
+                self.ck1 = false;
+                self.ck2 = false;
+                self.ck3 = false;
+                self.ck4 = false;
+                self.ck5 = false;
+                self.ck6 = false;
+                self.ck7 = false;
+                self.ck8 = false;
+                self.ck9 = false;
+            } else {
+                self.ck0 = !false;
+                self.ck1 = !false;
+                self.ck2 = !false;
+                self.ck3 = !false;
+                self.ck4 = !false;
+                self.ck5 = !false;
+                self.ck6 = !false;
+                self.ck7 = !false;
+                self.ck8 = !false;
+                self.ck9 = !false;
             }
 
         },
-        showPopup () { 
+        showPopup() {
             $("#confirm_popup").modal('show');
         },
-        removeItem () { 
-            $("#confirm_popup").modal('hide'); 
-                    console.log("Remove Item Error: " ); 
-              
+        removeItem() {
+            $("#confirm_popup").modal('hide');
+            console.log("Remove Item Error: ");
+
         },
-        filterLogs: function (self, allLogs) {
+        filterLogs: function (self, allLogs, TodateV, fromdateV) {
+            let TimeFrom = moment(new Date(fromdateV)).unix()
+            let TimeTo = moment(new Date(TodateV)).unix()
+            let data = [];
+            allLogs.forEach(v => {
+
+                if (this.FromDate == "" || this.ToDate == "" || this.FromDate == null || this.ToDate == null) {
+                    data.push(v);
+                } else {
+                    let time = moment(new Date(v.loginTime)).unix();
+                    if (time > TimeFrom && time < TimeTo) {
+                        data.push(v);
+                    }
+                } 
+            });
+            allLogs = data;
+            self.dataa = [];
             self.todayLogs = [];
             self.weekLogs = [];
             self.dayLogs = []; ///
@@ -319,7 +577,7 @@ export default {
             self.dayLogsTSTime = moment.duration(); ///
             var days = [];
             var durations = [];
-            
+
             if (allLogs.length > 0) {
 
                 const todayDate = moment().set({
@@ -340,8 +598,9 @@ export default {
                     var durationsC = ((item.duration)._data['hours'] * 60 * 60) + ((item.duration)._data['minutes'] * 60) + (item.duration)._data['seconds'];
                     durations.push(durationsC);
                     days.push(moment(new Date(item.loginTimeM)).format("DD/MMM/YYYY"));
-                    
+
                 });
+
                 function secondsToHms(d) {
                     d = Number(d);
                     var h = Math.floor(d / 3600);
@@ -352,31 +611,67 @@ export default {
                     var sDisplay = s > 9 ? s : '0' + s;
                     return hDisplay + mDisplay + sDisplay;
                 }
-            var i;
-            self.totalTimes = 0;
-            for (i = 0; i < days.length; i++) {
-                var day = days[i];
-                var duration = durations[i];
-                var temp = true;
-                while (temp) {
-                    if (days[i] == days[i + 1]) {
-                        duration += durations[i + 1]
-                        self.dataCount += 1;
-                        i += 1;
-                        temp + 1;
-                    } else {
-                        temp = false;
+                var i;
+                self.totalTimes = 0;
+                for (i = 0; i < days.length; i++) {
+                    var day = days[i];
+                    var duration = durations[i];
+                    var temp = true;
+                    while (temp) {
+                        if (days[i] == days[i + 1]) {
+                            duration += durations[i + 1]
+                            self.dataCount += 1;
+                            i += 1;
+                            temp + 1;
+                        } else {
+                            temp = false;
+                        }
                     }
+
+                    if (self.searched) {
+                        let time = moment(new Date(day)).unix();
+                        let TimeFrom = moment(new Date(fromdateV)).unix()
+                        let TimeTo = moment(new Date(TodateV)).unix()
+                        if (self.FromDate == "" || self.ToDate == "" || self.FromDate == null || self.ToDate == null) {
+                            self.dataa.push({
+                                'days': day,
+                                'durations': secondsToHms(duration)
+                            });
+                        } else {
+                            //console.log(time +"-:-"+ TimeFrom +"-:-"+ TimeTo)
+                            // console.log(time > TimeFrom && time < TimeTo)
+
+                            if (time > TimeFrom && time < TimeTo) {
+
+                                self.totalTimes += duration;
+                                self.dataa.push({
+                                    'days': day,
+                                    'durations': secondsToHms(duration)
+                                });
+                            }
+                        }
+                    } else {
+                        self.totalTimes += duration;
+                        self.dataa.push({
+                            'days': day,
+                            'durations': secondsToHms(duration)
+                        });
+                    }
+
                 }
-                self.totalTimes += duration;
-                self.dataa.push({
-                    'days': day ,
-                    'durations': secondsToHms(duration)
-                });
+                self.totalTimes = secondsToHms(self.totalTimes);
+                self.dataToShowDAYS = self.dataa;
+                self.dataToShow = allLogs; 
+                self.allLogsTSTime = moment.duration();
+                 self.dataToShow.forEach(element => { 
+                     self.allLogsTSTime.add(element.duration); 
+                    });
+
+
+
+
+                self.isPrevAvaliableDAYS = false;
             }
-            self.totalTimes = secondsToHms(self.totalTimes);
-            self.dataToShowDAYS = self.dataa; 
-            self.isPrevAvaliableDAYS = false;}
         },
         timeFormat: function (mDuration) {
             let hours = (mDuration.asHours().toString().length < 2) ? "0" + mDuration.asHours() : mDuration.asHours();
@@ -385,14 +680,14 @@ export default {
 
             return parseInt(hours) + ":" + min + ":" + sec;
         },
-        
+
         SearchByDate(DFrom, DTo) {
-            
+
             let TimeFrom = moment(DFrom).unix()
             let TimeTo = moment(DTo).unix()
             let self = this;
- 
-            if (!self.IsBackup) { 
+            self.searched = true;
+            if (!self.IsBackup) {
                 self.Backup_allLogs = self.allLogs
                 self.Backup_bidsData = self.bidsData
                 self.Backup_completeReqData = self.completeReqData
@@ -401,7 +696,7 @@ export default {
                 self.Backup_invoiceComData = self.invoiceComData
                 self.Backup_walletData = self.walletData
                 self.IsBackup = !self.IsBackup;
-            } else { 
+            } else {
                 self.allLogs = self.Backup_allLogs
                 self.bidsData = self.Backup_bidsData
                 self.completeReqData = self.Backup_completeReqData
@@ -410,7 +705,7 @@ export default {
                 self.invoiceComData = self.Backup_invoiceComData
                 self.walletData = self.Backup_walletData
             }
-            if (DFrom == "" || DTo == "" || DFrom == null || DTo == null) { 
+            if (DFrom == "" || DTo == "" || DFrom == null || DTo == null) {
                 self.allLogs = self.Backup_allLogs
                 self.bidsData = self.Backup_bidsData
                 self.completeReqData = self.Backup_completeReqData
@@ -419,38 +714,35 @@ export default {
                 self.invoiceComData = self.Backup_invoiceComData
                 self.walletData = self.Backup_walletData
 
-            } else { 
-self.totalRequests=0;
+            } else {
+                self.totalRequests = 0;
 
 
                 self.userReqRef.on('value', function (userReqSnap) {
                     userReqSnap.forEach(element => {
                         element.forEach(record => {
-                           let time =   moment(record.val().createdAt ).unix()
- 
-                              if(time >TimeFrom && time < TimeTo){ 
-                                  self.totalRequests++;
-                              }
+                            let time = moment(record.val().createdAt).unix()
+
+                            if (time > TimeFrom && time < TimeTo) {
+                                self.totalRequests++;
+                            }
 
                         })
-                         
+
                     });
-                }) 
-
-
-
-                self.dataa = [] 
+                })
+                self.dataa = []
                 self.allLogs = []
                 self.allLogsTSTime = moment.duration();
-                  Object.values(self.Backup_allLogs ).forEach(element => {
-                      let time =moment(element.loginTime).unix()
-                      if(time >TimeFrom && time < TimeTo){
+                Object.values(self.Backup_allLogs).forEach(element => {
+                    let time = moment(element.loginTime).unix()
+                    if (time > TimeFrom && time < TimeTo) {
 
                         self.allLogsTSTime.add(element.duration);
-                          self.allLogs.push(element); 
-                       }   
-                   }); 
-                    self.dataToShow =self.allLogs ;
+                        self.allLogs.push(element);
+                    }
+                });
+                self.dataToShow = self.allLogs;
 
                 self.bidsData = []
                 Object.values(self.Backup_bidsData).forEach(element => {

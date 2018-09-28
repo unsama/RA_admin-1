@@ -46,9 +46,9 @@
                                 td {{ row.num_bids }}
                                 td
                                     
-                                    button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.id)' style="margin-bottom: 5px;margin-right: 5px;") Push Bids
+                                    button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.id,row.createdAt)' style="margin-bottom: 5px;margin-right: 5px;") Push Bids
                                     button.btn.btn-sm.btn-danger(type="button" style="width: 71px;" v-on:click='cancelReq(row.id)') Cancel
-        push_bids(v-bind:sel_req_id="assign_req_id_md")
+        push_bids(v-bind:sel_req_id="assign_req_id_md",:req_time="reqestTime")
         parcel_images(v-bind:images="sel_images")
         newparcel(v-bind:parcel_obj="sel_parcel_obj")
 </template>
@@ -62,6 +62,7 @@
     import parcelImages from '../modals/parcel_images.vue'
     import tableComp from '../html_utils/tabel_comp.vue'
     import newreqmodal from '../modals/request-parcel.vue'
+import { constants } from 'fs';
  
 
     export default {
@@ -106,7 +107,8 @@
                 sel_parcel_obj: {},
                 dataLoad: true,
                 all: [],
-                assign_req_id_md: ''
+                assign_req_id_md: '',
+                reqestTime:'',
             }
         },
         methods: {
@@ -123,7 +125,7 @@
                             self.userReqRef.child(liveReq.key + "/" + liveReq.val().reqId).once('value').then(function (reqSnap) {
                                 let reqData = reqSnap.val();
                                 if (reqData !== null) {
-                                    reqData['createdAt'] = moment(reqData.createdAt).format('hh:mm A DD/MMM/YYYY');
+                                    reqData['createdAt'] = moment(reqData.createdAt).format('hh:mm A DD/MMM/YYYY'); 
                                     self.userRef.child(liveReq.key).once('value').then(function (userSnap) {
                                         let userData = userSnap.val();
                                         reqData['username'] = userData.first_name + " " + userData.last_name;
@@ -133,7 +135,7 @@
 
                                         grab_data.push(reqData);
                                         
-                                        console.log(reqData);
+                                       // console.log(reqData);
                                         if (self.dataLoad) {
                                             process_complete++;
                                             if (snap.numChildren() === process_complete) {
@@ -153,8 +155,9 @@
                     }
                 });
             },
-            openBidsReq: function (req_id) {
-                this.assign_req_id_md = req_id;
+            openBidsReq: function (req_id,req_time) {
+                 this.reqestTime = req_time;
+                this.assign_req_id_md = req_id; 
             },
             cancelReq: function (key) {
                 let self = this;

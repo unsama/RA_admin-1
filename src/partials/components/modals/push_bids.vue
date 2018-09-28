@@ -21,6 +21,7 @@
                                     th Vehicle Type
                                     th Bid Amount
                                     th Bid Date
+                                    th Difference
                             tbody
                                 tr(v-for='(row, ind) in reqBidsData')
                                     td {{ ind+1 }}
@@ -29,6 +30,7 @@
                                     td {{ row.user.vehicle }}
                                     td {{ row.bid_amount }}
                                     td {{ msToDate(row.bid_time) }}
+                                    td {{timeFormat(getdef(row.bid_time,req_time))}}
                     .row
                         .col-md-6
                             h3 New Bid
@@ -71,7 +73,7 @@
 
     export default {
         name: "push_bids",
-        props: ['sel_req_id'],
+        props: ['sel_req_id','req_time'],
         data() {
             const db = firebase.database();
             return {
@@ -119,13 +121,14 @@
             });
         },
         watch: {
-            sel_req_id(val) {
+            sel_req_id(val) { 
                 const self = this;
                 self.driverBidsRef.off();
                 self.dataLoad1 = true;
                 self.reqBidsData = [];
                 if (val !== '') {
                     self.driverBidsRef.child(val).on('value', function (reqBidsSnap) {
+                       // console.log(reqBidsSnap.val());
                         self.dataLoad1 = true;
                         self.reqBidsData = [];
                         if (reqBidsSnap.numChildren() > 0) {
@@ -203,6 +206,17 @@
                 }else{
                     return moment(ms).format("hh:mm A DD/MMM/YYYY");
                 }
+            },
+            timeFormat: function (mDuration) {
+                let hours = (mDuration.asHours().toString().length < 2) ? "0" + mDuration.asHours() : mDuration.asHours();
+                let min = (mDuration.get('m').toString().length < 2) ? "0" + mDuration.get('m') : mDuration.get('m');
+                let sec = (mDuration.get('s').toString().length < 2) ? "0" + mDuration.get('s') : mDuration.get('s');
+                return parseInt(hours) + ":" + min + ":" + sec;
+                },
+            getdef(bidt,reqt){
+                var a = moment(bidt);
+                var b = moment(reqt);
+                return  moment.duration(a.diff(b)); 
             },
             toTitleCase(str) {
                 return str.replace(/\w\S*/g, function (txt) {

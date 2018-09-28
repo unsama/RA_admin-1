@@ -21,6 +21,7 @@
                                     th Vehicle Type
                                     th Bid Amount
                                     th Bid Date
+                                    th Difference
                             tbody
                                 tr(v-for='(row, ind) in reqBidsData')
                                     td {{ ind+1 }}
@@ -29,6 +30,7 @@
                                     td {{ row.user.vehicle }}
                                     td {{ row.bid_amount }}
                                     td {{ msToDate(row.bid_time) }}
+                                    td {{timeFormat(getdef(row.bid_time,req_time))}}
                     br
                     div.table-responsive(v-if='ReqLoad')
                         table.table.table-striped.table-bordered
@@ -59,7 +61,7 @@ const Validator = SimpleVueValidation.Validator;
 
 export default {
   name: "list_bids",
-  props: ["sel_req_id"],
+  props: ["sel_req_id","req_time"],
   data() {
     const db = firebase.database();
     return {
@@ -242,7 +244,18 @@ export default {
         .lessThanOrEqualTo(100000, "Maximum Bid amount is 100000!");
     }
   },
-  methods: {
+  methods: {            
+    timeFormat: function (mDuration) {
+                let hours = (mDuration.asHours().toString().length < 2) ? "0" + mDuration.asHours() : mDuration.asHours();
+                let min = (mDuration.get('m').toString().length < 2) ? "0" + mDuration.get('m') : mDuration.get('m');
+                let sec = (mDuration.get('s').toString().length < 2) ? "0" + mDuration.get('s') : mDuration.get('s');
+                return parseInt(hours) + ":" + min + ":" + sec;
+                },
+            getdef(bidt,reqt){
+                var a = moment(bidt);
+                var b = moment(reqt);
+                return  moment.duration(a.diff(b)); 
+            },
     msToDate(ms) {
       if (ms === 0 || ms ===undefined) {
         return '';

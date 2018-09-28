@@ -35,14 +35,16 @@ export default {
             userReqRef: null,
             driverBidsRef:null,                
             assign_req_id_md: '',
+            reqestTime:'',
         }
     },
     methods: {
         dateFormat(ms) {
             return moment(ms).format("hh:mm A, DD/MMM/YYYY")
         },
-        openBidsReq(req_id) {
+        openBidsReq(req_id, req_time) {
             this.assign_req_id_md = req_id;
+            this.reqestTime = req_time;
            //console.log(req_id);
         },
         genWeekDays() {

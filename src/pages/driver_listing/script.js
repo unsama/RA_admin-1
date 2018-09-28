@@ -22,6 +22,7 @@ export default {
         const db = firebase.database();
         self.userRef = db.ref('/users');
         self.addaRef = db.ref('/adda_list');
+        self.onlineDriversRef =db.ref('/online_drivers');
 
         let DataA = [];
 
@@ -98,6 +99,7 @@ export default {
             data1: [],
            // data2: [],
             userRef: null,
+            onlineDriversRef:null,
             // profile: [],
             selectedIDs: [],
             selectedAllIDs: false,
@@ -120,6 +122,7 @@ export default {
             SearchBlocked: "",
             UsersAOption: "All",
             UsersBOption: "All",
+            UsersCOption: "All",
         }
     },
     methods: {
@@ -151,6 +154,7 @@ export default {
 
             var UsersAO = this.UsersAOption;
             var UsersBO = this.UsersBOption;
+            var UsersCO = this.UsersCOption;
             var SelectedAddaIds =[];
             this.Addavalues.forEach(addaVal => {
                 SelectedAddaIds.push(addaVal.id);
@@ -161,6 +165,7 @@ export default {
             const db = firebase.database();
             self.userRef = db.ref('/users');
             self.addaRef = db.ref('/adda_list');
+            self.onlineDriversRef = db.ref('/online_drivers');
 
 
             let DataA = [];
@@ -221,26 +226,62 @@ export default {
                         } else if (item.hasOwnProperty("createdAt")) {
                             item['time'] = moment(item.createdAt).format("DD/MMM/YYYY");
                         }
-
-
                         var SelectedAddaId="Choose Adda";
-                        if(!SelectedAddaIds.length){
+                        let OnlineDrivers = [];
+                        self.onlineDriversRef.once('value',function(activeDriverssnap){
+                            activeDriverssnap.forEach(function (activeDriver) {
+                                OnlineDrivers.push( activeDriver.key);
+            
+                            });
+                            if(UsersCO=="Online"){
+                                let DriverOffline =false;
+                                OnlineDrivers.forEach(id => {
+                                    if(id==item['key']){
+                                        DriverOffline=true;
+                                    } 
+                                });
+                                if(DriverOffline){
+                                    a0();
+                                }
+    
+                            }else if(UsersCO=="Offline"){
+                            let DriverOffline =false;
+                                OnlineDrivers.forEach(id => {
+                                    if(id==item['key']){
+                                        DriverOffline=true;
+                                    } 
+                                });
+                                if(!DriverOffline){
+                                    a0();
+                                }
+                            }else{
+                                a0();
+                            }
+                        })
 
-                            if (startDate == "" && endDate == "") {
-                                a();
-                               } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
-                                   a();
-                               }
-                        }else{
-                        SelectedAddaIds.forEach(id => {            
-                             SelectedAddaId = id;
 
-                             if (startDate == "" && endDate == "") {
-                                 a();
+                                                                                                                                                                    ////////////
+
+                        function a0() {
+                           
+                            if(!SelectedAddaIds.length){
+
+                                if (startDate == "" && endDate == "") {
+                                    a();
                                 } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
                                     a();
                                 }
-                            });}
+                            }else{
+                            SelectedAddaIds.forEach(id => {            
+                                SelectedAddaId = id;
+
+                                if (startDate == "" && endDate == "") {
+                                    a();
+                                    } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
+                                        a();
+                                    }
+                                });}
+                            }
 
                         function a() {
 

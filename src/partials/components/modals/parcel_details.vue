@@ -7,7 +7,7 @@
                 .modal-content
                     .modal-header
                         button.close(type='button', data-dismiss='modal') ×
-                        h4.modal-title Parcel Details  
+                        h4.modal-title Parcel Details 
                         //p {{parcel_obj}}
                     .modal-body
                         template(v-if="Object.keys(parcel_obj).length > 0")
@@ -35,10 +35,15 @@
                                         td Vehicle Required:
                                         td {{ parcel_obj.req_data['vecType'] }}
                                     tr
-                                        td Parcel Images:
+                                        td Parcel Images: 
                                         td 
-                                            button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#pDetailImgPP' v-on:click='openImagePP(parcel_obj.req_data["parcelUriArray"])')
+                                            ul(style='list-style: none;')
+                                                li(v-for='(thumb) in parcel_obj.req_data["parcelThmbArray"]') 
+                                                    img( :src='thumb', alt='image',style="width:32%; height: 32%;")
+                                            //button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#pDetailImgPP' v-on:click='openImagePP(parcel_obj.req_data["parcelUriArray"])')
                                                 i.fa.fa-eye
+                                            //img.img-thumbnail(src='parcel_obj.req_data["parcelUriArray"]', alt='img', width='304', height='236') 
+
                                         td Reach Time:
                                         td {{ formatDate( parcel_obj.pend_req_data['reach_time']) }} 
                                     tr
@@ -81,8 +86,11 @@
                                         td {{data.amount}}
                                         td {{data.discountPrice}}
                                         td {{formatDate(data.first_bid_time)}}
-
-        parcel_images(v-bind:images="sel_images" id='pDetailImgPP')
+                        ul(style='list-style: none; padding-left: 0px;')
+                            li(v-for='(thumb) in parcel_obj.req_data["parcelUriArray"]') 
+                                img( :src='thumb', alt='image' ,style="width:100%; height: 100%;")
+                        parcel_images(v-bind:images="sel_images" id='pDetailImgPP')
+ 
 
 </template>
 
@@ -104,7 +112,8 @@ export default {
   },
   data() {
     const db = firebase.database();
-    return {
+    
+    return {v:[],
       loaders: {
         driver: true,
         client: true
@@ -114,10 +123,10 @@ export default {
         client: {}
       },
       sel_images: [],
-
+        ImGData:[],
       userRef: db.ref("/users")
     };
-  },
+  }, 
   watch: {
     parcel_obj(val) {
       if (val.hasOwnProperty("pend_req_data")) {
@@ -129,7 +138,6 @@ export default {
     formatDate(val) {
       if (val === undefined) return "";
       if (val == 0) return "";
-      // console.log(val);
       return moment(val).format("hh:mm A DD/MMM/YYYY");
     },
     async dataLoad(pReqData) {
@@ -156,7 +164,7 @@ export default {
         self.loaders["client"] = false;
       });
     },
-    openImagePP(images) {
+    openImagePP(images) { 
       this.sel_images = images;
     }
   }

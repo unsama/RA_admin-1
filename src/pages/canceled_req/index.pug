@@ -53,7 +53,7 @@ aside.right-side
                                                     td {{ dateFormat(row.reqData.createdAt) }}
                                                     td {{ dateFormat(row.reqData.canceledAt) }}
                                                     td
-                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
+                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id,row.reqData.createdAt)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
                                                     td {{ row.reqData.id }}
                                                     td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
                                                     td +{{row.clientData.mob_no}}
@@ -97,7 +97,7 @@ aside.right-side
                                                     td {{ dateFormat(row.reqData.createdAt) }}
                                                     td {{ dateFormat(row.reqData.canceledAt) }}
                                                     td
-                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
+                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id,row.reqData.createdAt)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
                                                     td {{ row.reqData.id }}
                                                     td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
                                                     td +{{row.clientData.mob_no}}
@@ -141,7 +141,7 @@ aside.right-side
                                                     td {{ dateFormat(row.reqData.createdAt) }}
                                                     td {{ dateFormat(row.reqData.canceledAt) }}
                                                     td
-                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
+                                                        button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id,row.reqData.createdAt)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
                                                     td {{ row.reqData.id }}
                                                     td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
                                                     td +{{row.clientData.mob_no}}
@@ -153,4 +153,4 @@ aside.right-side
                                                     td {{ row.reqData.reason }}
                                                     td {{ row.reqData.labours }}
                                                     td {{ row.reqData.floors }}
-                        list_bids(v-bind:sel_req_id="assign_req_id_md")
+                        list_bids(v-bind:sel_req_id="assign_req_id_md",:req_time="reqestTime")

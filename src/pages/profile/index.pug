@@ -11,14 +11,14 @@ aside.right-side
         .row
             .col-xs-12
                 .col-md-8.col-md-offset-2
-                    .box
+                    .box#LBA
                         .box-body
                             div.text-center(v-if='dataLoad')
                                 i.fa.fa-refresh.fa-spin.fa-3x.fa-fw
                             .row(v-if='!dataLoad')
                                 .col-xs-12
                                     .col-xs-6
-                                        div.img-thumbnail.img-circle.img-avatar(v-bind:style='"background-image:url("+profileImgURL+")"' v-if='!profileImgLoad && profileImgURL !== ""')
+                                        #my_canvas_id.div.img-thumbnail.img-circle.img-avatar(v-bind:style='"background-image:url("+profileImgURL+")"' v-if='!profileImgLoad && profileImgURL !== ""')
                                         div.img-thumbnail.img-circle.img-avatar.text-center(v-if='profileImgLoad')
                                             i.fa.fa-refresh.fa-spin.fa-3x.fa-fw(style="margin-top:20px;")
                                         h2.user-name-profile {{ userData.first_name }} {{ userData.last_name }}
@@ -141,9 +141,9 @@ aside.right-side
         h2 Search By Date
         .row
             .col-xs-3.col-lg-2
-                date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
+                date_picker( :typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
             .col-xs-3.col-lg-2
-                date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
+                date_picker( :typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
             .col-xs-3.col-lg-2
                 button.btn.btn-default(@click="SearchByDate(FromDate,ToDate)") Search
             .col-xs-3.col-lg-6 
