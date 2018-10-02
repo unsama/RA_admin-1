@@ -19,6 +19,7 @@
                                 th Distance
                                 th Duration
                                 th Require Vehicle
+                                //th Parcel Images
                                 th Action
                         template(slot="tbody")
                             tr(v-for='(row, ind) in all')
@@ -30,6 +31,9 @@
                                 td {{ row.req_data.disText }}
                                 td {{ row.req_data.durText }}
                                 td {{ row.req_data.vecType }}
+                                //td  
+                                  button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#parcel_images' v-on:click='openImagesPP(row.req_data["parcelUriArray"])' style="margin-bottom: 5px;margin-right: 5px;")
+                                    i.fa.fa-eye
                                 td
                                     button.btn.btn-info.mr-10(data-toggle='modal' data-target='#parcel_details' v-on:click='openDetailPP(row)') Details
                                     template(v-if="row.pend_req_data.status === 'req.accept'")
@@ -41,6 +45,7 @@
                                     template(v-if="row.pend_req_data.status === 'req.complete'")
                                         button.btn.btn-info(disabled) Completed!
         parcel_details(v-bind:parcel_obj="sel_parcel_obj")
+        parcel_images(v-bind:images="sel_images")
 </template>
 
 <script>
@@ -49,12 +54,14 @@ import moment from "moment";
 
 import tableComp from "../html_utils/tabel_comp.vue";
 import parcelDetailsModal from "../modals/parcel_details.vue";
+import parcelImages from      "../modals/parcel_images.vue";
 
 export default {
   name: "progress_request",
   components: {
     table_comp: tableComp,
-    parcel_details: parcelDetailsModal
+    parcel_details: parcelDetailsModal,
+    parcel_images:parcelImages
   },
   created() {
     this.loadPendRequest();
@@ -69,7 +76,8 @@ export default {
 
       dataLoad: true,
       all: [],
-      sel_parcel_obj: {}
+      sel_parcel_obj: {},
+      sel_images:[],
     };
   },
   methods: {
@@ -92,9 +100,7 @@ export default {
                     let BidData = BidSnap.val();
                     reqData["createdAt"] = moment(reqData.createdAt).format(
                       "hh:mm A DD/MMM/YYYY"
-                    );
-/////////////////////////////////////////////////////////
-
+                    ); 
 
                 self.bidsRef.child(reqData.id).on("value", function(BidsSnap) {
 
@@ -172,6 +178,9 @@ export default {
     },
     openDetailPP(row) {
       this.sel_parcel_obj = row;
+    },
+    openImagesPP(imgs){
+      this.sel_images = imgs; 
     }
   }
 };

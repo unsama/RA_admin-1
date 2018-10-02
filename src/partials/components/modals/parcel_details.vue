@@ -27,16 +27,19 @@
                                     tr
                                         td Est. Distance:
                                         td {{ parcel_obj.req_data['disText'] }}
-                                        td Floor:
-                                        td {{ parcel_obj.req_data['floors'] }}
-                                    tr
-                                        td Labour:
-                                        td {{ parcel_obj.req_data['labours'] }}
                                         td Vehicle Required:
                                         td {{ parcel_obj.req_data['vecType'] }}
+
                                     tr
-                                        td Parcel Images: 
-                                        td 
+                                        td   
+                                            p Labour:
+                                            p Floor:
+                                        td
+                                            p {{ parcel_obj.req_data['labours'] }}
+                                            p {{ parcel_obj.req_data['floors'] }}
+                                     
+                                        //td Parcel Images: 
+                                        //td 
                                             ul(style='list-style: none;')
                                                 li(v-for='(thumb) in parcel_obj.req_data["parcelThmbArray"]') 
                                                     img( :src='thumb', alt='image',style="width:32%; height: 32%;")
@@ -86,9 +89,15 @@
                                         td {{data.amount}}
                                         td {{data.discountPrice}}
                                         td {{formatDate(data.first_bid_time)}}
-                        ul(style='list-style: none; padding-left: 0px;')
-                            li(v-for='(thumb) in parcel_obj.req_data["parcelUriArray"]') 
-                                img( :src='thumb', alt='image' ,style="width:100%; height: 100%;")
+                            //parcel
+                            img(:src="SelectedImg", alt="", style="width:100%;height: 100%;" )
+                            br
+                            ul(style='list-style: none; padding-left: 0px;')
+                                li(v-for='(thumb ,index) in parcel_obj.req_data["parcelThmbArray"]') 
+                                    img( :src='thumb', alt='image' ,style="width:10%; height: 10%;",v-on:click="ChangeIMG_URL(index)" )
+ 
+ 
+
                         parcel_images(v-bind:images="sel_images" id='pDetailImgPP')
  
 
@@ -113,7 +122,10 @@ export default {
   data() {
     const db = firebase.database();
     
-    return {v:[],
+    return {
+        v:[],
+        SelectedImg:"ABC",
+
       loaders: {
         driver: true,
         client: true
@@ -131,6 +143,9 @@ export default {
     parcel_obj(val) {
       if (val.hasOwnProperty("pend_req_data")) {
         this.dataLoad(val.pend_req_data);
+        
+      this.SelectedImg="ABC";
+        
       }
     }
   },
@@ -139,6 +154,15 @@ export default {
       if (val === undefined) return "";
       if (val == 0) return "";
       return moment(val).format("hh:mm A DD/MMM/YYYY");
+    },
+    ChangeIMG_URL(index){
+        //console.log(this.parcel_obj);
+        this.parcel_obj.req_data["parcelUriArray"].forEach((element , ind) => {
+            if(index==ind){
+                this.SelectedImg = element;
+            } 
+        });
+    //console.log(index); 
     },
     async dataLoad(pReqData) {
       this.loaders["driver"] = true;
@@ -164,9 +188,15 @@ export default {
         self.loaders["client"] = false;
       });
     },
-    openImagePP(images) { 
+    openImagePP(images) {  
       this.sel_images = images;
     }
   }
 };
 </script>
+<style scoped>
+  .carousel-inner img {
+      width: 100%;
+      height: 100%;
+  }
+</style>

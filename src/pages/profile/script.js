@@ -262,7 +262,7 @@ export default {
     },
     watch: {
         allLogs: function (val) {
-            this.filterLogs(this, val, this.ToDate, this.FromDate);
+            this.filterLogs(this, val, this.ToDate, this.FromDate); 
         },
         search_table1: function (val) {
             func.tableSearch(this.$refs.table1, val);
@@ -294,7 +294,204 @@ export default {
     },
     methods: {
         ExportData: function () {
+            let self = this;
 
+
+            let columnpendingReqData = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Driver Name",
+                    dataKey: "driverName"
+                },
+                {
+                    title: "Client Name",
+                    dataKey: "clientName"
+                },
+                {
+                    title: "Origin",
+                    dataKey: "origin"
+                },
+                {
+                    title: "Destination",
+                    dataKey: "destination"
+                },
+                {
+                    title: "Distance",
+                    dataKey: "distance"
+                },
+                {
+                    title: "Duration",
+                    dataKey: "duration"
+                },
+                {
+                    title: "Created At",
+                    dataKey: "createdAt"
+                },
+                {
+                    title: "Vehicle Type",
+                    dataKey: "vehicleType"
+                },
+                {
+                    title: "Amount",
+                    dataKey: "amount"
+                },
+                {
+                    title: "Status",
+                    dataKey: "status"
+                },
+            ];
+            let rowspendingReqData = [];
+            Object.values(self.pendingReqData).forEach((data, index) => {
+                rowspendingReqData.push({
+                    "iD": index + 1,
+                    "driverName": data.driver_data.first_name + ' ' + data.driver_data.last_name,
+                    "clientName": data.client_data.first_name + ' ' + data.client_data.last_name,
+                    "origin": data.request_data.orgText,
+                    "destination": data.request_data.desText,
+                    "distance": data.request_data.disText,
+                    "duration": data.request_data.durText,
+                    "createdAt": data.request_data.createdAt,
+                    "vehicleType": data.driver_data.vehicle,
+                    "amount": data.bid_data.amount,
+                    "status": data.active_req_data.status,
+                })
+            })
+            let columnswalletData = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Added Date",
+                    dataKey: "addedDate"
+                },
+                {
+                    title: "Narration",
+                    dataKey: "narration"
+                },
+                {
+                    title: "Debit",
+                    dataKey: "debit"
+                },
+                {
+                    title: "Credit",
+                    dataKey: "credit"
+                },
+                {
+                    title: "Balance",
+                    dataKey: "balance"
+                },
+            ];
+            let rowswalletData = [];
+            Object.values(self.walletData).forEach((data, index) => {
+                rowswalletData.push({
+                    "iD": index + 1,
+                    "addedDate": data.addedAt,
+                    "narration": data.narration,
+                    "debit": data.debit,
+                    "credit": data.credit,
+                    "balance": data.balance,
+                })
+            })
+            let columnsinvoiceComData = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Date",
+                    dataKey: "date"
+                },
+                {
+                    title: "Commission Invoice",
+                    dataKey: "commissionInvoice"
+                },
+                {
+                    title: "Order Invoice#",
+                    dataKey: "orderInvoice"
+                },
+                {
+                    title: "Apply Commission(%)",
+                    dataKey: "applyCommission"
+                },
+                {
+                    title: "Commission Amount",
+                    dataKey: "commissionAmount"
+                },
+            ];
+            let rowsinvoiceComData = [];
+            Object.values(self.invoiceComData).forEach((data, index) => {
+                rowsinvoiceComData.push({
+                    "iD": index + 1,
+                    "date": data.createdAt,
+                    "commissionInvoice": data.invoice_no,
+                    "orderInvoice": data.order_invoice,
+                    "applyCommission": data.apply_commission,
+                    "commissionAmount": data.commission_amount,
+                })
+            })
+            let columnsinvoiceReqData = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Date",
+                    dataKey: "date"
+                },
+                {
+                    title: "Details",
+                    dataKey: "details"
+                },
+                {
+                    title: "Invoice",
+                    dataKey: "invoice"
+                },
+                {
+                    title: "Earn",
+                    dataKey: "earn"
+                },
+            ];
+            let rowsinvoiceReqData = [];
+            Object.values(self.invoiceReqData).forEach((data, index) => {
+                rowsinvoiceReqData.push({
+                    "iD": index + 1,
+                    "date": data.createdAt,
+                    "details": data.req_data.orgText + " To " + data.req_data.desText + " | User :" + data.client_data.first_name + " " + data.client_data.last_name + " | Driver : " + data.driver_data.first_name + " " + data.driver_data.last_name,
+                    "invoice": data.invoice_no,
+                    "earn": data.amount,
+                })
+            });
+            let columnsbidsData = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Bid Time",
+                    dataKey: "bidTime"
+                },
+                {
+                    title: "Bid Price",
+                    dataKey: "bidPrice"
+                },
+                {
+                    title: "Client Name",
+                    dataKey: "clientName"
+                },
+            ];
+            let rowsbidsData = [];
+            self.bidsData.forEach((data, index) => {
+                rowsbidsData.push({
+                    "iD": index + 1,
+                    "bidTime": self.formatDate(data.first_bid_time),
+                    "bidPrice": data.amount,
+                    "clientName": data.clientData.first_name + " " + data.clientData.last_name,
+                })
+            })
 
             let columnsReqCompleted = [
                 {
@@ -340,9 +537,7 @@ export default {
             ];
 
             let rowsReqCompleted = [];
-
-
-            Object.values(this.completeReqData).forEach((data, index) => {
+            Object.values(self.completeReqData).forEach((data, index) => {
 
                 rowsReqCompleted.push({
                     "iD": index + 1,
@@ -373,7 +568,7 @@ export default {
                 }
             ];
             let rowsLogDays = [];
-            this.dataToShowDAYS.forEach((data, index) => {
+            self.dataa.forEach((data, index) => {
                 rowsLogDays.push({
                     'iD': index + 1,
                     'date': data.days,
@@ -381,7 +576,8 @@ export default {
                 });
             });
 
-            var columns = [{
+            var columns = [
+                {
                     title: "#",
                     dataKey: "iD"
                 },
@@ -399,12 +595,66 @@ export default {
                 }
             ];
             var rows = [];
-            this.dataToShow.forEach((dataP, index) => {
+            self.dataToShow.forEach((dataP, index) => {
                 rows.push({
                     'iD': index + 1,
                     'LiT': dataP.loginTime,
                     'LoT': dataP.logoutTime,
-                    'D': this.timeFormat(dataP.duration)
+                    'D': self.timeFormat(dataP.duration)
+                });
+            });
+            var columnsToday = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Login Date/Time",
+                    dataKey: "LiT"
+                },
+                {
+                    title: "Logout Date/Time",
+                    dataKey: "LoT"
+                },
+                {
+                    title: "Duration",
+                    dataKey: "D"
+                }
+            ];
+            var rowsToday = [];
+            self.todayLogs.forEach((dataP, index) => {
+                rowsToday.push({
+                    'iD': index + 1,
+                    'LiT': dataP.loginTime,
+                    'LoT': dataP.logoutTime,
+                    'D': self.timeFormat(dataP.duration)
+                });
+            });
+            var columnsWeek = [
+                {
+                    title: "#",
+                    dataKey: "iD"
+                },
+                {
+                    title: "Login Date/Time",
+                    dataKey: "LiT"
+                },
+                {
+                    title: "Logout Date/Time",
+                    dataKey: "LoT"
+                },
+                {
+                    title: "Duration",
+                    dataKey: "D"
+                }
+            ];
+            var rowsWeek = [];
+            self.weekLogs.forEach((dataP, index) => {
+                rowsWeek.push({
+                    'iD': index + 1,
+                    'LiT': dataP.loginTime,
+                    'LoT': dataP.logoutTime,
+                    'D': self.timeFormat(dataP.duration)
                 });
             });
             var doc = new jsPDF("p", "pt");
@@ -412,24 +662,119 @@ export default {
             var img = new Image;
 
             var userProfile = {
-                FullName: this.userData['first_name'].charAt(0).toUpperCase() + this.userData['first_name'].substr(1) + " " + this.userData['last_name'].charAt(0).toUpperCase() + this.userData['last_name'].substr(1),
-                MobileNumber: this.userData['mob_no'].replace(/(\d{2})(\d{3})(\d{4})/, "0$2 $3"),
-                AddaName: this.userData['adda_name'].toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' '),
+                FullName: self.userData['first_name'].charAt(0).toUpperCase() + self.userData['first_name'].substr(1) + " " + self.userData['last_name'].charAt(0).toUpperCase() + self.userData['last_name'].substr(1),
+                MobileNumber: self.userData['mob_no'].replace(/(\d{2})(\d{3})(\d{4})/, "0$2 $3"),
+                AddaName: self.userData['adda_name'].toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' '),
             }
-            let point = 150;
+            let point = 130;
+            let mar = 40;
+            let btmsps = 10;
+            let maxPageSize = 780;
+            let startpoint = 50;
             img.onload = function () {
-                doc.addImage(this, 10, 10, 60, 80);
-                doc.addFont('Arial');
-                doc.setFont('Arial');
+                doc.addImage(this, mar, 40, 60, 80); 
                 doc.setFontSize(10);
-                doc.text(75, 25, 'Driver Name      : ' + userProfile.FullName);
-                doc.text(75, 55, 'Mobile Number : ' + userProfile.MobileNumber);
-                doc.text(75, 85, 'Adda Name       : ' + userProfile.AddaName);
+                doc.text(mar+75, 75, 'Driver Name      : ' + userProfile.FullName);
+                doc.text(mar+75, 95, 'Mobile Number : ' + userProfile.MobileNumber);
+                doc.text(mar+75, 115, 'Adda Name       : ' + userProfile.AddaName);
+                doc.setFontSize(10);
+                doc.text(mar, 150, 'Data Filtered From   _________________ To _________________ ');
+                doc.text(mar+100, 150,  self.FromDate==""   ? "": ( self.FromDate==null?"": moment(self.FromDate).format("DD/MMM/YYYY"))) 
+                doc.text(mar+210, 150,  self.ToDate==""   ? "": ( self.ToDate==null? "":moment(self.ToDate).format("DD/MMM/YYYY"))) 
                 doc.setFontSize(16);
-                doc.text(10, 120, 'Data Filtered From   _____________________ To _____________________ ');
-                doc.text(150, 120, '02/Jan/2018');
-                doc.text(344, 120, '02/Feb/2018');
 
+if(self.ck0){
+            point += 50;
+                
+                if(rowsToday!=0){
+                    doc.text(mar, point, "Logs Data by Today");
+                    point += btmsps;                
+                    doc.autoTable(columnsToday, rowsToday, {
+
+                        styles: {
+                            fontSize: 8,
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
+
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                    doc.text(mar, point, "Logs Data by Today");
+                    doc.setFontSize(10); 
+                    doc.text(mar, point+20, " NO-DATA");
+                    doc.setFontSize(14);
+                }
+}
+if(self.ck1){
+                point += 50;
+                
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if(rowsWeek!=0){
+                    doc.text(mar, point, "Logs Data by Week");
+                    point += btmsps;                
+                    doc.autoTable(columnsWeek, rowsWeek, {
+
+                        styles: {
+                            fontSize: 8,
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
+
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                    doc.text(mar, point, "Logs Data by Week");
+                    doc.setFontSize(10);
+                    doc.text(mar, point+20, " NO-DATA");
+                    doc.setFontSize(14);
+                }
+
+
+}
+if(self.ck2){
+                point += 50;
+
+                if (point > maxPageSize) {
+                    doc.addPage();
+                    point = startpoint;
+                } 
+                if(rows!=0){
+                doc.text(mar, point, "Logs Data");
+                point += btmsps;  
                 doc.autoTable(columns, rows, {
 
                     styles: {
@@ -453,63 +798,458 @@ export default {
                         left: 40,
                         right: 40,
                     },
-                    theme: 'plain'
+                    theme: 'grid'
                 });
+            }else{
+                 doc.text(mar, point, "Logs Data");
+                 doc.setFontSize(10);
+                 doc.text(mar, point+20, " NO-DATA");
+                 doc.setFontSize(14);
+            }
+}
 
-                doc.text(10, point += 30, "Next Data");
-                doc.autoTable(columnsLogDays, rowsLogDays, {
+if(self.ck3){
+                point += 50;
+                if (point > maxPageSize) {
+                    doc.addPage();
+                    point = startpoint;
+                }
+                if(rowsLogDays!=0){
+                    doc.text(mar, point, "Logs Data by Days");
+                    point += btmsps;
+                    doc.autoTable(columnsLogDays, rowsLogDays, {
 
-                    styles: {
-                        fontSize: 8,
-                    },
-                    headerStyles: {
-                        fontSize: 8,
-                    },
-                    bodyStyles: {
-                        fontSize: 8,
-                    },
-                    showHeader: 'firstPage',
+                        styles: {
+                            fontSize: 8,
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
 
-                    drawRow: function (row, data) {
-                        point = data.row.y;
-                    },
-                    startY: point,
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
 
-                    margin: {
-                        top: 10,
-                        bottom: 10,
-                        left: 40,
-                        right: 40,
-                    },
-                    theme: 'plain'
-                });
-                point+=30; 
-                doc.autoTable(columnsReqCompleted, rowsReqCompleted, {
-                    tableWidth: 'wrap', // 'auto', 'wrap'
-                    styles: {
-                        fontSize: 8,
-                    },
-                    headerStyles: {
-                        fontSize: 8,
-                    },
-                    bodyStyles: {
-                        fontSize: 8,
-                    },
-                    showHeader: 'firstPage',
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                    doc.text(mar, point, "Logs Data by Days");
+                    doc.setFontSize(10);
+                    doc.text(mar, point+20, " NO-DATA");
+                    doc.setFontSize(14);
+                }
+}
+if(self.ck4){
+                point += 50;
+                if (point > maxPageSize) {
+                    doc.addPage();
+                    point = startpoint;
+                }
+                if(rowspendingReqData!=0){
+                    doc.text(mar, point, "Pending Requests Data");
+                    point += btmsps;
+                    doc.autoTable(columnpendingReqData, rowspendingReqData, {
+                        styles: {
+                            columnWidth: 'auto'
+                        },
+                        columnStyles: {
+                            iD: {
+                                columnWidth: 20,
+                                halign: 'center'
+                            },
+                            driverName: {
+                                columnWidth: 50,
+                                halign: 'center'
+                            },
+                            clientName: {
+                                columnWidth: 50,
+                                halign: 'center'
+                            },
+                            origin: {
+                                columnWidth: 65,
+                                fontSize: 7,
+                                halign: 'center'
+                            },
+                            destination: {
+                                columnWidth: 65,
+                                fontSize: 7,
+                                halign: 'center'
+                            },
+                            distance: {
+                                columnWidth: 50,
+                                halign: 'center'
+                            },
+                            duration: {
+                                columnWidth: 50,
+                                halign: 'center'
+                            },
+                            createdAt: {
+                                columnWidth: 60,
+                                halign: 'center'
+                            },
+                            vehicleType: {
+                                columnWidth: 40,
+                                halign: 'center'
+                            },
+                            amount: {
+                                columnWidth: 40,
+                                halign: 'right'
+                            },
+                            status: {
+                                halign: 'center'
+                            },
+                        },
+                        styles: {
+                            fontSize: 8,
+                            overflow: 'linebreak',
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
 
-                    drawRow: function (row, data) {
-                        point = data.row.y;
-                    },
-                    startY: point,
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
 
-                    margin: {
-                        top: 10,
-                        bottom: 10,
-                        left: 40,
-                        right: 40,
-                    },
-                    theme: 'plain'
-                });
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                    doc.text(mar, point, "Pending Requests Data");
+                    doc.setFontSize(10);
+                    doc.text(mar, point+20, " NO-DATA");
+                    doc.setFontSize(14);
+                }
+
+}
+if(self.ck5){
+                point += 50;
+                if (point > maxPageSize) {
+                    doc.addPage();
+                    point = startpoint;
+                }
+                if(rowsReqCompleted!=0){
+                    doc.text(mar, point, "Completed Requests Data");
+                    point += btmsps;
+                    doc.autoTable(columnsReqCompleted, rowsReqCompleted, {
+                        styles: {
+                            columnWidth: 'auto'
+                        },
+                        columnStyles: {
+                            iD: {
+                                columnWidth: 20,
+                                halign: 'center'
+                            },
+                            driverName: {
+                                columnWidth: 50,
+                                halign: 'center'
+                            },
+                            clientName: {
+                                columnWidth: 50,
+                                halign: 'center'
+                            },
+                            origin: {
+                                columnWidth: 80,
+                                fontSize: 7,
+                                halign: 'center'
+                            },
+                            destination: {
+                                columnWidth: 80,
+                                fontSize: 7,
+                                halign: 'center'
+                            },
+                            distance: {
+                                columnWidth: 50,
+                                halign: 'center'
+                            },
+                            duration: {
+                                columnWidth: 50,
+                                halign: 'center'
+                            },
+                            createdAt: {
+                                columnWidth: 60,
+                                halign: 'center'
+                            },
+                            vehicleType: {
+                                columnWidth: 40,
+                                halign: 'center'
+                            },
+                            amount: {
+                                columnWidth: 40,
+                                halign: 'right'
+                            },
+                        },
+                        styles: {
+                            fontSize: 8,
+                            overflow: 'linebreak',
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
+
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
+
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                    doc.text(mar, point, "Completed Requests Data");
+                    doc.setFontSize(10);
+                    doc.text(mar, point+20, " NO-DATA");
+                    doc.setFontSize(14);
+                }
+
+}
+if(self.ck6){
+
+
+                point += 50;
+                if (point > maxPageSize) {
+                    doc.addPage();
+                    point = startpoint;
+                }
+                if(rowsbidsData!=0){
+                    doc.text(mar, point, "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);
+                    point += btmsps;
+                    doc.autoTable(columnsbidsData, rowsbidsData, {
+                        styles: {
+                            columnWidth: 'auto'
+                        },
+                        columnStyles: {},
+                        styles: {
+                            fontSize: 8,
+                            overflow: 'linebreak',
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
+
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
+
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                    doc.text(mar, point, "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);
+                    doc.setFontSize(10);
+                    doc.text(mar, point+20, " NO-DATA");
+                    doc.setFontSize(14);
+                }
+
+}
+if(self.ck7){
+                point += 50;
+                if (point > maxPageSize) {
+                    doc.addPage();
+                    point = startpoint;
+                }
+                if(rowsinvoiceReqData!=0){
+                    doc.text(mar, point, "Earnings Summary");
+                    point += btmsps;
+                    doc.autoTable(columnsinvoiceReqData, rowsinvoiceReqData, {
+                        styles: {
+                            columnWidth: 'auto'
+                        },
+                        columnStyles: {
+                            iD: {
+                                columnWidth: 20,
+                                halign: 'center'
+                            },
+                            date: {
+                                columnWidth: 120,
+                                halign: 'center'
+                            },
+                            details: {
+                                columnWidth: 260
+                            },
+                            invoice: {
+                                columnWidth: 80
+                            },
+                            earn: {
+                                columnWidth: 40,
+                                halign: 'right'
+                            },
+                        },
+                        styles: {
+                            fontSize: 8,
+                            overflow: 'linebreak',
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
+
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
+
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                    doc.text(mar, point, "Earnings Summary");
+                    doc.setFontSize(10);
+                    doc.text(mar, point+20, " NO-DATA");
+                    doc.setFontSize(14);
+                }
+}
+if(self.ck8){
+
+                point += 50;
+                if (point > maxPageSize) {
+                    doc.addPage();
+                    point = startpoint;
+                }
+                if(rowsinvoiceComData!=0){
+                    doc.text(mar, point, "Commission Summary");
+                    point += btmsps;
+                    doc.autoTable(columnsinvoiceComData, rowsinvoiceComData, {
+                        styles: {
+                            columnWidth: 'auto'
+                        },
+                        columnStyles: {},
+                        styles: {
+                            fontSize: 8,
+                            overflow: 'linebreak',
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
+
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
+
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                     doc.text(mar, point, "Commission Summary");
+                     doc.setFontSize(10);
+                     doc.text(mar, point+20, " NO-DATA");
+                     doc.setFontSize(14);
+                }
+}
+if(self.ck9){
+
+                point += 50;
+                if (point > maxPageSize) {
+                    doc.addPage();
+                    point = startpoint;
+                }
+                if(rowswalletData!=0){
+                    doc.text(mar, point, "Wallet Summary");
+                    point += btmsps;
+                    doc.autoTable(columnswalletData, rowswalletData, {
+                        styles: {
+                            columnWidth: 'auto'
+                        },
+                        columnStyles: {},
+                        styles: {
+                            fontSize: 8,
+                            overflow: 'linebreak',
+                        },
+                        headerStyles: {
+                            fontSize: 8,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                        },
+                        showHeader: 'firstPage',
+
+                        drawRow: function (row, data) {
+                            point = data.row.y;
+                        },
+                        startY: point,
+
+                        margin: {
+                            top: 10,
+                            bottom: 10,
+                            left: 40,
+                            right: 40,
+                        },
+                        theme: 'grid'
+                    });
+                }else{
+                    doc.text(mar, point, "Wallet Summary");
+                    doc.setFontSize(10);
+                    doc.text(mar, point+20, " NO-DATA");
+                    doc.setFontSize(14);
+                }
+
+}
+
+
+
+                doc.setFontSize(14);
+                doc.text(40, maxPageSize, "____________________                                                ____________________");
+                doc.text(40, maxPageSize + 30, "   ISSUING Authority                                                        ADMIN ROADIOAPP");
+                doc.text(40, maxPageSize + 50, "      ROADIOAPP");
+
                 doc.save("Profile" + ".pdf");
             };
             img.crossOrigin = "https://firebasestorage.googleapis.com"; // for demo as we are at different origin than image
@@ -553,19 +1293,20 @@ export default {
 
         },
         filterLogs: function (self, allLogs, TodateV, fromdateV) {
-            let TimeFrom = moment(new Date(fromdateV)).unix()
-            let TimeTo = moment(new Date(TodateV)).unix()
+ 
+            let TimeFrom = moment( fromdateV ).startOf('day').unix()
+            let TimeTo = moment( TodateV ).endOf('day').unix()
             let data = [];
             allLogs.forEach(v => {
 
                 if (this.FromDate == "" || this.ToDate == "" || this.FromDate == null || this.ToDate == null) {
                     data.push(v);
-                } else {
-                    let time = moment(new Date(v.loginTime)).unix();
-                    if (time > TimeFrom && time < TimeTo) {
+                } else { 
+                    let time = moment(v.loginTime).unix();
+                    if (time >= TimeFrom && time <= TimeTo) {
                         data.push(v);
                     }
-                } 
+                }
             });
             allLogs = data;
             self.dataa = [];
@@ -629,19 +1370,18 @@ export default {
                     }
 
                     if (self.searched) {
-                        let time = moment(new Date(day)).unix();
-                        let TimeFrom = moment(new Date(fromdateV)).unix()
-                        let TimeTo = moment(new Date(TodateV)).unix()
+                        let time = moment( day ).unix(); 
+                        let TimeFrom = moment( fromdateV ).startOf('day').unix()
+                        let TimeTo = moment( TodateV ).endOf('day').unix()
                         if (self.FromDate == "" || self.ToDate == "" || self.FromDate == null || self.ToDate == null) {
                             self.dataa.push({
                                 'days': day,
                                 'durations': secondsToHms(duration)
                             });
                         } else {
-                            //console.log(time +"-:-"+ TimeFrom +"-:-"+ TimeTo)
-                            // console.log(time > TimeFrom && time < TimeTo)
+ 
 
-                            if (time > TimeFrom && time < TimeTo) {
+                            if (time >= TimeFrom && time <= TimeTo) {
 
                                 self.totalTimes += duration;
                                 self.dataa.push({
@@ -661,11 +1401,11 @@ export default {
                 }
                 self.totalTimes = secondsToHms(self.totalTimes);
                 self.dataToShowDAYS = self.dataa;
-                self.dataToShow = allLogs; 
+                self.dataToShow = allLogs;
                 self.allLogsTSTime = moment.duration();
-                 self.dataToShow.forEach(element => { 
-                     self.allLogsTSTime.add(element.duration); 
-                    });
+                self.dataToShow.forEach(element => {
+                    self.allLogsTSTime.add(element.duration);
+                });
 
 
 
@@ -683,8 +1423,8 @@ export default {
 
         SearchByDate(DFrom, DTo) {
 
-            let TimeFrom = moment(DFrom).unix()
-            let TimeTo = moment(DTo).unix()
+            let TimeFrom =  moment(DFrom).startOf('day').unix()
+            let TimeTo =  moment(DTo).endOf('day').unix()
             let self = this;
             self.searched = true;
             if (!self.IsBackup) {
@@ -723,7 +1463,7 @@ export default {
                         element.forEach(record => {
                             let time = moment(record.val().createdAt).unix()
 
-                            if (time > TimeFrom && time < TimeTo) {
+                            if (time >= TimeFrom && time <= TimeTo) {
                                 self.totalRequests++;
                             }
 
@@ -736,7 +1476,7 @@ export default {
                 self.allLogsTSTime = moment.duration();
                 Object.values(self.Backup_allLogs).forEach(element => {
                     let time = moment(element.loginTime).unix()
-                    if (time > TimeFrom && time < TimeTo) {
+                    if (time >= TimeFrom && time <= TimeTo) {
 
                         self.allLogsTSTime.add(element.duration);
                         self.allLogs.push(element);
@@ -747,7 +1487,7 @@ export default {
                 self.bidsData = []
                 Object.values(self.Backup_bidsData).forEach(element => {
                     let time = moment(element.first_bid_time).unix()
-                    if (time > TimeFrom && time < TimeTo) {
+                    if (time >= TimeFrom && time <= TimeTo) {
                         self.bidsData.push(element);
                     }
                 });
@@ -755,35 +1495,35 @@ export default {
                 self.completeReqData = []
                 Object.values(self.Backup_completeReqData).forEach(element => {
                     let time = moment(element.request_data.createdAt).unix()
-                    if (time > TimeFrom && time < TimeTo) {
+                    if (time >= TimeFrom && time <= TimeTo) {
                         self.completeReqData.push(element);
                     }
                 });
                 self.pendingReqData = []
                 Object.values(self.Backup_pendingReqData).forEach(element => {
                     let time = moment(element.request_data.createdAt).unix()
-                    if (time > TimeFrom && time < TimeTo) {
+                    if (time >= TimeFrom && time <= TimeTo) {
                         self.pendingReqData.push(element);
                     }
                 })
                 self.invoiceReqData = []
                 Object.values(self.Backup_invoiceReqData).forEach(element => {
                     let time = moment(element.createdAt).unix()
-                    if (time > TimeFrom && time < TimeTo) {
+                    if (time >= TimeFrom && time <= TimeTo) {
                         self.invoiceReqData.push(element);
                     }
                 })
                 self.invoiceComData = []
                 Object.values(self.Backup_invoiceComData).forEach(element => {
                     let time = moment(element.createdAt).unix()
-                    if (time > TimeFrom && time < TimeTo) {
+                    if (time >= TimeFrom && time <= TimeTo) {
                         self.invoiceComData.push(element);
                     }
                 })
                 self.walletData = []
                 Object.values(self.Backup_walletData).forEach(element => {
                     let time = moment(element.addedAt).unix()
-                    if (time > TimeFrom && time < TimeTo) {
+                    if (time >= TimeFrom && time <= TimeTo) {
                         self.walletData.push(element);
                     }
 
@@ -866,8 +1606,6 @@ export default {
         pending_req_driver: function (self, uid, driver_data) {
             self.activeReqRef.orderByChild('driver_uid').equalTo(uid).once('value').then(function (snap) {
                 let pend_req_data = snap.val();
-                /*console.log(pend_req_data);
-                 self.dataLoad2 = false;*/
                 if (pend_req_data !== null) {
                     let keys = Object.keys(pend_req_data);
                     let key_length = keys.length;

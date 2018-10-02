@@ -147,7 +147,7 @@ aside.right-side
             .col-xs-3.col-lg-2
                 button.btn.btn-default(@click="SearchByDate(FromDate,ToDate)") Search
             .col-xs-3.col-lg-6 
-                //button.btn.btn-default(@click="showPopup")  Export PDF 
+                button.btn.btn-default(@click="showPopup")  Export PDF 
             export_popup
                 slot
                     table.table.table--hover
@@ -362,8 +362,8 @@ aside.right-side
                                             th Amount
                                             th Status
                                     tbody
-                                        tr(v-for="(row, key, ind) in pendingReqData")
-                                            td {{ ind+1 }}
+                                        tr(v-for="(row, key, index) in pendingReqData")
+                                            td {{ index+1 }}
                                             td {{ row.driver_data.first_name + ' ' + row.driver_data.last_name }}
                                             td {{ row.client_data.first_name + ' ' + row.client_data.last_name }}
                                             td {{ row.request_data.orgText }}
@@ -486,7 +486,7 @@ aside.right-side
                                         tr(v-for="(row, key, index) in invoiceReqData")
                                             td {{ index+1 }}
                                             td {{ row.createdAt }}
-                                            td From({{ row.req_data.orgText }}) To({{ row.req_data.desText }}) User({{ row.client_data.first_name }}) Driver({{ row.driver_data.first_name }})
+                                            td From({{ row.req_data.orgText }}) To({{ row.req_data.desText }}) User({{ row.client_data.first_name }}  {{ row.client_data.last_name }} ) Driver({{ row.driver_data.first_name }} {{ row.driver_data.last_name }})
                                             td
                                                 router-link(v-bind:to="'/admin/invoice/'+key") {{ row.invoice_no }}
                                             td {{ row.amount }}
