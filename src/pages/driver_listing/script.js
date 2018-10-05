@@ -4,9 +4,11 @@ import moment from 'moment'
 import progressbar from 'vue-progress-bar'
 import router from 'vue-router'
 
+import XLSX from 'xlsx'
+
 import tableComp from '../../partials/components/html_utils/tabel_comp.vue'
 import Datepicker from 'vuejs-datepicker';
-import vueMultiselect from 'vue-multiselect'; 
+import vueMultiselect from 'vue-multiselect';
 
 
 export default {
@@ -14,7 +16,7 @@ export default {
         'table_comp': tableComp,
         'progress-bar': progressbar,
         'date_picker': Datepicker,
-        'vue-multiselect':vueMultiselect,
+        'vue-multiselect': vueMultiselect,
     },
     created: function () {
 
@@ -22,7 +24,7 @@ export default {
         const db = firebase.database();
         self.userRef = db.ref('/users');
         self.addaRef = db.ref('/adda_list');
-        self.onlineDriversRef =db.ref('/online_drivers');
+        self.onlineDriversRef = db.ref('/online_drivers');
 
         let DataA = [];
 
@@ -79,7 +81,7 @@ export default {
                         item['time'] = moment(item.createdAt).format("DD/MMM/YYYY");
                     }
                     grabData.push(item);
-                   // self.data2 = item;
+                    // self.data2 = item;
                     process_item++;
                     if (process_item === renderDataKeys.length) {
                         self.data1 = grabData;
@@ -93,13 +95,13 @@ export default {
     },
     data: function () {
         return {
-            Addavalues:[],
+            Addavalues: [],
             selectedAddaList: [],
             dataLoad: true,
             data1: [],
-           // data2: [],
+            // data2: [],
             userRef: null,
-            onlineDriversRef:null,
+            onlineDriversRef: null,
             // profile: [],
             selectedIDs: [],
             selectedAllIDs: false,
@@ -111,7 +113,7 @@ export default {
             info: "",
             addaDataKeys: [],
             addaList: [],
-           // selectedAdda: "Choose Adda",
+            // selectedAdda: "Choose Adda",
             selectedVehicle: "Choose Vehicle",
             pPage: 10,
             ActiveUsers: "",
@@ -127,38 +129,38 @@ export default {
     },
     methods: {
 
-        customLabel (option) {
-            return `${option.name}`//- ${option.language}
- 
-          },
- 
-        checkAllDrivers (v){
-            let self =this;
+        customLabel(option) {
+            return `${option.name}` //- ${option.language}
+
+        },
+
+        checkAllDrivers(v) {
+            let self = this;
             self.selectedIDs = [];
-            if(!v){
+            if (!v) {
                 self.data1.forEach(item => {
                     self.selectedIDs.push(item.key)
-                }); 
-                }
+                });
+            }
         },
 
         customFormatter(date) {
             return moment(date).format("DD/MMM/YYYY");
         },
- 
+
         changeSearch: function (e) {
 
 
-            var startDate = this.FromDate ===null ? '':this.FromDate;
-            var endDate = this.ToDate ===null ? '':this.ToDate;
+            var startDate = this.FromDate === null ? '' : this.FromDate;
+            var endDate = this.ToDate === null ? '' : this.ToDate;
 
             var UsersAO = this.UsersAOption;
             var UsersBO = this.UsersBOption;
             var UsersCO = this.UsersCOption;
-            var SelectedAddaIds =[];
+            var SelectedAddaIds = [];
             this.Addavalues.forEach(addaVal => {
                 SelectedAddaIds.push(addaVal.id);
-            }); 
+            });
             var selectedVehicleID = this.selectedVehicle;
             let self = this;
 
@@ -226,62 +228,63 @@ export default {
                         } else if (item.hasOwnProperty("createdAt")) {
                             item['time'] = moment(item.createdAt).format("DD/MMM/YYYY");
                         }
-                        var SelectedAddaId="Choose Adda";
+                        var SelectedAddaId = "Choose Adda";
                         let OnlineDrivers = [];
-                        self.onlineDriversRef.once('value',function(activeDriverssnap){
+                        self.onlineDriversRef.once('value', function (activeDriverssnap) {
                             activeDriverssnap.forEach(function (activeDriver) {
-                                OnlineDrivers.push( activeDriver.key);
-            
+                                OnlineDrivers.push(activeDriver.key);
+
                             });
-                            if(UsersCO=="Online"){
-                                let DriverOffline =false;
+                            if (UsersCO == "Online") {
+                                let DriverOffline = false;
                                 OnlineDrivers.forEach(id => {
-                                    if(id==item['key']){
-                                        DriverOffline=true;
-                                    } 
+                                    if (id == item['key']) {
+                                        DriverOffline = true;
+                                    }
                                 });
-                                if(DriverOffline){
+                                if (DriverOffline) {
                                     a0();
                                 }
-    
-                            }else if(UsersCO=="Offline"){
-                            let DriverOffline =false;
+
+                            } else if (UsersCO == "Offline") {
+                                let DriverOffline = false;
                                 OnlineDrivers.forEach(id => {
-                                    if(id==item['key']){
-                                        DriverOffline=true;
-                                    } 
+                                    if (id == item['key']) {
+                                        DriverOffline = true;
+                                    }
                                 });
-                                if(!DriverOffline){
+                                if (!DriverOffline) {
                                     a0();
                                 }
-                            }else{
+                            } else {
                                 a0();
                             }
                         })
 
 
-                                                                                                                                                                    ////////////
+                        ////////////
 
                         function a0() {
-                           
-                            if(!SelectedAddaIds.length){
+
+                            if (!SelectedAddaIds.length) {
 
                                 if (startDate == "" && endDate == "") {
                                     a();
                                 } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
                                     a();
                                 }
-                            }else{
-                            SelectedAddaIds.forEach(id => {            
-                                SelectedAddaId = id;
+                            } else {
+                                SelectedAddaIds.forEach(id => {
+                                    SelectedAddaId = id;
 
-                                if (startDate == "" && endDate == "") {
-                                    a();
+                                    if (startDate == "" && endDate == "") {
+                                        a();
                                     } else if (moment(startDate).unix() <= moment(item['time']).unix() && moment(endDate).unix() >= moment(item['time']).unix()) {
                                         a();
                                     }
-                                });}
+                                });
                             }
+                        }
 
                         function a() {
 
@@ -340,7 +343,7 @@ export default {
 
 
 
-                       // self.data2 = item;
+                        // self.data2 = item;
                         process_item++;
                         if (process_item === renderDataKeys.length) {
                             self.data1 = grabData;
@@ -365,44 +368,31 @@ export default {
                 });
             }
         },
-        pr:function () {
-            event.stopPropagation();
-           // console.log(this.selectedIDs);
+        ExportData: function () {
+            let self = this; 
+            let DriverS = [];
+            self.data1.forEach((driver, index) => {
+                DriverS.push({
+                    "#": index + 1,
+                    "Driver Name": driver.first_name + " " + driver.last_name,
+                    "Driver Email": driver.email,
+                    "Mobile#": driver.mob_no,
+                    "Adda Name": driver.place_name,
+                    "CNIC#": driver.cnic_no,
+                    "Vehicle Type": driver.vehicle,
+                    "Created Time": driver.time,
+                    "Action": driver.status,
+                    "Status": driver.blocked
+                })
+            }); 
+        var ws = XLSX.utils.json_to_sheet(DriverS);
+         
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Drivers");
+         
+        XLSX.writeFile(wb, "ExportDriversData.xlsx");
         },
-        select: function (key, event) {
-            event.stopPropagation(); /*
-            let self = this;
-            var IsAvailId = false;
-            if (self.selectedIDs.length == 0) {
-                self.selectedIDs.push(key);
-            } else {
 
-                self.data1.forEach(function (obj) {
-                    if (obj.key == key) {
-                        obj.selected = true;
-                    }
-                    // console.log(obj.selected+" "+obj.key);
-                });
-
-                self.selectedIDs.forEach(function (ID) {
-                    if (ID == key) {
-                        IsAvailId = false;
-                    } else {
-                        IsAvailId = true;
-                    }
-                });
-                if (IsAvailId) {
-                    self.selectedIDs.push(key);
-                }
-
-            }
-            console.log(self.selectedIDs); */
-
-        },
-        unselect: function (key, index, event) {
-            event.stopPropagation();
-
-        },
         active: function (key, index, event) {
             event.stopPropagation();
             let self = this;

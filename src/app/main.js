@@ -10,6 +10,7 @@ import firebase from 'firebase'
 import config_fb from '../../config/clientPrivate.json'
 firebase.initializeApp(config_fb.config_fb);
 
+
 import routes from './routes'
 
 Vue.use(VueRouter);

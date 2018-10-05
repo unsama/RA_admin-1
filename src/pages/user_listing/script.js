@@ -1,7 +1,7 @@
 import firebase from 'firebase'
 import func from '../../../custom_libs/func'
 import moment from 'moment'
-
+import XLSX from 'xlsx'
 import tableComp from '../../partials/components/html_utils/tabel_comp.vue'
 
 export default {
@@ -42,11 +42,40 @@ export default {
     data: function(){
         return {
             dataLoad: true,
+            selectedUserIDs:[],
+            CheckAll:false,
             data1: [],
             userRef: null
         }
     },
-    methods: {
+    methods: { 
+        EXPORT_File :function(){
+            let _g = this;
+            let data = [];
+            _g.data1.forEach(user  => {
+                delete user.password;
+                 data.push( user);
+            });
+ 
+        /* make the worksheet */
+        var ws = XLSX.utils.json_to_sheet(data);
+        
+        /* add to workbook */
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Users");
+        
+        /* generate an XLSX file */
+        XLSX.writeFile(wb, "ExportUsersData.xlsx");
+        },
+        CheckAlls:function (checkAll) {
+            let self =this; 
+            self.selectedUserIDs=[];
+            if(!checkAll){
+                self.data1 .forEach(user => {  
+                     self.selectedUserIDs.push(user.key)
+                 });
+            }
+        },
         deActive: function (key, index, event) {
             event.stopPropagation();
             let self = this;

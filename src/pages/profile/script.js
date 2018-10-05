@@ -5,7 +5,8 @@ import func from '../../../custom_libs/func'
 import exportPopup from '../../partials/components/modals/Export_popup.vue'
 import jsPDF from 'jspdf'
 require("jspdf-autotable");
-import html2canvas from 'html2canvas'
+
+import XLSX from 'xlsx' 
 import Datepicker from 'vuejs-datepicker';
 import SimpleVueValidation from 'simple-vue-validator'
 const Validator = SimpleVueValidation.Validator;
@@ -293,9 +294,298 @@ export default {
         }
     },
     methods: {
-        ExportData: function () {
+        checkSelectedList(){ 
+            if( 
+                this.ck0== true||
+                this.ck1== true||
+                this.ck2== true||
+                this.ck3== true||
+                this.ck4== true||
+                this.ck5== true||
+                this.ck6== true||
+                this.ck7== true||
+                this.ck8== true||
+                this.ck9== true 
+            ){
+ return false;
+            }return true;
+           
+        },
+        ExportDataXLSX: function(){
+            
             let self = this;
+            if(self.checkSelectedList()){
+                 alert("Please Select any One Condition");
+                 return;
+                }
+            let rowspendingReqData = {};
+            Object.values(self.pendingReqData).forEach((data, index) => {
+                rowspendingReqData.push({
+                    "#": index + 1,
+                    "Driver Name": data.driver_data.first_name + ' ' + data.driver_data.last_name,
+                    "Client Name": data.client_data.first_name + ' ' + data.client_data.last_name,
+                    "Origin": data.request_data.orgText,
+                    "Destination": data.request_data.desText,
+                    "Distance": data.request_data.disText,
+                    "Duration": data.request_data.durText,
+                    "Created At": data.request_data.createdAt,
+                    "Vehicle Type": data.driver_data.vehicle,
+                    "Amount": data.bid_data.amount,
+                    "Status": data.active_req_data.status,
+                })
+            })
+            
 
+
+            let rowswalletData = [];
+            let BDebit=0;
+            let BCredit=0; 
+            let BBalance=0; 
+            Object.values(self.walletData).forEach((data, index) => {
+                rowswalletData.push({
+                    "#": index + 1,
+                    "Added Date": data.addedAt,
+                    "Narration": data.narration,
+                    "Debit":  parseFloat( data.debit).toFixed(2) ,
+                    "Credit": parseFloat(data.credit).toFixed(2) ,
+                    "Balance":parseFloat(data.balance).toFixed(2),
+                })
+                BBalance=data.balance ; 
+                BDebit+= data.debit  ;  
+                BCredit+= data.credit  ;  
+            })
+            if(rowswalletData.length!=0){ 
+                BDebit =parseFloat(BDebit).toFixed(2);
+                BCredit =parseFloat(BCredit).toFixed(2);
+                rowswalletData.push({
+                    "#":  "",
+                    "Added Date": "",
+                    "Narration": "Balance",
+                    "Debit": "",
+                    "Credit": "",
+                    "Balance": BBalance,
+                })
+                rowswalletData.push({
+                    "#":  "",
+                    "Added Date": "",
+                    "Narration": "Total",
+                    "Debit":  BDebit,
+                    "Credit": BCredit,
+                    "Balance": "",
+                })
+            }
+             
+            
+
+            let rowsinvoiceComData = [];
+            let TotalCommission=0;
+            Object.values(self.invoiceComData).forEach((data, index) => {
+                rowsinvoiceComData.push({
+                    "#": index + 1,
+                    "Date": data.createdAt,
+                    "Commission Invoice": data.invoice_no,
+                    "Order Invoice#": data.order_invoice,
+                    "Apply Commission(%)": data.apply_commission,
+                    "Commission Amount": data.commission_amount,
+                })
+                TotalCommission+=data.commission_amount;
+            })
+            if(rowsinvoiceComData.length!=0){
+                rowsinvoiceComData.push({
+                    "#": "",
+                    "Date": "",
+                    "Commission Invoice": "",
+                    "Order Invoice#": "",
+                    "Apply Commission(%)": "Total",
+                    "Commission Amount":  TotalCommission ,
+                })
+            }
+ 
+            
+
+            let rowsinvoiceReqData = [];
+            let EarnAmount=0;
+            Object.values(self.invoiceReqData).forEach((data, index) => {
+                rowsinvoiceReqData.push({
+                    "#": index + 1,
+                    "Date": data.createdAt,
+                    "Details": data.req_data.orgText + " To " + data.req_data.desText + " | User :" + data.client_data.first_name + " " + data.client_data.last_name + " | Driver : " + data.driver_data.first_name + " " + data.driver_data.last_name,
+                    "Invoice": data.invoice_no,
+                    "Earn": data.amount,
+                })
+                EarnAmount+=data.amount;
+            });
+            if(rowsinvoiceReqData.length!=0){
+                rowsinvoiceReqData.push({
+                    "#": "",
+                    "Date": "",
+                    "Details": "",
+                    "Invoice": "Total",
+                    "Earn":  EarnAmount,
+                })
+            }
+            
+            
+ 
+            let rowsbidsData = [];
+            self.bidsData.forEach((data, index) => {
+                rowsbidsData.push({
+                    "#": index + 1,
+                    "Bid Time": self.formatDate(data.first_bid_time),
+                    "Bid Price": data.amount,
+                    "Client Name": data.clientData.first_name + " " + data.clientData.last_name,
+                })
+            })
+
+            
+
+            let rowsReqCompleted = [];
+            let Total_Amount = 0;
+            Object.values(self.completeReqData).forEach((data, index) => {
+
+                rowsReqCompleted.push({
+                    "#": index + 1,
+                    "Driver Name": data.driver_data.first_name + ' ' + data.driver_data.last_name,
+                    "Client Name": data.client_data.first_name + ' ' + data.client_data.last_name,
+                    "Origin": data.request_data.orgText,
+                    "Destination": data.request_data.desText,
+                    "Distance": data.request_data.disText,
+                    "Duration": data.request_data.durText,
+                    "Created At": data.request_data.createdAt,
+                    "Vehicle Type": data.driver_data.vehicle,
+                    "Amount": data.bid_data.amount,
+                });
+                Total_Amount+= parseInt(data.bid_data.amount);
+            });
+            if(rowsReqCompleted.length!=0){
+                rowsReqCompleted.push({
+                    "#": "",
+                    "Driver Name": "",
+                    "Client Name": "",
+                    "Origin": "",
+                    "Destination": "",
+                    "Distance": "",
+                    "Duration": "",
+                    "Created At": "",
+                    "Vehicle Type": "Total",
+                    "Amount": Total_Amount ,
+                });
+            }
+            
+            
+ 
+            let rowsLogDays = [];
+            self.dataa.forEach((data, index) => {
+                rowsLogDays.push({
+                    '#': index + 1,
+                    'Date': data.days,
+                    'Duration': data.durations
+                });
+            });
+            if(rowsLogDays.length!=0){
+                rowsLogDays.push({
+                    '#':"",
+                    'Date': "Total",
+                    'Duration': self.totalTimes,
+                });
+            }
+ 
+            
+
+            var rows = [];
+            self.dataToShow.forEach((dataP, index) => {
+                rows.push({
+                    '#': index + 1,
+                    'Login Date/Time': dataP.loginTime,
+                    'Logout Date/Time': dataP.logoutTime,
+                    'Duration': self.timeFormat(dataP.duration)
+                });
+            });if(rows.length!=0){
+                rows.push({
+                    '#': '',
+                    'Login Date/Time': '',
+                    'Logout Date/Time': "Total Time",
+                    'Duration': self.timeFormat(self.allLogsTSTime)
+                });
+            }
+ 
+            
+
+            var rowsToday = [];
+            self.todayLogs.forEach((dataP, index) => {
+                rowsToday.push({
+                    '#': index + 1,
+                    'Login Date/Time': dataP.loginTime,
+                    'Logout Date/Time': dataP.logoutTime,
+                    'Duration': self.timeFormat(dataP.duration)
+                });
+            });if(rowsToday.length!=0){
+                rowsToday.push({
+                    '#': "",
+                    'Login Date/Time': "",
+                    'Logout Date/Time': "Total Time",
+                    'Duration': self.timeFormat(todayLogsTSTime)
+                });
+            }
+ 
+            
+
+            var rowsWeek = [];
+            self.weekLogs.forEach((dataP, index) => {
+                rowsWeek.push({
+                    '#': index + 1,
+                    'Login Date/Time': dataP.loginTime,
+                    'Logout Date/Time': dataP.logoutTime,
+                    'Duration': self.timeFormat(dataP.duration)
+                });
+            });
+            if(rowsWeek.length!=0){
+                rowsWeek.push({
+                    '#': "",
+                    'Login Date/Time': "",
+                    'Logout Date/Time': "Total Time",
+                    'Duration': self.timeFormat(self.weekLogsTSTime) 
+                });
+            }
+            
+            
+           try{ var ws_drivers = XLSX.utils.json_to_sheet(rowspendingReqData);}catch(e){}
+          try{  var ws_drivers_wallet = XLSX.utils.json_to_sheet(rowswalletData);}catch(e){}
+          try{  var ws_drivers_commission = XLSX.utils.json_to_sheet(rowsinvoiceComData);}catch(e){}
+           try{  var ws_drivers_invoice = XLSX.utils.json_to_sheet(rowsinvoiceReqData);}catch(e){}
+            try{ var ws_drivers_bids = XLSX.utils.json_to_sheet(rowsbidsData);}catch(e){}
+          try{   var ws_drivers_ReqCompleted = XLSX.utils.json_to_sheet(rowsReqCompleted);}catch(e){}
+           try{  var ws_drivers_LogDays = XLSX.utils.json_to_sheet(rowsLogDays);}catch(e){}
+         try{    var ws_drivers_Logs = XLSX.utils.json_to_sheet(rows);}catch(e){}
+           try{  var ws_drivers_TodayLogs = XLSX.utils.json_to_sheet(rowsToday);}catch(e){}
+          try{  var ws_drivers_WeekLogs = XLSX.utils.json_to_sheet(rowsWeek);}catch(e){}
+
+ 
+            var wb = XLSX.utils.book_new();
+
+    try{if(self.ck0){ XLSX.utils.book_append_sheet(wb, ws_drivers_TodayLogs, "Logs Data by Today");}}catch(e){}
+    try{if(self.ck1){ XLSX.utils.book_append_sheet(wb, ws_drivers_WeekLogs, "Logs Data by Week");}}catch(e){}
+    try{if(self.ck2){ XLSX.utils.book_append_sheet(wb, ws_drivers_Logs, "Logs Data");}}catch(e){}
+    try{if(self.ck3){ XLSX.utils.book_append_sheet(wb, ws_drivers_LogDays, "Logs Data by Days");}}catch(e){}
+    try{if(self.ck4){ XLSX.utils.book_append_sheet(wb, ws_drivers, "Pending Requests Data");}}catch(e){}
+    try{if(self.ck5){ XLSX.utils.book_append_sheet(wb, ws_drivers_ReqCompleted, "Completed Requests Data");}}catch(e){}
+    try{if(self.ck6){ XLSX.utils.book_append_sheet(wb, ws_drivers_bids,  "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);}}catch(e){}
+    try{if(self.ck7){ XLSX.utils.book_append_sheet(wb, ws_drivers_invoice, "Earnings Summary");}}catch(e){}
+    try{if(self.ck8){ XLSX.utils.book_append_sheet(wb, ws_drivers_commission, "Commission Summary");}}catch(e){}
+    try{if(self.ck9){ XLSX.utils.book_append_sheet(wb, ws_drivers_wallet, "Wallet Summary");}}catch(e){}
+    
+
+    XLSX.writeFile(wb, self.$route.params.id +" "+moment().format("DD MMM YYYY HHMMSS") + ".xlsx");
+    
+ 
+
+        },
+        ExportDataPDF: function () {
+            let self = this;
+            if(self.checkSelectedList()){
+                 alert("Please Select any One Condition");
+                 return;
+                }
 
             let columnpendingReqData = [
                 {
@@ -386,16 +676,42 @@ export default {
                 },
             ];
             let rowswalletData = [];
+            let BDebit=0;
+            let BCredit=0; 
+            let BBalance=0; 
             Object.values(self.walletData).forEach((data, index) => {
                 rowswalletData.push({
                     "iD": index + 1,
                     "addedDate": data.addedAt,
                     "narration": data.narration,
-                    "debit": data.debit,
-                    "credit": data.credit,
-                    "balance": data.balance,
+                    "debit":  parseFloat( data.debit).toFixed(2) ,
+                    "credit": parseFloat(data.credit).toFixed(2) ,
+                    "balance":parseFloat(data.balance).toFixed(2),
                 })
+                BBalance=data.balance ; 
+                BDebit+= data.debit  ;  
+                BCredit+= data.credit  ;  
             })
+            if(rowswalletData.length!=0){ 
+                BDebit =parseFloat(BDebit).toFixed(2);
+                BCredit =parseFloat(BCredit).toFixed(2);
+                rowswalletData.push({
+                    "iD":  "",
+                    "addedDate": "",
+                    "narration": "Balance",
+                    "debit": "",
+                    "credit": "",
+                    "balance": BBalance,
+                })
+                rowswalletData.push({
+                    "iD":  "",
+                    "addedDate": "",
+                    "narration": "Total",
+                    "debit":  BDebit,
+                    "credit": BCredit,
+                    "balance": "",
+                })
+            }
             let columnsinvoiceComData = [
                 {
                     title: "#",
@@ -423,6 +739,7 @@ export default {
                 },
             ];
             let rowsinvoiceComData = [];
+            let TotalCommission=0;
             Object.values(self.invoiceComData).forEach((data, index) => {
                 rowsinvoiceComData.push({
                     "iD": index + 1,
@@ -432,7 +749,18 @@ export default {
                     "applyCommission": data.apply_commission,
                     "commissionAmount": data.commission_amount,
                 })
+                TotalCommission+=data.commission_amount;
             })
+            if(rowsinvoiceComData.length!=0){
+                rowsinvoiceComData.push({
+                    "iD": "",
+                    "date": "",
+                    "commissionInvoice": "",
+                    "orderInvoice": "",
+                    "applyCommission": "Total",
+                    "commissionAmount":  TotalCommission ,
+                })
+            }
             let columnsinvoiceReqData = [
                 {
                     title: "#",
@@ -456,6 +784,7 @@ export default {
                 },
             ];
             let rowsinvoiceReqData = [];
+            let EarnAmount=0;
             Object.values(self.invoiceReqData).forEach((data, index) => {
                 rowsinvoiceReqData.push({
                     "iD": index + 1,
@@ -464,7 +793,17 @@ export default {
                     "invoice": data.invoice_no,
                     "earn": data.amount,
                 })
+                EarnAmount+=data.amount;
             });
+            if(rowsinvoiceReqData.length!=0){
+                rowsinvoiceReqData.push({
+                    "iD": "",
+                    "date": "",
+                    "details": "",
+                    "invoice": "Total",
+                    "earn":  EarnAmount,
+                })
+            }
             let columnsbidsData = [
                 {
                     title: "#",
@@ -537,6 +876,7 @@ export default {
             ];
 
             let rowsReqCompleted = [];
+            let Total_Amount = 0;
             Object.values(self.completeReqData).forEach((data, index) => {
 
                 rowsReqCompleted.push({
@@ -551,7 +891,22 @@ export default {
                     "vehicleType": data.driver_data.vehicle,
                     "amount": data.bid_data.amount,
                 });
+                Total_Amount+= parseInt(data.bid_data.amount);
             });
+            if(rowsReqCompleted.length!=0){
+                rowsReqCompleted.push({
+                    "iD": "",
+                    "driverName": "",
+                    "clientName": "",
+                    "origin": "",
+                    "destination": "",
+                    "distance": "",
+                    "duration": "",
+                    "createdAt": "",
+                    "vehicleType": "Total",
+                    "amount": Total_Amount ,
+                });
+            }
 
             let columnsLogDays = [
                 {
@@ -575,7 +930,13 @@ export default {
                     'D': data.durations
                 });
             });
-
+            if(rowsLogDays.length!=0){
+            rowsLogDays.push({
+                'iD':"",
+                'date': "Total",
+                'D': self.totalTimes,
+            });
+}
             var columns = [
                 {
                     title: "#",
@@ -602,7 +963,15 @@ export default {
                     'LoT': dataP.logoutTime,
                     'D': self.timeFormat(dataP.duration)
                 });
-            });
+            });if(rows.length!=0){
+                rows.push({
+                    'iD': '',
+                    'LiT': '',
+                    'LoT': "Total Time",
+                    'D': self.timeFormat(self.allLogsTSTime)
+                });
+            }
+
             var columnsToday = [
                 {
                     title: "#",
@@ -629,7 +998,15 @@ export default {
                     'LoT': dataP.logoutTime,
                     'D': self.timeFormat(dataP.duration)
                 });
-            });
+            });if(rowsToday.length!=0){
+                rowsToday.push({
+                    'iD': "",
+                    'LiT': "",
+                    'LoT': "Total Time",
+                    'D': self.timeFormat(todayLogsTSTime)
+                });
+            }
+
             var columnsWeek = [
                 {
                     title: "#",
@@ -657,6 +1034,14 @@ export default {
                     'D': self.timeFormat(dataP.duration)
                 });
             });
+            if(rowsWeek.length!=0){
+                rowsWeek.push({
+                    'iD': "",
+                    'LiT': "",
+                    'LoT': "Total Time",
+                    'D': self.timeFormat(self.weekLogsTSTime) 
+                });
+            }
             var doc = new jsPDF("p", "pt");
 
             var img = new Image;
@@ -678,9 +1063,14 @@ export default {
                 doc.text(mar+75, 95, 'Mobile Number : ' + userProfile.MobileNumber);
                 doc.text(mar+75, 115, 'Adda Name       : ' + userProfile.AddaName);
                 doc.setFontSize(10);
-                doc.text(mar, 150, 'Data Filtered From   _________________ To _________________ ');
-                doc.text(mar+100, 150,  self.FromDate==""   ? "": ( self.FromDate==null?"": moment(self.FromDate).format("DD/MMM/YYYY"))) 
-                doc.text(mar+210, 150,  self.ToDate==""   ? "": ( self.ToDate==null? "":moment(self.ToDate).format("DD/MMM/YYYY"))) 
+                if(self.FromDate==null||self.ToDate==null||self.FromDate==""||self.ToDate==""){
+                    
+                }else{
+                    doc.text(mar, 150, 'Data Filtered From   _________________ To _________________ ');
+                    doc.text(mar+100, 150,  self.FromDate==""   ? "": ( self.FromDate==null?"": moment(self.FromDate).format("DD/MMM/YYYY"))) 
+                    doc.text(mar+210, 150,  self.ToDate==""   ? "": ( self.ToDate==null? "":moment(self.ToDate).format("DD/MMM/YYYY"))) 
+                }
+
                 doc.setFontSize(16);
 
 if(self.ck0){
@@ -1048,7 +1438,9 @@ if(self.ck6){
                         styles: {
                             columnWidth: 'auto'
                         },
-                        columnStyles: {},
+                        columnStyles: {
+                            bidPrice: {  halign: 'right' }, 
+                        },
                         styles: {
                             fontSize: 8,
                             overflow: 'linebreak',
@@ -1161,7 +1553,11 @@ if(self.ck8){
                         styles: {
                             columnWidth: 'auto'
                         },
-                        columnStyles: {},
+                        columnStyles: {
+                             
+                             applyCommission : {  halign: 'right' }, 
+                             commissionAmount :{  halign: 'right' },  
+                        },
                         styles: {
                             fontSize: 8,
                             overflow: 'linebreak',
@@ -1208,7 +1604,12 @@ if(self.ck9){
                         styles: {
                             columnWidth: 'auto'
                         },
-                        columnStyles: {},
+                        columnStyles: {
+                             debit :    {  halign: 'right' },
+                             credit : {  halign: 'right' },
+                             balance : {  halign: 'right' },
+                             
+                        },
                         styles: {
                             fontSize: 8,
                             overflow: 'linebreak',
@@ -1245,14 +1646,14 @@ if(self.ck9){
 
 
 
-                doc.setFontSize(14);
-                doc.text(40, maxPageSize, "____________________                                                ____________________");
-                doc.text(40, maxPageSize + 30, "   ISSUING Authority                                                        ADMIN ROADIOAPP");
-                doc.text(40, maxPageSize + 50, "      ROADIOAPP");
+                doc.setFontSize(10);
+                doc.text(40, maxPageSize, "____________________                                                                                                       ____________________");
+                doc.text(40, maxPageSize + 20, "   Issuing Authority                                                                                                                      Admin ROADIOAPP");
+                doc.text(40, maxPageSize + 35, "      ROADIOAPP");
 
-                doc.save("Profile" + ".pdf");
+                doc.save(self.$route.params.id +" "+moment().format("DD MMM YYYY HHMMSS") + ".pdf");
             };
-            img.crossOrigin = "https://firebasestorage.googleapis.com"; // for demo as we are at different origin than image
+            img.crossOrigin = "https://localhost"; // for demo as we are at different origin than image
             (this.profileImgURL != '') ? img.src = this.profileImgURL: img.src = 'https://s3-eu-west-1.amazonaws.com/philips-future-health-index/wp-content/uploads/2016/05/20132859/user.png'; // some random imgur image
 
 
@@ -1658,6 +2059,7 @@ if(self.ck9){
                             self.userRef.child(invoice_data.client_uid).once('value', function (clientSnap) {
                                 let client_data = clientSnap.val();
                                 self.invoiceReqDataTotal += parseInt(invoice_data.amount);
+                                
                                 self.invoiceReqData[row] = {
                                     client_data: client_data,
                                     driver_data: driver_data,
@@ -1699,7 +2101,8 @@ if(self.ck9){
                                 comInvItemData['order_invoice'] = func.getSetInvoiceNo(userReqInvSnap.key, userReqInvData.invoice_no, "U");
                                 comInvItemData['order_inv_key'] = userReqInvSnap.key;
                                 self.invoiceComData[key] = comInvItemData;
-                                self.invoiceComDataTotal += comInvItemData.commission_amount;
+                                self.invoiceComDataTotal  =parseFloat(parseFloat(self.invoiceComDataTotal) + parseFloat(comInvItemData.commission_amount)).toFixed(2);;
+                                 
                                 processItem++;
                                 if (processItem === key_length) {
                                     self.invoiceComData = func.sortObj(self.invoiceComData);
@@ -1726,7 +2129,7 @@ if(self.ck9){
                         let rowSel = walletData[row];
                         rowSel['addedAt'] = func.set_date_ser(new Date(func.decode_key(row)));
                         rowSel['balance'] = oldBalance = func.getBalance(oldBalance, rowSel.debit, rowSel.credit);
-
+                        rowSel['balance']  = parseFloat(rowSel['balance']).toFixed(2); 
                         self.totDebit += rowSel.debit;
                         self.totCredit += rowSel.credit;
                         self.walletData[row] = rowSel;
@@ -1774,6 +2177,9 @@ if(self.ck9){
             let keys = Object.keys(obj);
             let key_length = keys.length;
             return obj[keys[key_length - 1]];
+        },
+        Tofloat2(val){
+return parseFloat(val).toFixed(2);
         },
         getAddaName: function (self, AddaID) {
             if (self.AddaLoaded) {

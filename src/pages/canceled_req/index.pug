@@ -9,6 +9,31 @@ aside.right-side
             li Deliveries
             li Canceled Requests
     section.content
+                     
+        .row
+            .col-md-2  
+                date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
+            .col-md-2  
+                date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
+            .col-md-2  
+                button.btn.btn-default(v-on:click="FilterData") Search
+            .col-md-4  
+            .col-md-1
+                label(style="margin-bottom: 0px")
+                    input(type="checkbox",v-model='ExportOptions', name="Export",value="All" ,checked)  
+                    | All 
+                br
+                label(style="margin-bottom: 0px")
+                    input(type="checkbox",v-model='ExportOptions', name="Export",value="Week")  
+                    | Week
+                br                
+                label(style="margin-bottom: 0px")
+                    input(type="checkbox",v-model='ExportOptions', name="Export",value="Today")  
+                    | Today
+                br
+            .col-md-1
+                button.btn.btn-default(v-on:click="exportData") Export
+
         .row
             .col-xs-12
                 .box

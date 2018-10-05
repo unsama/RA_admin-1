@@ -1,9 +1,10 @@
 <template lang="pug">
     div
       .row
+        slot(name="inputsearch")   
         .col-md-3.col-md-offset-9
             .form-group
-              input.form-control(type='text' placeholder='Search' v-model='search_table')      
+              input.form-control(type='text' placeholder='Search' v-model='search_table')   
       table.table.table-hover.table-click(ref='table')
           thead
               slot(name="thead")

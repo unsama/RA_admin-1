@@ -147,7 +147,7 @@ aside.right-side
             .col-xs-3.col-lg-2
                 button.btn.btn-default(@click="SearchByDate(FromDate,ToDate)") Search
             .col-xs-3.col-lg-6 
-                button.btn.btn-default(@click="showPopup")  Export PDF 
+                button.btn.btn-default(@click="showPopup")  Export
             export_popup
                 slot
                     table.table.table--hover
@@ -209,7 +209,8 @@ aside.right-side
                                     input(type='checkbox', v-model='ck9')
                                 td
                                     label(for='checkbox') Wallet
-                button.btn.btn-primary(type='footer', slot='footer' , @click='ExportData') Export
+                button.btn.btn-primary(type='footer', slot='footer' , @click='ExportDataPDF') ExportPDF
+                button.btn.btn-primary(type='footer', slot='footer' , @click='ExportDataXLSX') ExportXLSX
                 
 
         
@@ -567,12 +568,12 @@ aside.right-side
                                                 b Balance
                                             td
                                             td
-                                            td {{ getLastRow(walletData).balance }}
+                                            td {{ Tofloat2(getLastRow(walletData).balance) }}
                                         tr
                                             td.text-right(colspan='3')
                                                 b Total
-                                            td {{ totDebit }}
-                                            td(colspan='2') {{ totCredit }}
+                                            td {{ Tofloat2(totDebit) }}
+                                            td(colspan='2') {{ Tofloat2(totCredit) }}
                 div.tab-pane#add_voucher(role='tabpanel')
                     .col-xs-12
                         .row
