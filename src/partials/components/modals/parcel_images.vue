@@ -6,7 +6,7 @@
             .modal-content
                 .modal-header
                     button.close(type='button', data-dismiss='modal') ×
-                    h4.modal-title Parcel Images {{Imgs.length}} - {{images}}
+                    h4.modal-title Parcel Images 
                 .modal-body
                     .parcelImagesCarousel.carousel.slide(data-ride="carousel" v-if="images.length > 0" v-bind:id="controlID()")
                         ol.carousel-indicators
@@ -59,9 +59,7 @@
             }, 
           watch: {
         images(val) {  
-           this.Imgs =  val  ;
-           console.log(this.Imgs);
-           console.log(this.images);
+           this.Imgs =  val  ; 
             }
         },
         methods: {

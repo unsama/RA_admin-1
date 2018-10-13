@@ -1,23 +1,28 @@
 aside.right-side
     section.content-header
-        h1 Completed Requests
+        h1 All Requests
         ol.breadcrumb
             li
                 router-link(to='/')
                     i.fa.fa-dashboard
                     |  Dashboard
             li Deliveries
-            li Completed Requests
+            li All Requests
     section.content
-                 
+                     
         .row
             .col-md-2  
                 date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
             .col-md-2  
-                date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')
-            .col-md-4                
+                date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate') 
+            .col-md-3                
                 input.form-control(type='text' placeholder='Search' v-model='search_t') 
-            .col-md-2  
+            .col-md-2   
+                select.form-control(v-model='selectedOption')
+                    option All
+                    option Canceled
+                    option Completed
+            .col-md-1  
                 button.btn.btn-default(v-on:click="FilterData") Search 
             .col-md-1
                 label(style="margin-bottom: 0px")
@@ -61,49 +66,40 @@ aside.right-side
                                                 tr
                                                     th 
                                                         input(type="checkbox", name="CheckByToday" ,v-on:click="toggleSelectToday",v-model="SelectToday")
-                                                    th S.No# 
-                                                    th Date
+                                                    th S.No#
+                                                    th Created Date
+                                                    th Canceled Date
+                                                    th Bids
                                                     th Request No.
                                                     th Client Name
                                                     th Client Number
-                                                    th Bids
-                                                    th Driver Name
-                                                    th Driver Number
                                                     th Origin
                                                     th Destination
                                                     th Distance
                                                     th Duration
-                                                    th Required Vehicle
-                                                    th Driver Vehicle
-                                                    th Reach Time
-                                                    th Start Time
-                                                    th Completed Time
-                                                    th Parcel Rating
-                                                    th Labours
-                                                    th Floors
+                                                    th Required Vehicle 
+                                                    th Reason 
+                                                    th Labours 
+                                                    th Floors 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in today')
                                                     td
                                                         input(type="checkbox", name="CheckBytoday" ,:value = "row.reqData.id" ,v-model="SelectedRequest" )
                                                     td {{ ind+1 }}
                                                     td {{ dateFormat(row.reqData.createdAt) }}
-                                                    td {{ row.reqData.id }}
-                                                    td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
-                                                    td +{{ row.clientData.mob_no }}
+                                                    td {{ dateFormat(row.reqData.canceledAt) }}
                                                     td
                                                         button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id,row.reqData.createdAt)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
-                                                    td {{ row.driverData.first_name +" "+ row.driverData.last_name }}
-                                                    td +{{ row.driverData.mob_no }}
+                                                    td {{ row.reqData.id }}
+
+                                                    td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
+                                                    td +{{row.clientData.mob_no}}
                                                     td {{ row.reqData.orgText }}
                                                     td {{ row.reqData.desText }}
                                                     td {{ row.reqData.disText }}
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
-                                                    td {{ row.driverData.vehicle }}
-                                                    td {{ dateFormat(row.compReqData.reach_time )}}
-                                                    td {{ dateFormat(row.compReqData.active_time )}}
-                                                    td {{ dateFormat(row.compReqData.complete_time )}}
-                                                    td {{ row.compReqData.rating }}
+                                                    td {{ row.reqData.reason }}
                                                     td {{ row.reqData.labours }}
                                                     td {{ row.reqData.floors }}
                             
@@ -119,49 +115,40 @@ aside.right-side
                                                 tr
                                                     th 
                                                         input(type="checkbox", name="CheckByWeek",v-on:click="toggleSelectWeek" ,v-model="SelectWeek")
-                                                    th S.No# 
-                                                    th Date
+                                                    th S.No#
+                                                    th Created Date
+                                                    th Canceled Date
+                                                    th Bids
                                                     th Request No.
                                                     th Client Name
                                                     th Client Number
-                                                    th Bids
-                                                    th Driver Name
-                                                    th Driver Number
                                                     th Origin
                                                     th Destination
                                                     th Distance
                                                     th Duration
-                                                    th Required Vehicle
-                                                    th Driver Vehicle
-                                                    th Reach Time
-                                                    th Start Time
-                                                    th Completed Time
-                                                    th Parcel Rating
-                                                    th Labours
-                                                    th Floors
+                                                    th Required Vehicle 
+                                                    th Reason 
+                                                    th Labours 
+                                                    th Floors 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in week')
                                                     td
                                                         input(type="checkbox", name="CheckByWeek" ,:value = "row.reqData.id" ,v-model="SelectedRequest")
                                                     td {{ ind+1 }}
                                                     td {{ dateFormat(row.reqData.createdAt) }}
-                                                    td {{ row.reqData.id }}
-                                                    td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
-                                                    td +{{ row.clientData.mob_no }}
+                                                    td {{ dateFormat(row.reqData.canceledAt) }}
                                                     td
                                                         button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id,row.reqData.createdAt)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
-                                                    td {{ row.driverData.first_name +" "+ row.driverData.last_name }}
-                                                    td +{{ row.driverData.mob_no }}
+                                                    td {{ row.reqData.id }}
+ 
+                                                    td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
+                                                    td +{{row.clientData.mob_no}}
                                                     td {{ row.reqData.orgText }}
                                                     td {{ row.reqData.desText }}
                                                     td {{ row.reqData.disText }}
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
-                                                    td {{ row.driverData.vehicle }}
-                                                    td {{ dateFormat(row.compReqData.reach_time )}}
-                                                    td {{ dateFormat(row.compReqData.active_time )}}
-                                                    td {{ dateFormat(row.compReqData.complete_time )}}
-                                                    td {{ row.compReqData.rating }}
+                                                    td {{ row.reqData.reason }}
                                                     td {{ row.reqData.labours }}
                                                     td {{ row.reqData.floors }}
                             
@@ -177,49 +164,40 @@ aside.right-side
                                                 tr
                                                     th 
                                                         input(type="checkbox", name="CheckByAll",v-on:click="toggleSelectAll",v-model="SelectAll")
-                                                    th S.No# 
-                                                    th Date
+                                                    th S.No#
+                                                    th Created Date
+                                                    th Canceled Date
+                                                    th Bids
                                                     th Request No.
                                                     th Client Name
                                                     th Client Number
-                                                    th Bids
-                                                    th Driver Name
-                                                    th Driver Number
                                                     th Origin
                                                     th Destination
                                                     th Distance
                                                     th Duration
-                                                    th Required Vehicle
-                                                    th Driver Vehicle
-                                                    th Reach Time
-                                                    th Start Time
-                                                    th Completed Time
-                                                    th Parcel Rating
-                                                    th Labours
+                                                    th Required Vehicle 
+                                                    th Reason 
+                                                    th Labours 
                                                     th Floors 
                                             template(slot="tbody")
                                                 tr(v-for='(row, ind) in all')
-                                                    td
+                                                    td 
                                                         input(type="checkbox", name="CheckByAll"  ,:value = "row.reqData.id" ,v-model="SelectedRequest")
-                                                    td {{ ind+1 }}  
+                                                    td {{ ind+1 }}
                                                     td {{ dateFormat(row.reqData.createdAt) }}
-                                                    td {{ row.reqData.id }}
-                                                    td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
-                                                    td +{{ row.clientData.mob_no }}
+                                                    td {{ dateFormat(row.reqData.canceledAt) }}
                                                     td
                                                         button.btn.btn-sm.btn-info(data-toggle='modal' data-target='#push_modal' v-on:click='openBidsReq(row.reqData.id,row.reqData.createdAt)' style="margin-bottom: 5px;margin-right: 5px;") {{row.Bids}} 
-                                                    td {{ row.driverData.first_name +" "+ row.driverData.last_name }}
-                                                    td +{{ row.driverData.mob_no }}
+                                                    td {{ row.reqData.id }}
+
+                                                    td {{ row.clientData.first_name +" "+ row.clientData.last_name }}
+                                                    td +{{row.clientData.mob_no}}
                                                     td {{ row.reqData.orgText }}
                                                     td {{ row.reqData.desText }}
                                                     td {{ row.reqData.disText }}
                                                     td {{ row.reqData.durText }}
                                                     td {{ row.reqData.vecType }}
-                                                    td {{ row.driverData.vehicle }}
-                                                    td {{ dateFormat(row.compReqData.reach_time )}}
-                                                    td {{ dateFormat(row.compReqData.active_time )}}
-                                                    td {{ dateFormat(row.compReqData.complete_time )}}
-                                                    td {{ row.compReqData.rating }}
+                                                    td {{ row.reqData.reason }}
                                                     td {{ row.reqData.labours }}
                                                     td {{ row.reqData.floors }}
                         list_bids(v-bind:sel_req_id="assign_req_id_md",:req_time="reqestTime")

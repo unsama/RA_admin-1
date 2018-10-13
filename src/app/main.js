@@ -17,6 +17,8 @@ Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(SimpleVueValidation);
 
+
+
 const router = new VueRouter({
     mode: 'history',
     routes,

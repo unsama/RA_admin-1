@@ -1,5 +1,23 @@
+import firebase from 'firebase';
+ 
+let LiverootUID = 'DerqRbXa2iZYe8Lw3bTrxI4jtv92';
+let LiveadminUID = 'EqSMcc6A2yfgKAjiVnLMaGD82P93';
 export default {
     created: function(){
+
+        let self = this;
+        firebase.auth().onAuthStateChanged((user) => {
+            switch (user.uid) {
+ 
+                case LiverootUID:{self.isRoot = true; break}
+                case LiveadminUID:{self.isRoot = false; break}    
+ 
+            }
+        })
+
+
+
+
         $(function(){
             $("body").on('click', 'li.treeview > a', function(e){
                 e.preventDefault();
@@ -42,7 +60,7 @@ export default {
     },
     data: function(){
         return {
-
+            isRoot:false,
         }
     },
     methods: {

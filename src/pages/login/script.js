@@ -1,5 +1,4 @@
 import firebase from 'firebase'
-
 import SimpleVueValidation from 'simple-vue-validator'
 const Validator = SimpleVueValidation.Validator;
 

@@ -66,6 +66,10 @@ aside.left-side.sidebar-offcanvas
                         router-link(to='/admin/requests/canceled')
                             i.fa.fa-angle-double-right
                             |  Canceled
+                    li(v-if="isRoot")
+                        router-link(to='/admin/requests/All')
+                            i.fa.fa-angle-double-right
+                            |  All
             li.treeview
                 a(href='#')
                     i.fa.fa-money

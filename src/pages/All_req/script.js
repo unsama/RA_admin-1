@@ -6,7 +6,10 @@ import XLSX from 'xlsx'
 import tableComp from '../../partials/components/html_utils/tabel_comp.vue'
 import ListBids from '../../partials/components/modals/list_bids.vue'
 import Datepicker from 'vuejs-datepicker'
- 
+import {
+    isUndefined
+} from 'util';
+
 let LiverootUID = 'DerqRbXa2iZYe8Lw3bTrxI4jtv92';
 let LiveadminUID = 'EqSMcc6A2yfgKAjiVnLMaGD82P93';
 export default {
@@ -20,17 +23,42 @@ export default {
         firebase.auth().onAuthStateChanged((user) => {
             switch (user.uid) {
  
-                case LiverootUID:{self.isRoot = true; break}
-                case LiveadminUID:{self.isRoot = false; break}    
- 
+                case LiverootUID:
+                    {
+                        self.isRoot = true;;
+                        break
+                    }
+                case LiveadminUID:
+                    {
+                        self.isRoot = false;self.$router.push('/admin');;
+                        break
+                    }
+
+
+
+                case rootUID:
+                    {
+                        self.isRoot = true;
+                        break
+                    }
+                case adminUID:
+                    {
+                        self.isRoot = false;self.$router.push('/admin');
+                        break
+                    }
+
             }
         })
         const db = firebase.database();
         self.userRef = db.ref('/users');
         self.userReqRef = db.ref('/user_requests');
+        self.completeReqRef = db.ref('/complete_requests');
         self.driverBidsRef = db.ref('/driver_bids');
-        self.user_requestsRef = db.ref('/user_requests'); 
+        self.userRequestsRef = db.ref('/user_requests');
+        self.userRequestInvoicesRef = db.ref('/user_request_invoices');
+        self.driverCommissionInvoicesRef = db.ref('/driver_commission_invoices');
         self.deletedRequestsRef = db.ref('/deleted_requests');
+        self.walletRef = db.ref('/wallet');
         self.cancelRequestListener();
 
     },
@@ -38,8 +66,10 @@ export default {
         this.userReqRef.off();
     },
     data: function () {
-        return {            
-            isRoot:false,
+        return {
+            selectedOption:'All',
+            isRoot: false,
+            iti: 0,
             search_t: "",
             IsBackuped: false,
             dataLoad: true,
@@ -68,68 +98,66 @@ export default {
             let self = this;
             self.dataLoad = true;
 
-            doit().then(function () {
-                self.dataLoad = false;
+            let DeleteList = [];
+
+            self.userRequestsRef.once('value', snap => {
+                snap.forEach(el => {
+                    let A__key = el.key;
+                    Object.keys(el.val()).forEach(sbel => {
+                        self.SelectedRequest.forEach(id => {
+                            if (id == sbel) {
+                                DeleteList.push(A__key + '/' + sbel);
+                                //console.log('data matched');
+                            }
+                        });
+                    });
+                });
+                // console.log("Start")
+                DeleteList.forEach(id => {
+
+                    //console.log(id);
+                    let ids = id.split("/");
+                    self.deletedRequestsRef.child(ids[1]).set('Deleted');
+                    self.userRequestsRef.child(id).remove() //////////// Delete From 
+                    self.driverBidsRef.child(ids[1]).remove() //////////// Delete From 
+
+
+                    self.completeReqRef.child(ids[1]).remove() //////////// Delete From 
+
+                    self.userRequestInvoicesRef.orderByChild('req_id').equalTo(ids[1]).once("value", function (snapshotUserReq) {
+                        snapshotUserReq.forEach(function (data) {
+
+                            self.walletRef.orderByChild('narration').once('value', snap => {
+                                let IDDATA = ('U' + data.val().invoice_no);
+                                snap.forEach(wData => {
+                                    let IDVALUE = wData.val().narration;
+                                    let VARFORMATCHING = IDVALUE.substr(IDVALUE.length - IDDATA.length);
+                                    if (VARFORMATCHING == IDDATA) {
+                                        self.walletRef.child(wData.key).remove() //////////// Delete From 
+                                    }
+                                });
+                            })
+                            self.userRequestInvoicesRef.child(data.key).remove(e => {
+                               // console.log("Done>");
+                            }) //////////// Delete From 
+                        });
+
+                    });
+
+                    self.driverCommissionInvoicesRef.orderByChild('req_id').equalTo(ids[1]).once("value", function (snapshot) {
+                        snapshot.forEach(function (data) {
+                            self.driverCommissionInvoicesRef.child(data.key).remove() //////////// Delete From 
+                        });
+                    })
+
+                });
+
+
             });
 
 
-            async function doit() {
-                await DeleteDataSelected();
-            }
-
-            function DeleteDataSelected() {
-                return new Promise(function (resolve, reject) {
-                    let DeleteList = [];
-                    self.user_requestsRef.once('value', snap => {
-                        snap.forEach(el => {
-                            let A__key = el.key;
-                            Object.keys(el.val()).forEach(sbel => {
-                                self.SelectedRequest.forEach(id => {
-                                    if (id == sbel)
-                                        DeleteList.push(A__key + '/' + sbel)
-                                });
-                            });
-                        });
-                    });
-                    if (self.SelectedRequest.length) {
-                        self.dataLoad = true;
-                        DeleteList.forEach((id, index) => {
-                            self.user_requestsRef.child(id).remove(e => {
-                                let ids = id.split("/");
-                                self.deletedRequestsRef.child(ids[1]).set('Deleted');
-                                self.driverBidsRef.child(ids[1]).remove()
-
-                                function removeA(arr) {
-                                    var what, a = arguments,
-                                        L = a.length,
-                                        ax;
-                                    while (L > 1 && arr.length) {
-                                        what = a[--L];
-                                        while ((ax = arr.indexOf(what)) !== -1) {
-                                            arr.splice(ax, 1);
-                                        }
-                                    }
-                                    return arr;
-                                }
-                                removeA(self.SelectedRequest, ids[1]);
-
-                                if (index + 1 == DeleteList.length) {
-                                    self.search_t = "";
-                                    self.SelectToday = false;
-                                    self.SelectWeek = false;
-                                    self.SelectAll = false;
-                                    self.dataLoad = false;
-                                }
-                            });
-                        });
-                    } else {
-                        self.dataLoad = false;
-                        alert("Please Select Records");
-                    }
-
-                })
-            }
-
+            self.cancelRequestListener();
+            self.dataLoad = !true;
         },
 
         toggleSelectToday: function () {
@@ -276,14 +304,22 @@ export default {
                 }
             })
 
-            let startTime = self.FromDate == "" ? '' : self.FromDate == undefined ? '' : moment(self.FromDate).startOf('day').unix()
-            let endTime = self.ToDate == "" ? '' : self.ToDate == undefined ? '' : moment(self.ToDate).endOf('day').unix()
-
+            let startTime = self.FromDate == "" ? '' : self.FromDate == undefined ? '' : moment(self.FromDate).startOf('day').unix();
+            let endTime = self.ToDate == "" ? '' : self.ToDate == undefined ? '' : moment(self.ToDate).endOf('day').unix();
 
             self.all = [];
             TextedFiltered.forEach(function (item, ind) {
+
                 if ((moment(item.reqData.createdAt).unix() >= startTime && moment(item.reqData.createdAt).unix() <= endTime) || (startTime == '' || endTime == '')) {
+                     
+ 
+                    if (item.reqData.hasOwnProperty("canceledAt") && self.selectedOption=="Canceled")
+                    self.all.push(item); 
+                    if (!(item.reqData.hasOwnProperty("canceledAt")) && self.selectedOption=="Completed")
+                    self.all.push(item); 
+                    if (self.selectedOption=="All")
                     self.all.push(item);
+
                 }
             });
             self.week = [];
@@ -355,9 +391,6 @@ export default {
                 }
             });
 
-
-
-
             /* generate an XLSX file */
             try {
                 XLSX.writeFile(wb, "Export_Canceled_Requests_Data.xlsx");
@@ -367,6 +400,10 @@ export default {
 
         },
         dateFormat(ms) {
+            if (isUndefined(ms)) {
+                return ms;
+            }
+
             return moment(ms).format("hh:mm A, DD/MMM/YYYY")
         },
         openBidsReq(req_id, req_time) {
@@ -395,11 +432,10 @@ export default {
                 let grabData = []
 
                 if (snap.numChildren() > 0) {
-                    //console.log(snap.val())
 
                     await Promise.all(_.map(snap.val(), async (userReqs, key) => {
                         await Promise.all(_.map(userReqs, async (reqs) => {
-                            if (reqs.hasOwnProperty("canceledAt")) {
+                            if ( /*reqs.hasOwnProperty("canceledAt")*/ true) {
 
                                 let BidsSnap = await self.driverBidsRef.child(reqs.id).once('value');
                                 let clientSnap = await self.userRef.child(key).once('value');
@@ -459,10 +495,13 @@ export default {
                     self.week = week_grabData;
 
                     self.dataLoad = false;
+                    self.FilterData();
                 } else {
                     self.dataLoad = false;
+                     self.FilterData();
                 }
             })
+            
         }
     }
 }

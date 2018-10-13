@@ -487,7 +487,9 @@ aside.right-side
                                         tr(v-for="(row, key, index) in invoiceReqData")
                                             td {{ index+1 }}
                                             td {{ row.createdAt }}
-                                            td From({{ row.req_data.orgText }}) To({{ row.req_data.desText }}) User({{ row.client_data.first_name }}  {{ row.client_data.last_name }} ) Driver({{ row.driver_data.first_name }} {{ row.driver_data.last_name }})
+                                            //td From({{ row.req_data.orgText }}) To({{ row.req_data.desText }}) User({{ row.client_data.first_name }}  {{ row.client_data.last_name }} ) Driver({{ row.driver_data.first_name }} {{ row.driver_data.last_name }})
+                                            td(v-if="row.req_data") From({{ row.req_data.orgText }}) To({{ row.req_data.desText }}) User({{ row.client_data.first_name }}  {{ row.client_data.last_name }} ) Driver({{ row.driver_data.first_name }} {{ row.driver_data.last_name }})
+                                            td(v-else) 
                                             td
                                                 router-link(v-bind:to="'/admin/invoice/'+key") {{ row.invoice_no }}
                                             td {{ row.amount }}

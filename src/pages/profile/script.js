@@ -6,7 +6,7 @@ import exportPopup from '../../partials/components/modals/Export_popup.vue'
 import jsPDF from 'jspdf'
 require("jspdf-autotable");
 
-import XLSX from 'xlsx' 
+import XLSX from 'xlsx'
 import Datepicker from 'vuejs-datepicker';
 import SimpleVueValidation from 'simple-vue-validator'
 const Validator = SimpleVueValidation.Validator;
@@ -263,7 +263,7 @@ export default {
     },
     watch: {
         allLogs: function (val) {
-            this.filterLogs(this, val, this.ToDate, this.FromDate); 
+            this.filterLogs(this, val, this.ToDate, this.FromDate);
         },
         search_table1: function (val) {
             func.tableSearch(this.$refs.table1, val);
@@ -294,30 +294,31 @@ export default {
         }
     },
     methods: {
-        checkSelectedList(){ 
-            if( 
-                this.ck0== true||
-                this.ck1== true||
-                this.ck2== true||
-                this.ck3== true||
-                this.ck4== true||
-                this.ck5== true||
-                this.ck6== true||
-                this.ck7== true||
-                this.ck8== true||
-                this.ck9== true 
-            ){
- return false;
-            }return true;
-           
+        checkSelectedList() {
+            if (
+                this.ck0 == true ||
+                this.ck1 == true ||
+                this.ck2 == true ||
+                this.ck3 == true ||
+                this.ck4 == true ||
+                this.ck5 == true ||
+                this.ck6 == true ||
+                this.ck7 == true ||
+                this.ck8 == true ||
+                this.ck9 == true
+            ) {
+                return false;
+            }
+            return true;
+
         },
-        ExportDataXLSX: function(){
-            
+        ExportDataXLSX: function () {
+
             let self = this;
-            if(self.checkSelectedList()){
-                 alert("Please Select any One Condition");
-                 return;
-                }
+            if (self.checkSelectedList()) {
+                alert("Please Select any One Condition");
+                return;
+            }
             let rowspendingReqData = {};
             Object.values(self.pendingReqData).forEach((data, index) => {
                 rowspendingReqData.push({
@@ -334,31 +335,31 @@ export default {
                     "Status": data.active_req_data.status,
                 })
             })
-            
+
 
 
             let rowswalletData = [];
-            let BDebit=0;
-            let BCredit=0; 
-            let BBalance=0; 
+            let BDebit = 0;
+            let BCredit = 0;
+            let BBalance = 0;
             Object.values(self.walletData).forEach((data, index) => {
                 rowswalletData.push({
                     "#": index + 1,
                     "Added Date": data.addedAt,
                     "Narration": data.narration,
-                    "Debit":  parseFloat( data.debit).toFixed(2) ,
-                    "Credit": parseFloat(data.credit).toFixed(2) ,
-                    "Balance":parseFloat(data.balance).toFixed(2),
+                    "Debit": parseFloat(data.debit).toFixed(2),
+                    "Credit": parseFloat(data.credit).toFixed(2),
+                    "Balance": parseFloat(data.balance).toFixed(2),
                 })
-                BBalance=data.balance ; 
-                BDebit+= data.debit  ;  
-                BCredit+= data.credit  ;  
+                BBalance = data.balance;
+                BDebit += data.debit;
+                BCredit += data.credit;
             })
-            if(rowswalletData.length!=0){ 
-                BDebit =parseFloat(BDebit).toFixed(2);
-                BCredit =parseFloat(BCredit).toFixed(2);
+            if (rowswalletData.length != 0) {
+                BDebit = parseFloat(BDebit).toFixed(2);
+                BCredit = parseFloat(BCredit).toFixed(2);
                 rowswalletData.push({
-                    "#":  "",
+                    "#": "",
                     "Added Date": "",
                     "Narration": "Balance",
                     "Debit": "",
@@ -366,19 +367,19 @@ export default {
                     "Balance": BBalance,
                 })
                 rowswalletData.push({
-                    "#":  "",
+                    "#": "",
                     "Added Date": "",
                     "Narration": "Total",
-                    "Debit":  BDebit,
+                    "Debit": BDebit,
                     "Credit": BCredit,
                     "Balance": "",
                 })
             }
-             
-            
+
+
 
             let rowsinvoiceComData = [];
-            let TotalCommission=0;
+            let TotalCommission = 0;
             Object.values(self.invoiceComData).forEach((data, index) => {
                 rowsinvoiceComData.push({
                     "#": index + 1,
@@ -388,23 +389,23 @@ export default {
                     "Apply Commission(%)": data.apply_commission,
                     "Commission Amount": data.commission_amount,
                 })
-                TotalCommission+=data.commission_amount;
+                TotalCommission += data.commission_amount;
             })
-            if(rowsinvoiceComData.length!=0){
+            if (rowsinvoiceComData.length != 0) {
                 rowsinvoiceComData.push({
                     "#": "",
                     "Date": "",
                     "Commission Invoice": "",
                     "Order Invoice#": "",
                     "Apply Commission(%)": "Total",
-                    "Commission Amount":  TotalCommission ,
+                    "Commission Amount": TotalCommission,
                 })
             }
- 
-            
+
+
 
             let rowsinvoiceReqData = [];
-            let EarnAmount=0;
+            let EarnAmount = 0;
             Object.values(self.invoiceReqData).forEach((data, index) => {
                 rowsinvoiceReqData.push({
                     "#": index + 1,
@@ -413,20 +414,20 @@ export default {
                     "Invoice": data.invoice_no,
                     "Earn": data.amount,
                 })
-                EarnAmount+=data.amount;
+                EarnAmount += data.amount;
             });
-            if(rowsinvoiceReqData.length!=0){
+            if (rowsinvoiceReqData.length != 0) {
                 rowsinvoiceReqData.push({
                     "#": "",
                     "Date": "",
                     "Details": "",
                     "Invoice": "Total",
-                    "Earn":  EarnAmount,
+                    "Earn": EarnAmount,
                 })
             }
-            
-            
- 
+
+
+
             let rowsbidsData = [];
             self.bidsData.forEach((data, index) => {
                 rowsbidsData.push({
@@ -437,7 +438,7 @@ export default {
                 })
             })
 
-            
+
 
             let rowsReqCompleted = [];
             let Total_Amount = 0;
@@ -455,9 +456,9 @@ export default {
                     "Vehicle Type": data.driver_data.vehicle,
                     "Amount": data.bid_data.amount,
                 });
-                Total_Amount+= parseInt(data.bid_data.amount);
+                Total_Amount += parseInt(data.bid_data.amount);
             });
-            if(rowsReqCompleted.length!=0){
+            if (rowsReqCompleted.length != 0) {
                 rowsReqCompleted.push({
                     "#": "",
                     "Driver Name": "",
@@ -468,12 +469,12 @@ export default {
                     "Duration": "",
                     "Created At": "",
                     "Vehicle Type": "Total",
-                    "Amount": Total_Amount ,
+                    "Amount": Total_Amount,
                 });
             }
-            
-            
- 
+
+
+
             let rowsLogDays = [];
             self.dataa.forEach((data, index) => {
                 rowsLogDays.push({
@@ -482,15 +483,15 @@ export default {
                     'Duration': data.durations
                 });
             });
-            if(rowsLogDays.length!=0){
+            if (rowsLogDays.length != 0) {
                 rowsLogDays.push({
-                    '#':"",
+                    '#': "",
                     'Date': "Total",
                     'Duration': self.totalTimes,
                 });
             }
- 
-            
+
+
 
             var rows = [];
             self.dataToShow.forEach((dataP, index) => {
@@ -500,7 +501,8 @@ export default {
                     'Logout Date/Time': dataP.logoutTime,
                     'Duration': self.timeFormat(dataP.duration)
                 });
-            });if(rows.length!=0){
+            });
+            if (rows.length != 0) {
                 rows.push({
                     '#': '',
                     'Login Date/Time': '',
@@ -508,8 +510,8 @@ export default {
                     'Duration': self.timeFormat(self.allLogsTSTime)
                 });
             }
- 
-            
+
+
 
             var rowsToday = [];
             self.todayLogs.forEach((dataP, index) => {
@@ -519,16 +521,17 @@ export default {
                     'Logout Date/Time': dataP.logoutTime,
                     'Duration': self.timeFormat(dataP.duration)
                 });
-            });if(rowsToday.length!=0){
+            });
+            if (rowsToday.length != 0) {
                 rowsToday.push({
                     '#': "",
                     'Login Date/Time': "",
                     'Logout Date/Time': "Total Time",
-                    'Duration': self.timeFormat(todayLogsTSTime)
+                    'Duration': self.timeFormat(self.todayLogsTSTime)
                 });
             }
- 
-            
+
+
 
             var rowsWeek = [];
             self.weekLogs.forEach((dataP, index) => {
@@ -539,56 +542,115 @@ export default {
                     'Duration': self.timeFormat(dataP.duration)
                 });
             });
-            if(rowsWeek.length!=0){
+            if (rowsWeek.length != 0) {
                 rowsWeek.push({
                     '#': "",
                     'Login Date/Time': "",
                     'Logout Date/Time': "Total Time",
-                    'Duration': self.timeFormat(self.weekLogsTSTime) 
+                    'Duration': self.timeFormat(self.weekLogsTSTime)
                 });
             }
-            
-            
-           try{ var ws_drivers = XLSX.utils.json_to_sheet(rowspendingReqData);}catch(e){}
-          try{  var ws_drivers_wallet = XLSX.utils.json_to_sheet(rowswalletData);}catch(e){}
-          try{  var ws_drivers_commission = XLSX.utils.json_to_sheet(rowsinvoiceComData);}catch(e){}
-           try{  var ws_drivers_invoice = XLSX.utils.json_to_sheet(rowsinvoiceReqData);}catch(e){}
-            try{ var ws_drivers_bids = XLSX.utils.json_to_sheet(rowsbidsData);}catch(e){}
-          try{   var ws_drivers_ReqCompleted = XLSX.utils.json_to_sheet(rowsReqCompleted);}catch(e){}
-           try{  var ws_drivers_LogDays = XLSX.utils.json_to_sheet(rowsLogDays);}catch(e){}
-         try{    var ws_drivers_Logs = XLSX.utils.json_to_sheet(rows);}catch(e){}
-           try{  var ws_drivers_TodayLogs = XLSX.utils.json_to_sheet(rowsToday);}catch(e){}
-          try{  var ws_drivers_WeekLogs = XLSX.utils.json_to_sheet(rowsWeek);}catch(e){}
 
- 
+
+            try {
+                var ws_drivers = XLSX.utils.json_to_sheet(rowspendingReqData);
+            } catch (e) {}
+            try {
+                var ws_drivers_wallet = XLSX.utils.json_to_sheet(rowswalletData);
+            } catch (e) {}
+            try {
+                var ws_drivers_commission = XLSX.utils.json_to_sheet(rowsinvoiceComData);
+            } catch (e) {}
+            try {
+                var ws_drivers_invoice = XLSX.utils.json_to_sheet(rowsinvoiceReqData);
+            } catch (e) {}
+            try {
+                var ws_drivers_bids = XLSX.utils.json_to_sheet(rowsbidsData);
+            } catch (e) {}
+            try {
+                var ws_drivers_ReqCompleted = XLSX.utils.json_to_sheet(rowsReqCompleted);
+            } catch (e) {}
+            try {
+                var ws_drivers_LogDays = XLSX.utils.json_to_sheet(rowsLogDays);
+            } catch (e) {}
+            try {
+                var ws_drivers_Logs = XLSX.utils.json_to_sheet(rows);
+            } catch (e) {}
+            try {
+                var ws_drivers_TodayLogs = XLSX.utils.json_to_sheet(rowsToday);
+            } catch (e) {}
+            try {
+                var ws_drivers_WeekLogs = XLSX.utils.json_to_sheet(rowsWeek);
+            } catch (e) {}
+
+
             var wb = XLSX.utils.book_new();
 
-    try{if(self.ck0){ XLSX.utils.book_append_sheet(wb, ws_drivers_TodayLogs, "Logs Data by Today");}}catch(e){}
-    try{if(self.ck1){ XLSX.utils.book_append_sheet(wb, ws_drivers_WeekLogs, "Logs Data by Week");}}catch(e){}
-    try{if(self.ck2){ XLSX.utils.book_append_sheet(wb, ws_drivers_Logs, "Logs Data");}}catch(e){}
-    try{if(self.ck3){ XLSX.utils.book_append_sheet(wb, ws_drivers_LogDays, "Logs Data by Days");}}catch(e){}
-    try{if(self.ck4){ XLSX.utils.book_append_sheet(wb, ws_drivers, "Pending Requests Data");}}catch(e){}
-    try{if(self.ck5){ XLSX.utils.book_append_sheet(wb, ws_drivers_ReqCompleted, "Completed Requests Data");}}catch(e){}
-    try{if(self.ck6){ XLSX.utils.book_append_sheet(wb, ws_drivers_bids,  "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);}}catch(e){}
-    try{if(self.ck7){ XLSX.utils.book_append_sheet(wb, ws_drivers_invoice, "Earnings Summary");}}catch(e){}
-    try{if(self.ck8){ XLSX.utils.book_append_sheet(wb, ws_drivers_commission, "Commission Summary");}}catch(e){}
-    try{if(self.ck9){ XLSX.utils.book_append_sheet(wb, ws_drivers_wallet, "Wallet Summary");}}catch(e){}
-    
+            try {
+                if (self.ck0) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_TodayLogs, "Logs Data by Today");
+                }
+            } catch (e) {}
+            try {
+                if (self.ck1) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_WeekLogs, "Logs Data by Week");
+                }
+            } catch (e) {}
+            try {
+                if (self.ck2) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_Logs, "Logs Data");
+                }
+            } catch (e) {}
+            try {
+                if (self.ck3) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_LogDays, "Logs Data by Days");
+                }
+            } catch (e) {}
+            try {
+                if (self.ck4) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers, "Pending Requests Data");
+                }
+            } catch (e) {}
+            try {
+                if (self.ck5) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_ReqCompleted, "Completed Requests Data");
+                }
+            } catch (e) {}
+            try {
+                if (self.ck6) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_bids, "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);
+                }
+            } catch (e) {}
+            try {
+                if (self.ck7) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_invoice, "Earnings Summary");
+                }
+            } catch (e) {}
+            try {
+                if (self.ck8) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_commission, "Commission Summary");
+                }
+            } catch (e) {}
+            try {
+                if (self.ck9) {
+                    XLSX.utils.book_append_sheet(wb, ws_drivers_wallet, "Wallet Summary");
+                }
+            } catch (e) {}
 
-    XLSX.writeFile(wb, self.$route.params.id +" "+moment().format("DD MMM YYYY HHMMSS") + ".xlsx");
-    
- 
+
+            XLSX.writeFile(wb, self.$route.params.id + " " + moment().format("DD MMM YYYY HHMMSS") + ".xlsx");
+
+
 
         },
         ExportDataPDF: function () {
             let self = this;
-            if(self.checkSelectedList()){
-                 alert("Please Select any One Condition");
-                 return;
-                }
+            if (self.checkSelectedList()) {
+                alert("Please Select any One Condition");
+                return;
+            }
 
-            let columnpendingReqData = [
-                {
+            let columnpendingReqData = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -649,8 +711,7 @@ export default {
                     "status": data.active_req_data.status,
                 })
             })
-            let columnswalletData = [
-                {
+            let columnswalletData = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -676,27 +737,27 @@ export default {
                 },
             ];
             let rowswalletData = [];
-            let BDebit=0;
-            let BCredit=0; 
-            let BBalance=0; 
+            let BDebit = 0;
+            let BCredit = 0;
+            let BBalance = 0;
             Object.values(self.walletData).forEach((data, index) => {
                 rowswalletData.push({
                     "iD": index + 1,
                     "addedDate": data.addedAt,
                     "narration": data.narration,
-                    "debit":  parseFloat( data.debit).toFixed(2) ,
-                    "credit": parseFloat(data.credit).toFixed(2) ,
-                    "balance":parseFloat(data.balance).toFixed(2),
+                    "debit": parseFloat(data.debit).toFixed(2),
+                    "credit": parseFloat(data.credit).toFixed(2),
+                    "balance": parseFloat(data.balance).toFixed(2),
                 })
-                BBalance=data.balance ; 
-                BDebit+= data.debit  ;  
-                BCredit+= data.credit  ;  
+                BBalance = data.balance;
+                BDebit += data.debit;
+                BCredit += data.credit;
             })
-            if(rowswalletData.length!=0){ 
-                BDebit =parseFloat(BDebit).toFixed(2);
-                BCredit =parseFloat(BCredit).toFixed(2);
+            if (rowswalletData.length != 0) {
+                BDebit = parseFloat(BDebit).toFixed(2);
+                BCredit = parseFloat(BCredit).toFixed(2);
                 rowswalletData.push({
-                    "iD":  "",
+                    "iD": "",
                     "addedDate": "",
                     "narration": "Balance",
                     "debit": "",
@@ -704,16 +765,15 @@ export default {
                     "balance": BBalance,
                 })
                 rowswalletData.push({
-                    "iD":  "",
+                    "iD": "",
                     "addedDate": "",
                     "narration": "Total",
-                    "debit":  BDebit,
+                    "debit": BDebit,
                     "credit": BCredit,
                     "balance": "",
                 })
             }
-            let columnsinvoiceComData = [
-                {
+            let columnsinvoiceComData = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -739,7 +799,7 @@ export default {
                 },
             ];
             let rowsinvoiceComData = [];
-            let TotalCommission=0;
+            let TotalCommission = 0;
             Object.values(self.invoiceComData).forEach((data, index) => {
                 rowsinvoiceComData.push({
                     "iD": index + 1,
@@ -749,20 +809,19 @@ export default {
                     "applyCommission": data.apply_commission,
                     "commissionAmount": data.commission_amount,
                 })
-                TotalCommission+=data.commission_amount;
+                TotalCommission += data.commission_amount;
             })
-            if(rowsinvoiceComData.length!=0){
+            if (rowsinvoiceComData.length != 0) {
                 rowsinvoiceComData.push({
                     "iD": "",
                     "date": "",
                     "commissionInvoice": "",
                     "orderInvoice": "",
                     "applyCommission": "Total",
-                    "commissionAmount":  TotalCommission ,
+                    "commissionAmount": TotalCommission,
                 })
             }
-            let columnsinvoiceReqData = [
-                {
+            let columnsinvoiceReqData = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -784,7 +843,7 @@ export default {
                 },
             ];
             let rowsinvoiceReqData = [];
-            let EarnAmount=0;
+            let EarnAmount = 0;
             Object.values(self.invoiceReqData).forEach((data, index) => {
                 rowsinvoiceReqData.push({
                     "iD": index + 1,
@@ -793,19 +852,18 @@ export default {
                     "invoice": data.invoice_no,
                     "earn": data.amount,
                 })
-                EarnAmount+=data.amount;
+                EarnAmount += data.amount;
             });
-            if(rowsinvoiceReqData.length!=0){
+            if (rowsinvoiceReqData.length != 0) {
                 rowsinvoiceReqData.push({
                     "iD": "",
                     "date": "",
                     "details": "",
                     "invoice": "Total",
-                    "earn":  EarnAmount,
+                    "earn": EarnAmount,
                 })
             }
-            let columnsbidsData = [
-                {
+            let columnsbidsData = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -832,8 +890,7 @@ export default {
                 })
             })
 
-            let columnsReqCompleted = [
-                {
+            let columnsReqCompleted = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -891,9 +948,9 @@ export default {
                     "vehicleType": data.driver_data.vehicle,
                     "amount": data.bid_data.amount,
                 });
-                Total_Amount+= parseInt(data.bid_data.amount);
+                Total_Amount += parseInt(data.bid_data.amount);
             });
-            if(rowsReqCompleted.length!=0){
+            if (rowsReqCompleted.length != 0) {
                 rowsReqCompleted.push({
                     "iD": "",
                     "driverName": "",
@@ -904,12 +961,11 @@ export default {
                     "duration": "",
                     "createdAt": "",
                     "vehicleType": "Total",
-                    "amount": Total_Amount ,
+                    "amount": Total_Amount,
                 });
             }
 
-            let columnsLogDays = [
-                {
+            let columnsLogDays = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -930,15 +986,14 @@ export default {
                     'D': data.durations
                 });
             });
-            if(rowsLogDays.length!=0){
-            rowsLogDays.push({
-                'iD':"",
-                'date': "Total",
-                'D': self.totalTimes,
-            });
-}
-            var columns = [
-                {
+            if (rowsLogDays.length != 0) {
+                rowsLogDays.push({
+                    'iD': "",
+                    'date': "Total",
+                    'D': self.totalTimes,
+                });
+            }
+            var columns = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -963,7 +1018,8 @@ export default {
                     'LoT': dataP.logoutTime,
                     'D': self.timeFormat(dataP.duration)
                 });
-            });if(rows.length!=0){
+            });
+            if (rows.length != 0) {
                 rows.push({
                     'iD': '',
                     'LiT': '',
@@ -972,8 +1028,7 @@ export default {
                 });
             }
 
-            var columnsToday = [
-                {
+            var columnsToday = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -998,17 +1053,17 @@ export default {
                     'LoT': dataP.logoutTime,
                     'D': self.timeFormat(dataP.duration)
                 });
-            });if(rowsToday.length!=0){
+            });
+            if (rowsToday.length != 0) {
                 rowsToday.push({
                     'iD': "",
                     'LiT': "",
                     'LoT': "Total Time",
-                    'D': self.timeFormat(todayLogsTSTime)
+                    'D': self.timeFormat(self.todayLogsTSTime)
                 });
             }
 
-            var columnsWeek = [
-                {
+            var columnsWeek = [{
                     title: "#",
                     dataKey: "iD"
                 },
@@ -1034,12 +1089,12 @@ export default {
                     'D': self.timeFormat(dataP.duration)
                 });
             });
-            if(rowsWeek.length!=0){
+            if (rowsWeek.length != 0) {
                 rowsWeek.push({
                     'iD': "",
                     'LiT': "",
                     'LoT': "Total Time",
-                    'D': self.timeFormat(self.weekLogsTSTime) 
+                    'D': self.timeFormat(self.weekLogsTSTime)
                 });
             }
             var doc = new jsPDF("p", "pt");
@@ -1057,603 +1112,612 @@ export default {
             let maxPageSize = 780;
             let startpoint = 50;
             img.onload = function () {
-                doc.addImage(this, mar, 40, 60, 80); 
+                doc.addImage(this, mar, 40, 60, 80);
                 doc.setFontSize(10);
-                doc.text(mar+75, 75, 'Driver Name      : ' + userProfile.FullName);
-                doc.text(mar+75, 95, 'Mobile Number : ' + userProfile.MobileNumber);
-                doc.text(mar+75, 115, 'Adda Name       : ' + userProfile.AddaName);
+                doc.text(mar + 75, 75, 'Driver Name      : ' + userProfile.FullName);
+                doc.text(mar + 75, 95, 'Mobile Number : ' + userProfile.MobileNumber);
+                doc.text(mar + 75, 115, 'Adda Name       : ' + userProfile.AddaName);
                 doc.setFontSize(10);
-                if(self.FromDate==null||self.ToDate==null||self.FromDate==""||self.ToDate==""){
-                    
-                }else{
+                if (self.FromDate == null || self.ToDate == null || self.FromDate == "" || self.ToDate == "") {
+
+                } else {
                     doc.text(mar, 150, 'Data Filtered From   _________________ To _________________ ');
-                    doc.text(mar+100, 150,  self.FromDate==""   ? "": ( self.FromDate==null?"": moment(self.FromDate).format("DD/MMM/YYYY"))) 
-                    doc.text(mar+210, 150,  self.ToDate==""   ? "": ( self.ToDate==null? "":moment(self.ToDate).format("DD/MMM/YYYY"))) 
+                    doc.text(mar + 100, 150, self.FromDate == "" ? "" : (self.FromDate == null ? "" : moment(self.FromDate).format("DD/MMM/YYYY")))
+                    doc.text(mar + 210, 150, self.ToDate == "" ? "" : (self.ToDate == null ? "" : moment(self.ToDate).format("DD/MMM/YYYY")))
                 }
 
                 doc.setFontSize(16);
 
-if(self.ck0){
-            point += 50;
-                
-                if(rowsToday!=0){
-                    doc.text(mar, point, "Logs Data by Today");
-                    point += btmsps;                
-                    doc.autoTable(columnsToday, rowsToday, {
+                if (self.ck0) {
+                    point += 50;
 
-                        styles: {
-                            fontSize: 8,
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
+                    if (rowsToday != 0) {
+                        doc.text(mar, point, "Logs Data by Today");
+                        point += btmsps;
+                        doc.autoTable(columnsToday, rowsToday, {
 
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                    doc.text(mar, point, "Logs Data by Today");
-                    doc.setFontSize(10); 
-                    doc.text(mar, point+20, " NO-DATA");
-                    doc.setFontSize(14);
+                            styles: {
+                                fontSize: 8,
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
+
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Logs Data by Today");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
                 }
-}
-if(self.ck1){
-                point += 50;
-                
+                if (self.ck1) {
+                    point += 50;
+
                     if (point > maxPageSize) {
                         doc.addPage();
                         point = startpoint;
                     }
-                    if(rowsWeek!=0){
-                    doc.text(mar, point, "Logs Data by Week");
-                    point += btmsps;                
-                    doc.autoTable(columnsWeek, rowsWeek, {
+                    if (rowsWeek != 0) {
+                        doc.text(mar, point, "Logs Data by Week");
+                        point += btmsps;
+                        doc.autoTable(columnsWeek, rowsWeek, {
 
-                        styles: {
-                            fontSize: 8,
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
+                            styles: {
+                                fontSize: 8,
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
 
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                    doc.text(mar, point, "Logs Data by Week");
-                    doc.setFontSize(10);
-                    doc.text(mar, point+20, " NO-DATA");
-                    doc.setFontSize(14);
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Logs Data by Week");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
+
+
+                }
+                if (self.ck2) {
+                    point += 50;
+
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if (rows != 0) {
+                        doc.text(mar, point, "Logs Data");
+                        point += btmsps;
+                        doc.autoTable(columns, rows, {
+
+                            styles: {
+                                fontSize: 8,
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
+
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Logs Data");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
                 }
 
+                if (self.ck3) {
+                    point += 50;
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if (rowsLogDays != 0) {
+                        doc.text(mar, point, "Logs Data by Days");
+                        point += btmsps;
+                        doc.autoTable(columnsLogDays, rowsLogDays, {
 
-}
-if(self.ck2){
-                point += 50;
+                            styles: {
+                                fontSize: 8,
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
 
-                if (point > maxPageSize) {
-                    doc.addPage();
-                    point = startpoint;
-                } 
-                if(rows!=0){
-                doc.text(mar, point, "Logs Data");
-                point += btmsps;  
-                doc.autoTable(columns, rows, {
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
 
-                    styles: {
-                        fontSize: 8,
-                    },
-                    headerStyles: {
-                        fontSize: 8,
-                    },
-                    bodyStyles: {
-                        fontSize: 8,
-                    },
-                    showHeader: 'firstPage',
-                    drawRow: function (row, data) {
-                        point = data.row.y;
-                    },
-                    startY: point,
-
-                    margin: {
-                        top: 10,
-                        bottom: 10,
-                        left: 40,
-                        right: 40,
-                    },
-                    theme: 'grid'
-                });
-            }else{
-                 doc.text(mar, point, "Logs Data");
-                 doc.setFontSize(10);
-                 doc.text(mar, point+20, " NO-DATA");
-                 doc.setFontSize(14);
-            }
-}
-
-if(self.ck3){
-                point += 50;
-                if (point > maxPageSize) {
-                    doc.addPage();
-                    point = startpoint;
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Logs Data by Days");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
                 }
-                if(rowsLogDays!=0){
-                    doc.text(mar, point, "Logs Data by Days");
-                    point += btmsps;
-                    doc.autoTable(columnsLogDays, rowsLogDays, {
+                if (self.ck4) {
+                    point += 50;
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if (rowspendingReqData != 0) {
+                        doc.text(mar, point, "Pending Requests Data");
+                        point += btmsps;
+                        doc.autoTable(columnpendingReqData, rowspendingReqData, {
+                            styles: {
+                                columnWidth: 'auto'
+                            },
+                            columnStyles: {
+                                iD: {
+                                    columnWidth: 20,
+                                    halign: 'center'
+                                },
+                                driverName: {
+                                    columnWidth: 50,
+                                    halign: 'center'
+                                },
+                                clientName: {
+                                    columnWidth: 50,
+                                    halign: 'center'
+                                },
+                                origin: {
+                                    columnWidth: 65,
+                                    fontSize: 7,
+                                    halign: 'center'
+                                },
+                                destination: {
+                                    columnWidth: 65,
+                                    fontSize: 7,
+                                    halign: 'center'
+                                },
+                                distance: {
+                                    columnWidth: 50,
+                                    halign: 'center'
+                                },
+                                duration: {
+                                    columnWidth: 50,
+                                    halign: 'center'
+                                },
+                                createdAt: {
+                                    columnWidth: 60,
+                                    halign: 'center'
+                                },
+                                vehicleType: {
+                                    columnWidth: 40,
+                                    halign: 'center'
+                                },
+                                amount: {
+                                    columnWidth: 40,
+                                    halign: 'right'
+                                },
+                                status: {
+                                    halign: 'center'
+                                },
+                            },
+                            styles: {
+                                fontSize: 8,
+                                overflow: 'linebreak',
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
 
-                        styles: {
-                            fontSize: 8,
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
 
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Pending Requests Data");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
 
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                    doc.text(mar, point, "Logs Data by Days");
-                    doc.setFontSize(10);
-                    doc.text(mar, point+20, " NO-DATA");
-                    doc.setFontSize(14);
                 }
-}
-if(self.ck4){
-                point += 50;
-                if (point > maxPageSize) {
-                    doc.addPage();
-                    point = startpoint;
+                if (self.ck5) {
+                    point += 50;
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if (rowsReqCompleted != 0) {
+                        doc.text(mar, point, "Completed Requests Data");
+                        point += btmsps;
+                        doc.autoTable(columnsReqCompleted, rowsReqCompleted, {
+                            styles: {
+                                columnWidth: 'auto'
+                            },
+                            columnStyles: {
+                                iD: {
+                                    columnWidth: 20,
+                                    halign: 'center'
+                                },
+                                driverName: {
+                                    columnWidth: 50,
+                                    halign: 'center'
+                                },
+                                clientName: {
+                                    columnWidth: 50,
+                                    halign: 'center'
+                                },
+                                origin: {
+                                    columnWidth: 80,
+                                    fontSize: 7,
+                                    halign: 'center'
+                                },
+                                destination: {
+                                    columnWidth: 80,
+                                    fontSize: 7,
+                                    halign: 'center'
+                                },
+                                distance: {
+                                    columnWidth: 50,
+                                    halign: 'center'
+                                },
+                                duration: {
+                                    columnWidth: 50,
+                                    halign: 'center'
+                                },
+                                createdAt: {
+                                    columnWidth: 60,
+                                    halign: 'center'
+                                },
+                                vehicleType: {
+                                    columnWidth: 40,
+                                    halign: 'center'
+                                },
+                                amount: {
+                                    columnWidth: 40,
+                                    halign: 'right'
+                                },
+                            },
+                            styles: {
+                                fontSize: 8,
+                                overflow: 'linebreak',
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
+
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
+
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Completed Requests Data");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
+
                 }
-                if(rowspendingReqData!=0){
-                    doc.text(mar, point, "Pending Requests Data");
-                    point += btmsps;
-                    doc.autoTable(columnpendingReqData, rowspendingReqData, {
-                        styles: {
-                            columnWidth: 'auto'
-                        },
-                        columnStyles: {
-                            iD: {
-                                columnWidth: 20,
-                                halign: 'center'
-                            },
-                            driverName: {
-                                columnWidth: 50,
-                                halign: 'center'
-                            },
-                            clientName: {
-                                columnWidth: 50,
-                                halign: 'center'
-                            },
-                            origin: {
-                                columnWidth: 65,
-                                fontSize: 7,
-                                halign: 'center'
-                            },
-                            destination: {
-                                columnWidth: 65,
-                                fontSize: 7,
-                                halign: 'center'
-                            },
-                            distance: {
-                                columnWidth: 50,
-                                halign: 'center'
-                            },
-                            duration: {
-                                columnWidth: 50,
-                                halign: 'center'
-                            },
-                            createdAt: {
-                                columnWidth: 60,
-                                halign: 'center'
-                            },
-                            vehicleType: {
-                                columnWidth: 40,
-                                halign: 'center'
-                            },
-                            amount: {
-                                columnWidth: 40,
-                                halign: 'right'
-                            },
-                            status: {
-                                halign: 'center'
-                            },
-                        },
-                        styles: {
-                            fontSize: 8,
-                            overflow: 'linebreak',
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
+                if (self.ck6) {
 
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
 
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                    doc.text(mar, point, "Pending Requests Data");
-                    doc.setFontSize(10);
-                    doc.text(mar, point+20, " NO-DATA");
-                    doc.setFontSize(14);
+                    point += 50;
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if (rowsbidsData != 0) {
+                        doc.text(mar, point, "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);
+                        point += btmsps;
+                        doc.autoTable(columnsbidsData, rowsbidsData, {
+                            styles: {
+                                columnWidth: 'auto'
+                            },
+                            columnStyles: {
+                                bidPrice: {
+                                    halign: 'right'
+                                },
+                            },
+                            styles: {
+                                fontSize: 8,
+                                overflow: 'linebreak',
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
+
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
+
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
+
                 }
+                if (self.ck7) {
+                    point += 50;
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if (rowsinvoiceReqData != 0) {
+                        doc.text(mar, point, "Earnings Summary");
+                        point += btmsps;
+                        doc.autoTable(columnsinvoiceReqData, rowsinvoiceReqData, {
+                            styles: {
+                                columnWidth: 'auto'
+                            },
+                            columnStyles: {
+                                iD: {
+                                    columnWidth: 20,
+                                    halign: 'center'
+                                },
+                                date: {
+                                    columnWidth: 120,
+                                    halign: 'center'
+                                },
+                                details: {
+                                    columnWidth: 260
+                                },
+                                invoice: {
+                                    columnWidth: 80
+                                },
+                                earn: {
+                                    columnWidth: 40,
+                                    halign: 'right'
+                                },
+                            },
+                            styles: {
+                                fontSize: 8,
+                                overflow: 'linebreak',
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
 
-}
-if(self.ck5){
-                point += 50;
-                if (point > maxPageSize) {
-                    doc.addPage();
-                    point = startpoint;
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
+
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Earnings Summary");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
                 }
-                if(rowsReqCompleted!=0){
-                    doc.text(mar, point, "Completed Requests Data");
-                    point += btmsps;
-                    doc.autoTable(columnsReqCompleted, rowsReqCompleted, {
-                        styles: {
-                            columnWidth: 'auto'
-                        },
-                        columnStyles: {
-                            iD: {
-                                columnWidth: 20,
-                                halign: 'center'
-                            },
-                            driverName: {
-                                columnWidth: 50,
-                                halign: 'center'
-                            },
-                            clientName: {
-                                columnWidth: 50,
-                                halign: 'center'
-                            },
-                            origin: {
-                                columnWidth: 80,
-                                fontSize: 7,
-                                halign: 'center'
-                            },
-                            destination: {
-                                columnWidth: 80,
-                                fontSize: 7,
-                                halign: 'center'
-                            },
-                            distance: {
-                                columnWidth: 50,
-                                halign: 'center'
-                            },
-                            duration: {
-                                columnWidth: 50,
-                                halign: 'center'
-                            },
-                            createdAt: {
-                                columnWidth: 60,
-                                halign: 'center'
-                            },
-                            vehicleType: {
-                                columnWidth: 40,
-                                halign: 'center'
-                            },
-                            amount: {
-                                columnWidth: 40,
-                                halign: 'right'
-                            },
-                        },
-                        styles: {
-                            fontSize: 8,
-                            overflow: 'linebreak',
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
+                if (self.ck8) {
 
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
+                    point += 50;
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if (rowsinvoiceComData != 0) {
+                        doc.text(mar, point, "Commission Summary");
+                        point += btmsps;
+                        doc.autoTable(columnsinvoiceComData, rowsinvoiceComData, {
+                            styles: {
+                                columnWidth: 'auto'
+                            },
+                            columnStyles: {
 
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                    doc.text(mar, point, "Completed Requests Data");
-                    doc.setFontSize(10);
-                    doc.text(mar, point+20, " NO-DATA");
-                    doc.setFontSize(14);
+                                applyCommission: {
+                                    halign: 'right'
+                                },
+                                commissionAmount: {
+                                    halign: 'right'
+                                },
+                            },
+                            styles: {
+                                fontSize: 8,
+                                overflow: 'linebreak',
+                            },
+                            headerStyles: {
+                                fontSize: 8,
+                            },
+                            bodyStyles: {
+                                fontSize: 8,
+                            },
+                            showHeader: 'firstPage',
+
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
+
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Commission Summary");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
                 }
+                if (self.ck9) {
 
-}
-if(self.ck6){
-
-
-                point += 50;
-                if (point > maxPageSize) {
-                    doc.addPage();
-                    point = startpoint;
-                }
-                if(rowsbidsData!=0){
-                    doc.text(mar, point, "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);
-                    point += btmsps;
-                    doc.autoTable(columnsbidsData, rowsbidsData, {
-                        styles: {
-                            columnWidth: 'auto'
-                        },
-                        columnStyles: {
-                            bidPrice: {  halign: 'right' }, 
-                        },
-                        styles: {
-                            fontSize: 8,
-                            overflow: 'linebreak',
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
-
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
-
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                    doc.text(mar, point, "Driver Bids Bids: " + self.filterBids + " / Requests:" + self.totalRequests);
-                    doc.setFontSize(10);
-                    doc.text(mar, point+20, " NO-DATA");
-                    doc.setFontSize(14);
-                }
-
-}
-if(self.ck7){
-                point += 50;
-                if (point > maxPageSize) {
-                    doc.addPage();
-                    point = startpoint;
-                }
-                if(rowsinvoiceReqData!=0){
-                    doc.text(mar, point, "Earnings Summary");
-                    point += btmsps;
-                    doc.autoTable(columnsinvoiceReqData, rowsinvoiceReqData, {
-                        styles: {
-                            columnWidth: 'auto'
-                        },
-                        columnStyles: {
-                            iD: {
-                                columnWidth: 20,
-                                halign: 'center'
+                    point += 50;
+                    if (point > maxPageSize) {
+                        doc.addPage();
+                        point = startpoint;
+                    }
+                    if (rowswalletData != 0) {
+                        doc.text(mar, point, "Wallet Summary");
+                        point += btmsps;
+                        doc.autoTable(columnswalletData, rowswalletData, {
+                            styles: {
+                                columnWidth: 'auto'
                             },
-                            date: {
-                                columnWidth: 120,
-                                halign: 'center'
+                            columnStyles: {
+                                debit: {
+                                    halign: 'right'
+                                },
+                                credit: {
+                                    halign: 'right'
+                                },
+                                balance: {
+                                    halign: 'right'
+                                },
+
                             },
-                            details: {
-                                columnWidth: 260
+                            styles: {
+                                fontSize: 8,
+                                overflow: 'linebreak',
                             },
-                            invoice: {
-                                columnWidth: 80
+                            headerStyles: {
+                                fontSize: 8,
                             },
-                            earn: {
-                                columnWidth: 40,
-                                halign: 'right'
+                            bodyStyles: {
+                                fontSize: 8,
                             },
-                        },
-                        styles: {
-                            fontSize: 8,
-                            overflow: 'linebreak',
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
+                            showHeader: 'firstPage',
 
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
+                            drawRow: function (row, data) {
+                                point = data.row.y;
+                            },
+                            startY: point,
 
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                    doc.text(mar, point, "Earnings Summary");
-                    doc.setFontSize(10);
-                    doc.text(mar, point+20, " NO-DATA");
-                    doc.setFontSize(14);
+                            margin: {
+                                top: 10,
+                                bottom: 10,
+                                left: 40,
+                                right: 40,
+                            },
+                            theme: 'grid'
+                        });
+                    } else {
+                        doc.text(mar, point, "Wallet Summary");
+                        doc.setFontSize(10);
+                        doc.text(mar, point + 20, " NO-DATA");
+                        doc.setFontSize(14);
+                    }
+
                 }
-}
-if(self.ck8){
-
-                point += 50;
-                if (point > maxPageSize) {
-                    doc.addPage();
-                    point = startpoint;
-                }
-                if(rowsinvoiceComData!=0){
-                    doc.text(mar, point, "Commission Summary");
-                    point += btmsps;
-                    doc.autoTable(columnsinvoiceComData, rowsinvoiceComData, {
-                        styles: {
-                            columnWidth: 'auto'
-                        },
-                        columnStyles: {
-                             
-                             applyCommission : {  halign: 'right' }, 
-                             commissionAmount :{  halign: 'right' },  
-                        },
-                        styles: {
-                            fontSize: 8,
-                            overflow: 'linebreak',
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
-
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
-
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                     doc.text(mar, point, "Commission Summary");
-                     doc.setFontSize(10);
-                     doc.text(mar, point+20, " NO-DATA");
-                     doc.setFontSize(14);
-                }
-}
-if(self.ck9){
-
-                point += 50;
-                if (point > maxPageSize) {
-                    doc.addPage();
-                    point = startpoint;
-                }
-                if(rowswalletData!=0){
-                    doc.text(mar, point, "Wallet Summary");
-                    point += btmsps;
-                    doc.autoTable(columnswalletData, rowswalletData, {
-                        styles: {
-                            columnWidth: 'auto'
-                        },
-                        columnStyles: {
-                             debit :    {  halign: 'right' },
-                             credit : {  halign: 'right' },
-                             balance : {  halign: 'right' },
-                             
-                        },
-                        styles: {
-                            fontSize: 8,
-                            overflow: 'linebreak',
-                        },
-                        headerStyles: {
-                            fontSize: 8,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                        },
-                        showHeader: 'firstPage',
-
-                        drawRow: function (row, data) {
-                            point = data.row.y;
-                        },
-                        startY: point,
-
-                        margin: {
-                            top: 10,
-                            bottom: 10,
-                            left: 40,
-                            right: 40,
-                        },
-                        theme: 'grid'
-                    });
-                }else{
-                    doc.text(mar, point, "Wallet Summary");
-                    doc.setFontSize(10);
-                    doc.text(mar, point+20, " NO-DATA");
-                    doc.setFontSize(14);
-                }
-
-}
-
-
-
                 doc.setFontSize(10);
                 doc.text(40, maxPageSize, "____________________                                                                                                       ____________________");
                 doc.text(40, maxPageSize + 20, "   Issuing Authority                                                                                                                      Admin ROADIOAPP");
                 doc.text(40, maxPageSize + 35, "      ROADIOAPP");
 
-                doc.save(self.$route.params.id +" "+moment().format("DD MMM YYYY HHMMSS") + ".pdf");
+                doc.save(self.$route.params.id + " " + moment().format("DD MMM YYYY HHMMSS") + ".pdf");
             };
-            img.crossOrigin = "https://localhost"; // for demo as we are at different origin than image
+            img.crossOrigin = "*"; // for demo as we are at different origin than image
             (this.profileImgURL != '') ? img.src = this.profileImgURL: img.src = 'https://s3-eu-west-1.amazonaws.com/philips-future-health-index/wp-content/uploads/2016/05/20132859/user.png'; // some random imgur image
 
 
@@ -1694,15 +1758,15 @@ if(self.ck9){
 
         },
         filterLogs: function (self, allLogs, TodateV, fromdateV) {
- 
-            let TimeFrom = moment( fromdateV ).startOf('day').unix()
-            let TimeTo = moment( TodateV ).endOf('day').unix()
+
+            let TimeFrom = moment(fromdateV).startOf('day').unix()
+            let TimeTo = moment(TodateV).endOf('day').unix()
             let data = [];
             allLogs.forEach(v => {
 
                 if (this.FromDate == "" || this.ToDate == "" || this.FromDate == null || this.ToDate == null) {
                     data.push(v);
-                } else { 
+                } else {
                     let time = moment(v.loginTime).unix();
                     if (time >= TimeFrom && time <= TimeTo) {
                         data.push(v);
@@ -1771,16 +1835,16 @@ if(self.ck9){
                     }
 
                     if (self.searched) {
-                        let time = moment( day ).unix(); 
-                        let TimeFrom = moment( fromdateV ).startOf('day').unix()
-                        let TimeTo = moment( TodateV ).endOf('day').unix()
+                        let time = moment(day).unix();
+                        let TimeFrom = moment(fromdateV).startOf('day').unix()
+                        let TimeTo = moment(TodateV).endOf('day').unix()
                         if (self.FromDate == "" || self.ToDate == "" || self.FromDate == null || self.ToDate == null) {
                             self.dataa.push({
                                 'days': day,
                                 'durations': secondsToHms(duration)
                             });
                         } else {
- 
+
 
                             if (time >= TimeFrom && time <= TimeTo) {
 
@@ -1824,8 +1888,8 @@ if(self.ck9){
 
         SearchByDate(DFrom, DTo) {
 
-            let TimeFrom =  moment(DFrom).startOf('day').unix()
-            let TimeTo =  moment(DTo).endOf('day').unix()
+            let TimeFrom = moment(DFrom).startOf('day').unix()
+            let TimeTo = moment(DTo).endOf('day').unix()
             let self = this;
             self.searched = true;
             if (!self.IsBackup) {
@@ -2047,6 +2111,7 @@ if(self.ck9){
         user_req_invoices: function (self, uid, driver_data) {
             self.userReqInvoiceRef.orderByChild('driver_uid').equalTo(uid).once('value').then(function (userReqInvoiceSnap) {
                 let userReqInvoiceData = userReqInvoiceSnap.val();
+                console.log(userReqInvoiceData);
                 if (userReqInvoiceData !== null) {
                     let keys = Object.keys(userReqInvoiceData);
                     let key_length = keys.length;
@@ -2059,7 +2124,7 @@ if(self.ck9){
                             self.userRef.child(invoice_data.client_uid).once('value', function (clientSnap) {
                                 let client_data = clientSnap.val();
                                 self.invoiceReqDataTotal += parseInt(invoice_data.amount);
-                                
+
                                 self.invoiceReqData[row] = {
                                     client_data: client_data,
                                     driver_data: driver_data,
@@ -2072,7 +2137,7 @@ if(self.ck9){
                                 if (processItem === key_length) {
                                     self.invoiceReqData = func.sortObj(self.invoiceReqData);
                                     self.dataLoad3 = false;
-                                }
+                                } 
                             });
                         });
                     });
@@ -2101,8 +2166,8 @@ if(self.ck9){
                                 comInvItemData['order_invoice'] = func.getSetInvoiceNo(userReqInvSnap.key, userReqInvData.invoice_no, "U");
                                 comInvItemData['order_inv_key'] = userReqInvSnap.key;
                                 self.invoiceComData[key] = comInvItemData;
-                                self.invoiceComDataTotal  =parseFloat(parseFloat(self.invoiceComDataTotal) + parseFloat(comInvItemData.commission_amount)).toFixed(2);;
-                                 
+                                self.invoiceComDataTotal = parseFloat(parseFloat(self.invoiceComDataTotal) + parseFloat(comInvItemData.commission_amount)).toFixed(2);;
+
                                 processItem++;
                                 if (processItem === key_length) {
                                     self.invoiceComData = func.sortObj(self.invoiceComData);
@@ -2129,7 +2194,7 @@ if(self.ck9){
                         let rowSel = walletData[row];
                         rowSel['addedAt'] = func.set_date_ser(new Date(func.decode_key(row)));
                         rowSel['balance'] = oldBalance = func.getBalance(oldBalance, rowSel.debit, rowSel.credit);
-                        rowSel['balance']  = parseFloat(rowSel['balance']).toFixed(2); 
+                        rowSel['balance'] = parseFloat(rowSel['balance']).toFixed(2);
                         self.totDebit += rowSel.debit;
                         self.totCredit += rowSel.credit;
                         self.walletData[row] = rowSel;
@@ -2178,8 +2243,8 @@ if(self.ck9){
             let key_length = keys.length;
             return obj[keys[key_length - 1]];
         },
-        Tofloat2(val){
-return parseFloat(val).toFixed(2);
+        Tofloat2(val) {
+            return parseFloat(val).toFixed(2);
         },
         getAddaName: function (self, AddaID) {
             if (self.AddaLoaded) {
