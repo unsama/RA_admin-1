@@ -17,6 +17,28 @@ aside.right-side
                         h3.box-title(style="margin-bottom: -26px;") Users
                         .box-tools.text-right
                             input(type="button", value="Export xlsx" ,v-on:click = "EXPORT_File")
+                        .col-md-2    
+                            date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='FromDate')
+                        .col-md-2    
+                            date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')                            
+                        .col-md-2    
+                            .form-group
+                                label
+                                    input(type='radio', v-model='UsersAOption',  value='All')
+                                    | All 
+                                br
+                                label
+                                    input(type='radio', v-model='UsersAOption',  value='Actived')
+                                    | Active
+                                br
+                                label
+                                    input(type='radio', v-model='UsersAOption',  value='InActived')
+                                    | Deactive 
+                        .col-md-2    
+                            .form-group                        
+                                input(type="button", value="Search", @click="changeSearch()")
+ 
+
                         div.text-center(v-if='dataLoad')
                             i.fa.fa-refresh.fa-spin.fa-3x.fa-fw
                         h3.text-center(style='margin: 15px 0;' v-if='!dataLoad && data1.length === 0')

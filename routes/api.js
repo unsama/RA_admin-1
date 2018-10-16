@@ -14,7 +14,7 @@ var sessionsRef = db.ref("sessions");
 var completeReqRef = db.ref("complete_requests");
 var bidRef = db.ref("driver_bids");
 var promoRef = db.ref("promo_code");
-
+var userReqRef = db.ref("user_requests");
 var twilioCred = require('../config/private').twilio;
 // var RestClient = require('twilio').RestClient;
 var LookupsClient = require('twilio').LookupsClient;
@@ -42,7 +42,10 @@ router.post('/forgot_password', function (req, res, next) {
     req.getValidationResult().then(function (result) {
         var errors = result.useFirstErrorOnly().array();
         if (errors.length > 0) {
-            return res.json({status: "failed", message: errors[0].msg});
+            return res.json({
+                status: "failed",
+                message: errors[0].msg
+            });
         } else {
             var mob_no = req.body.mob_no;
             var type = req.body.type;
@@ -70,7 +73,10 @@ router.post('/forgot_password', function (req, res, next) {
                         };
                         forgotPassToken.child(selKey).set(setData, function (err) {
                             if (err) {
-                                return res.json({status: "failed", message: err.message});
+                                return res.json({
+                                    status: "failed",
+                                    message: err.message
+                                });
                             }
                             /*var sms_api = new MobilinkLib();
                             sms_api.set_sms('Forgot Password token is: "' + code, mob_no);
@@ -84,7 +90,9 @@ router.post('/forgot_password', function (req, res, next) {
                                     });
                                 }
                             });*/
-                            nexmo.message.sendSms(config.from, mob_no, 'Forgot Password token is: "' + code, {type: 'unicode'}, function (err, resData) {
+                            nexmo.message.sendSms(config.from, mob_no, 'Forgot Password token is: "' + code, {
+                                type: 'unicode'
+                            }, function (err, resData) {
                                 if (err) {
                                     return res.json({
                                         "status": "failed",
@@ -92,7 +100,10 @@ router.post('/forgot_password', function (req, res, next) {
                                     });
                                 }
                                 if (resData.messages[0].status === "0") {
-                                    return res.json({"status": "ok", "token": code});
+                                    return res.json({
+                                        "status": "ok",
+                                        "token": code
+                                    });
                                 } else {
                                     return res.json({
                                         "status": "failed",
@@ -102,10 +113,16 @@ router.post('/forgot_password', function (req, res, next) {
                             });
                         });
                     } else {
-                        return res.json({status: "failed", message: "Mobile Number is not found!"});
+                        return res.json({
+                            status: "failed",
+                            message: "Mobile Number is not found!"
+                        });
                     }
                 } else {
-                    return res.json({status: "failed", message: "Mobile Number is not found!"});
+                    return res.json({
+                        status: "failed",
+                        message: "Mobile Number is not found!"
+                    });
                 }
             });
         }
@@ -133,7 +150,10 @@ router.post('/new_password', function (req, res, next) {
     req.getValidationResult().then(function (result) {
         var errors = result.useFirstErrorOnly().array();
         if (errors.length > 0) {
-            return res.json({status: "failed", message: errors[0].msg});
+            return res.json({
+                status: "failed",
+                message: errors[0].msg
+            });
         } else {
             var mob_no = req.body.mob_no;
             var token = req.body.token;
@@ -163,21 +183,36 @@ router.post('/new_password', function (req, res, next) {
                             "password": newHash,
                         }, function (err) {
                             if (err) {
-                                return res.json({status: "failed", message: "Data could not be saved. " + err});
+                                return res.json({
+                                    status: "failed",
+                                    message: "Data could not be saved. " + err
+                                });
                             } else {
                                 forgotPassToken.child(selKey).remove(function (err) {
                                     if (!err) {
-                                        return res.json({status: "ok", message: "Password has been changed!"});
+                                        return res.json({
+                                            status: "ok",
+                                            message: "Password has been changed!"
+                                        });
                                     }
-                                    return res.json({status: "failed", message: "Data could not be deleted. " + err});
+                                    return res.json({
+                                        status: "failed",
+                                        message: "Data could not be deleted. " + err
+                                    });
                                 });
                             }
                         });
                     } else {
-                        return res.json({status: "failed", message: "Invalid Request!"});
+                        return res.json({
+                            status: "failed",
+                            message: "Invalid Request!"
+                        });
                     }
                 } else {
-                    return res.json({status: "failed", message: "Invalid Request!"});
+                    return res.json({
+                        status: "failed",
+                        message: "Invalid Request!"
+                    });
                 }
             });
         }
@@ -199,7 +234,10 @@ router.post('/update_password', function (req, res, next) {
     req.getValidationResult().then(function (result) {
         var errors = result.useFirstErrorOnly().array();
         if (errors.length > 0) {
-            return res.json({status: "failed", message: errors[0].msg});
+            return res.json({
+                status: "failed",
+                message: errors[0].msg
+            });
         } else {
             var uid = req.body.uid;
             var old_pass = req.body.old_pass;
@@ -209,7 +247,10 @@ router.post('/update_password', function (req, res, next) {
             userRef.child(uid).once("value").then(function (snap) {
                 var data = snap.val();
                 if (data === null) {
-                    return res.json({status: "failed", message: "Invalid User!"});
+                    return res.json({
+                        status: "failed",
+                        message: "Invalid User!"
+                    });
                 } else {
                     if (data.type === type) {
                         if (bcrypt.compareSync(old_pass, data.password)) {
@@ -219,16 +260,28 @@ router.post('/update_password', function (req, res, next) {
                                 "password": newHash,
                             }, function (err) {
                                 if (err) {
-                                    res.json({"status": "failed", message: "Data could not be saved. " + err});
+                                    res.json({
+                                        "status": "failed",
+                                        message: "Data could not be saved. " + err
+                                    });
                                 } else {
-                                    return res.json({status: "ok", message: "Password has been changed!"});
+                                    return res.json({
+                                        status: "ok",
+                                        message: "Password has been changed!"
+                                    });
                                 }
                             });
                         } else {
-                            return res.json({status: "failed", message: "Incorrect Password!"});
+                            return res.json({
+                                status: "failed",
+                                message: "Incorrect Password!"
+                            });
                         }
                     } else {
-                        return res.json({status: "failed", message: "Invalid User!"});
+                        return res.json({
+                            status: "failed",
+                            message: "Invalid User!"
+                        });
                     }
                 }
             });
@@ -238,13 +291,19 @@ router.post('/update_password', function (req, res, next) {
 
 router.post('/validate', function (req, res, next) {
     if ((typeof req.body.phone_num === "undefined" || req.body.phone_num === "") || (typeof req.body.type === "undefined" || req.body.type === "")) {
-        res.json({"status": "failed", "message": "Invalid Request!"});
+        res.json({
+            "status": "failed",
+            "message": "Invalid Request!"
+        });
     } else {
         var phone_num = req.body.phone_num;
         var user_type = req.body.type;
         lookup_client.phoneNumbers("+" + phone_num).get(function (error, number) {
             if (error) {
-                res.json({"status": "failed", "message": error.message});
+                res.json({
+                    "status": "failed",
+                    "message": error.message
+                });
             } else {
                 userRef.once("value", function (snap) {
                     var data = snap.val();
@@ -257,7 +316,10 @@ router.post('/validate', function (req, res, next) {
                         }
                     }
                     if (check) {
-                        res.json({"status": "failed", "message": "User already exist!"});
+                        res.json({
+                            "status": "failed",
+                            "message": "User already exist!"
+                        });
                     } else {
                         var code = Math.floor(Math.random() * 900000) + 100000;
                         /*var sms_api = new MobilinkLib();
@@ -269,7 +331,9 @@ router.post('/validate', function (req, res, next) {
                                 return res.json({"status": "failed", "message": result});
                             }
                         });*/
-                        nexmo.message.sendSms(config.from, phone_num, 'Your auth token is: "' + code, {type: 'unicode'}, function (err, resData) {
+                        nexmo.message.sendSms(config.from, phone_num, 'Your auth token is: "' + code, {
+                            type: 'unicode'
+                        }, function (err, resData) {
                             if (err) {
                                 return res.json({
                                     "status": "failed",
@@ -277,7 +341,10 @@ router.post('/validate', function (req, res, next) {
                                 });
                             }
                             if (resData.messages[0].status === "0") {
-                                return res.json({"status": "ok", "token": code});
+                                return res.json({
+                                    "status": "ok",
+                                    "token": code
+                                });
                             } else {
                                 return res.json({
                                     "status": "failed",
@@ -301,7 +368,9 @@ router.post('/register', function (req, res, next) {
     req.sanitize("mob_no").trimValRis();
 
     if (params['email']) {
-        req.assert('email', 'Invalid Email!').isEmail().isLength({max: 50}).withMessage("Email is too long!");
+        req.assert('email', 'Invalid Email!').isEmail().isLength({
+            max: 50
+        }).withMessage("Email is too long!");
     }
     req.assert('mob_no', 'Mobile Number is invalid!').notEmpty().withMessage("Mobile Number is required!").isInt().isLength({
         min: 12,
@@ -328,26 +397,44 @@ router.post('/register', function (req, res, next) {
     req.getValidationResult().then(function (result) {
         errors = result.useFirstErrorOnly().array();
         if (errors.length > 0) {
-            return res.json({status: "failed", message: errors[0].msg});
+            return res.json({
+                status: "failed",
+                message: errors[0].msg
+            });
         } else {
             lookup_client.phoneNumbers("+" + params["mob_no"]).get(function (error, number) {
                 if (error) {
-                    res.json({"status": "failed", "message": error.message});
+                    res.json({
+                        "status": "failed",
+                        "message": error.message
+                    });
                 } else {
                     userMobCheck(params['mob_no'], params['type'], function (exist) {
                         if (exist) {
-                            res.json({"status": "failed", "message": "Mobile number is already exist!"});
+                            res.json({
+                                "status": "failed",
+                                "message": "Mobile number is already exist!"
+                            });
                         } else {
                             if (params['email'] !== "") {
                                 userEmailCheck(params['email'], params['type'], function (exist) {
                                     if (exist) {
-                                        res.json({"status": "failed", "message": "Email is already exist!"});
+                                        res.json({
+                                            "status": "failed",
+                                            "message": "Email is already exist!"
+                                        });
                                     } else {
                                         userInsert(params, function (err, token) {
                                             if (err) {
-                                                res.json({"status": "failed", "message": err});
+                                                res.json({
+                                                    "status": "failed",
+                                                    "message": err
+                                                });
                                             } else {
-                                                res.json({"status": "ok", "token": token});
+                                                res.json({
+                                                    "status": "ok",
+                                                    "token": token
+                                                });
                                             }
                                         });
                                     }
@@ -355,9 +442,15 @@ router.post('/register', function (req, res, next) {
                             } else {
                                 userInsert(params, function (err, token) {
                                     if (err) {
-                                        res.json({"status": "failed", "message": err});
+                                        res.json({
+                                            "status": "failed",
+                                            "message": err
+                                        });
                                     } else {
-                                        res.json({"status": "ok", "token": token});
+                                        res.json({
+                                            "status": "ok",
+                                            "token": token
+                                        });
                                     }
                                 });
                             }
@@ -380,19 +473,31 @@ router.post('/login', function (req, res, next) {
     req.getValidationResult().then(function (result) {
         errors = result.useFirstErrorOnly().array();
         if (errors.length > 0) {
-            return res.json({status: "failed", message: errors[0].msg});
+            return res.json({
+                status: "failed",
+                message: errors[0].msg
+            });
         } else {
             userLoginCheck('mob_no', params, function (err, uid) {
                 if (err) {
                     userLoginCheck('email', params, function (err, uid) {
                         if (err) {
-                            res.json({status: 'failed', message: err});
+                            res.json({
+                                status: 'failed',
+                                message: err
+                            });
                         } else {
                             userLoginToken(uid, function (err, token) {
                                 if (err) {
-                                    res.json({status: 'failed', message: err});
+                                    res.json({
+                                        status: 'failed',
+                                        message: err
+                                    });
                                 } else {
-                                    return res.json({"status": "ok", "token": token});
+                                    return res.json({
+                                        "status": "ok",
+                                        "token": token
+                                    });
                                 }
                             });
                         }
@@ -400,9 +505,15 @@ router.post('/login', function (req, res, next) {
                 } else {
                     userLoginToken(uid, function (err, token) {
                         if (err) {
-                            res.json({status: 'failed', message: err});
+                            res.json({
+                                status: 'failed',
+                                message: err
+                            });
                         } else {
-                            return res.json({"status": "ok", "token": token});
+                            return res.json({
+                                "status": "ok",
+                                "token": token
+                            });
                         }
                     });
                 }
@@ -413,77 +524,190 @@ router.post('/login', function (req, res, next) {
 
 router.post('/promocode', function (req, res, next) {
     var params = req.body.promocode_text;
-   
+
     req.assert('promocode_text', 'Please Enter Promo Code!').notEmpty();
 
-  
+
     req.getValidationResult().then(function (result) {
         errors = result.useFirstErrorOnly().array();
-        if(errors.length > 0) {
-           res.json(errors);
-        }
-        else{
-            promoRef.orderByChild('promo').equalTo(params).once('value').then(function (userSnap){
+        if (errors.length > 0) {
+            res.json(errors);
+        } else {
+            promoRef.orderByChild('promo').equalTo(params).once('value').then(function (userSnap) {
                 let userData = userSnap.val();
                 let new_snap = _.filter(userData);
-                if(userData !== null)
-                {
+                if (userData !== null) {
                     let keys = Object.keys(userData);
 
-            let type_check = false;
+                    let type_check = false;
 
-            keys.forEach(function (key) {
-                let row = userData[key];
-                var abc = moment(row.expdate,'x');
-                var actaldate = abc.format('DD/MMM/YYYY');
+                    keys.forEach(function (key) {
+                        let row = userData[key];
+                        var abc = moment(row.expdate, 'x');
+                        var actaldate = abc.format('DD/MMM/YYYY');
 
-                var todayDate = moment();
-                var todayDateFormat = todayDate.format("DD/MMM/YYYY");
-                if(todayDateFormat > actaldate){
-                    res.json({status: "failed", message: "This Promo Code is Expired!"});
+                        var todayDate = moment();
+                        var todayDateFormat = todayDate.format("DD/MMM/YYYY");
+                        if (todayDateFormat > actaldate) {
+                            res.json({
+                                status: "failed",
+                                message: "This Promo Code is Expired!"
+                            });
 
-                }else{
-                    if (row.status === 1){
-                        res.json({status: "failed", message: "This Promo Code is not exist!"});
-                    }
-                    else {
-                        res.json({status: "ok", data: new_snap});
-                    }
+                        } else {
+                            if (row.status === 1) {
+                                res.json({
+                                    status: "failed",
+                                    message: "This Promo Code is not exist!"
+                                });
+                            } else {
+                                res.json({
+                                    status: "ok",
+                                    data: new_snap
+                                });
+                            }
+                        }
+
+                    });
+
+                } else {
+                    res.json({
+                        status: "failed",
+                        message: "Invalid Promo Code!"
+                    });
                 }
 
-            });
-
-                  
-                    
-                    
-                }
-                else{
-                    res.json({status: "failed", message: "Invalid Promo Code!"});
-                }
-                
 
             });
         }
     });
 });
 
+function secondsToHms(mDuration) {
+    let hours = (mDuration.asHours().toString().length < 2) ? "0" + mDuration.asHours() : mDuration.asHours();
+    let min = (mDuration.get('m').toString().length < 2) ? "0" + mDuration.get('m') : mDuration.get('m');
+    let sec = (mDuration.get('s').toString().length < 2) ? "0" + mDuration.get('s') : mDuration.get('s');
+    return parseInt(hours) + ":" + min + ":" + sec;
+};
+router.get('/get_logs', function (req, res) {
+    let token = req.body.token || req.params.token || req.query.token;
+    if (token && token !== "") {
+        admin.auth().verifyIdToken(token)
+            .then(function (decodeToken) {
+                req.query['uid'] = decodeToken.uid;
+               // req.query['uid'] = '-L0xblGLKyrUZA6ojx8k' //decodeToken.uid;
+                let dataOfDays = 7;
+                let lastdays = moment().subtract(dataOfDays, 'days');
+                let data = [];
+                let Temp_logDate = '';
+                let tempduration = '';
+                let totalTime = '';
+                sessionsRef.orderByChild("userID").equalTo(req.query['uid']).once('value', function (snap) {
+                    snap.forEach(log => {
+                        if (log.val().loginTime >= lastdays.valueOf()) {
+                            let login_time = '';
+                            let Logout_time = '';
+                            let duration = '';
+                            login_time = moment(log.val().loginTime);
+                            Logout_time = moment(log.val().logoutTime);
+                            duration = moment.duration(Logout_time.diff(login_time));
+                            try {
+                                if (moment(Temp_logDate).unix() == moment(login_time).startOf('day').unix()) {
+                                    if (totalTime != '') {
+                                        totalTime.add(duration);
+                                    } else {
+                                        totalTime = duration;
+                                    }
+                                    if (tempduration == '') {
+                                        tempduration = duration;
+                                    } else {
+                                        tempduration.add(duration);
+                                    }
+                                } else {
+                                    data.push({
+                                        'date': login_time.format('DD MMM YYYY'),
+                                        'time': secondsToHms(duration),
+                                    });
+                                    tempduration = '';
+                                }
+                            } catch (e) {
+                                console.log(e.message)
+                            }
+                            Temp_logDate = moment(log.val().loginTime).startOf('day');
+                        }
+                    });
+                    let bidsTotal = 0;
+                    bidRef.once('value', function (driverBidsSnap) {
+                        driverBidsSnap.forEach(key => {
+                            let isOK = false;
+                            Object.values(key.val()).forEach(bid => {
+                                if (bid.first_bid_time >= lastdays.valueOf()) {
+                                    isOK = true;
+                                }
+                            });
+                            Object.keys(key.val()).forEach(bid => {
+                                if (bid == req.query['uid'] && isOK) {
+                                    bidsTotal++;
+                                } else {}
+                            })
+                        });
+                        let totalReq = 0;
+                        userReqRef.once('value', function (userReqSnap) {
+                            userReqSnap.
+                            forEach(req => {
+                                Object.values(req.val()).forEach(reqData => {
+                                    if (reqData.createdAt >= lastdays.valueOf()) {
+                                        totalReq++;
+                                    }
+                                });
+                            });
+                            res.json({
+                                status: 'ok',
+                                totalTime: secondsToHms(totalTime),
+                                totalBids: bidsTotal,
+                                totalRequests: totalReq,
+                                logData: data.reverse(),
+                            });
+                        })
+                    });
+                });
+            })
+            .catch(function (err) {
+                res.json({
+                    status: "failed",
+                    message: err.message
+                });
+            });
+    } else {
+        res.json({
+            status: "failed",
+            message: "Token Required!"
+        });
+    }
 
+});
+ 
 router.get('/get_top_10', customTokenMW, function (req, res) {
-    if(req.query.date && req.query.date !== "") {
+    if (req.query.date && req.query.date !== "") {
         const sel_month = moment(req.query.date);
         const min_month = moment().subtract(12, 'M');
         const max_month = moment();
-        if(sel_month.isValid()) {
-            if(sel_month.unix() >= min_month.unix() && sel_month.unix() <= max_month.unix()) {
+        if (sel_month.isValid()) {
+            if (sel_month.unix() >= min_month.unix() && sel_month.unix() <= max_month.unix()) {
                 userRef.orderByChild("type").equalTo("driver").once('value', function (snap) {
                     if (snap.val() !== null) {
                         const all_snap = snap.val();
-                        let new_snap = _.filter(all_snap, {status: 1});
+                        let new_snap = _.filter(all_snap, {
+                            status: 1
+                        });
                         let ind = 0;
                         let sendData = [];
                         if (new_snap.length > 0) {
                             new_snap.forEach(function (driver) {
-                                const driver_key = _.findKey(all_snap, {status: 1, email: driver.email});
+                                const driver_key = _.findKey(all_snap, {
+                                    status: 1,
+                                    email: driver.email
+                                });
                                 let grabData = {};
                                 grabData['points'] = 0;
                                 grabData['id'] = driver_key;
@@ -496,13 +720,15 @@ router.get('/get_top_10', customTokenMW, function (req, res) {
                                         sess_snap.forEach(function (sess_item) {
                                             let sess_item_val = sess_item.val();
                                             if (sess_item_val.hasOwnProperty("loginTime") && sess_item_val.hasOwnProperty("logoutTime")) {
-                                                if(moment(sess_item_val.loginTime).format('M') === sel_month.format('M')) {
+                                                if (moment(sess_item_val.loginTime).format('M') === sel_month.format('M')) {
                                                     defDuration.add(moment.duration(moment(sess_item_val.logoutTime).diff(moment(sess_item_val.loginTime))));
                                                 }
                                             }
                                         });
                                     }
-                                    grabData['time'] = {m: (defDuration.get('h') * 60) + defDuration.get("m")};
+                                    grabData['time'] = {
+                                        m: (defDuration.get('h') * 60) + defDuration.get("m")
+                                    };
                                     grabData['points'] += Math.round(grabData.time.m / 100);
                                     // hit db callback --complete_requests
                                     completeReqRef.orderByChild("driver_uid").equalTo(driver_key).once('value', function (creq_snap) {
@@ -510,7 +736,7 @@ router.get('/get_top_10', customTokenMW, function (req, res) {
                                         let rating_count = 0;
                                         if (creq_snap.val() !== null) {
                                             creq_snap.forEach(function (c_job) {
-                                                if(moment(c_job.val().complete_time).format('M') === sel_month.format('M')) {
+                                                if (moment(c_job.val().complete_time).format('M') === sel_month.format('M')) {
                                                     rating_count += c_job.val().rating;
                                                     grabData['points'] += ratingPoints(c_job.val().rating);
                                                 }
@@ -534,20 +760,35 @@ router.get('/get_top_10', customTokenMW, function (req, res) {
                                 });
                             });
                         } else {
-                            res.json({status: "failed", message: "No Top Driver Found!"});
+                            res.json({
+                                status: "failed",
+                                message: "No Top Driver Found!"
+                            });
                         }
                     } else {
-                        res.json({status: "failed", message: "No Top Driver Found!"});
+                        res.json({
+                            status: "failed",
+                            message: "No Top Driver Found!"
+                        });
                     }
                 });
-            }else{
-                res.json({status: "failed", message: "No Match Date!"});
+            } else {
+                res.json({
+                    status: "failed",
+                    message: "No Match Date!"
+                });
             }
-        }else{
-            res.json({status: "failed", message: "Invalid date!"});
+        } else {
+            res.json({
+                status: "failed",
+                message: "Invalid date!"
+            });
         }
-    }else{
-        res.json({status: "failed", message: "Date not found!"});
+    } else {
+        res.json({
+            status: "failed",
+            message: "Date not found!"
+        });
     }
 });
 
@@ -652,8 +893,8 @@ function userLoginCheck(field, params, callback) {
             keys.forEach(function (key) {
                 let row = userData[key];
                 if (row.type === params['type'] && bcrypt.compareSync(params['password'], row.password)) {
-                    if(typeof row.blocked !== 'undefined') {
-                        if(row.blocked === true) {
+                    if (typeof row.blocked !== 'undefined') {
+                        if (row.blocked === true) {
                             err = "Your account is blocked!";
                             return false;
                         }
@@ -690,17 +931,31 @@ function complete_pros(push_row, ind, tot_length, allData, res, req) {
     if (ind === tot_length) {
         allData = _.orderBy(allData, ['points', 'time.m', 'rating', 'earning', 'bids'], ['desc', 'desc', 'desc', 'desc', 'desc']);
         let top_10 = _.take(allData, 10);
-        let rankGet = _.findIndex(allData, {id: req.query.uid});
+        let rankGet = _.findIndex(allData, {
+            id: req.query.uid
+        });
         if (rankGet > -1) {
-            if (_.some(top_10, {id: req.query.uid})) {
-                res.json({status: "ok", data: top_10});
+            if (_.some(top_10, {
+                    id: req.query.uid
+                })) {
+                res.json({
+                    status: "ok",
+                    data: top_10
+                });
             } else {
                 let grabRankItem = allData[rankGet];
                 top_10.push(grabRankItem);
-                res.json({status: "ok", data: top_10, rank: rankGet + 1});
+                res.json({
+                    status: "ok",
+                    data: top_10,
+                    rank: rankGet + 1
+                });
             }
         } else {
-            res.json({status: "failed", message: "Driver is not active!"});
+            res.json({
+                status: "failed",
+                message: "Driver is not active!"
+            });
         }
     }
     return ind;
@@ -736,7 +991,7 @@ async function driverEarning(com_reqs_snap, driver_key, m_moment) {
 async function comJobBid(req_key, driver_key, m_moment) {
     let earn = 0;
     await bidRef.child(req_key + "/" + driver_key).once('value', function (bid_snap) {
-        if(moment(bid_snap.val().first_bid_time).format("M") === m_moment.format("M")) {
+        if (moment(bid_snap.val().first_bid_time).format("M") === m_moment.format("M")) {
             earn = parseInt(bid_snap.val().amount);
         }
     });
@@ -748,10 +1003,10 @@ async function driverBids(driver_key, m_moment) {
     await bidRef.once('value', function (bid_snap) {
         if (bid_snap.val() !== null) {
             let res = _.filter(bid_snap.val(), driver_key);
-            if(res.length > 0) {
+            if (res.length > 0) {
                 for (let [p_key, p_val] of Object.entries(res)) {
                     for (let [i_key, i_val] of Object.entries(p_val)) {
-                        if(moment(i_val.first_bid_time).format("M") === m_moment.format("M")) {
+                        if (moment(i_val.first_bid_time).format("M") === m_moment.format("M")) {
                             count++;
                         }
                     }
@@ -771,9 +1026,15 @@ function customTokenMW(req, res, next) {
                 next();
             })
             .catch(function (err) {
-                res.json({status: "failed", message: err.message});
+                res.json({
+                    status: "failed",
+                    message: err.message
+                });
             });
     } else {
-        res.json({status: "failed", message: "Token Required!"});
+        res.json({
+            status: "failed",
+            message: "Token Required!"
+        });
     }
 }

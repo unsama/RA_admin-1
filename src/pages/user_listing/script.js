@@ -2,21 +2,23 @@ import firebase from 'firebase'
 import func from '../../../custom_libs/func'
 import moment from 'moment'
 import XLSX from 'xlsx'
+import Datepicker from 'vuejs-datepicker';
 import tableComp from '../../partials/components/html_utils/tabel_comp.vue'
 
 export default {
     components: {
-        'table_comp': tableComp
+        'table_comp': tableComp,
+        'date_picker': Datepicker,
     },
     created: function () {
         let self = this;
 
         const db = firebase.database();
         self.userRef = db.ref('/users');
-        self.userRef.orderByChild('type').equalTo('client').on('value', function(snap){
+        self.userRef.orderByChild('type').equalTo('client').on('value', function (snap) {
             let renderData = snap.val();
             self.data1 = [];
-            if(renderData !== null) {
+            if (renderData !== null) {
                 let renderDataKeys = Object.keys(renderData);
                 let process_item = 0;
                 let grabData = [];
@@ -33,57 +35,106 @@ export default {
                     process_item++;
                     if (process_item === renderDataKeys.length) {
                         self.data1 = grabData;
+                        self.data1_ = grabData;
                         self.dataLoad = false;
                     }
                 });
             }
         });
     },
-    data: function(){
+    data: function () {
         return {
             dataLoad: true,
-            selectedUserIDs:[],
-            CheckAll:false,
+            selectedUserIDs: [],
+            CheckAll: false,
             data1: [],
-            userRef: null
+            data1_: [],
+            userRef: null,
+            FromDate: "",
+            ToDate: "",
+            UsersAOption: "All",
         }
     },
-    methods: { 
-        EXPORT_File :function(){
+    methods: {
+        changeSearch() {
+            let self = this;
+            self.data1 = [];
+            let FDate = '';
+            let TDate = '';
+            if (self.FromDate == '' || self.ToDate == '' || self.FromDate == null || self.ToDate == null) {} else {
+                FDate = moment(self.FromDate).startOf('day').unix();
+                TDate = moment(self.ToDate).endOf('day').unix();
+            }
+            self.data1_.forEach(user => {
+                if (FDate == "" || TDate == "" || FDate == null || TDate == null) {
+                    if (self.UsersAOption == 'Actived') {
+                        if (user.status == 1) {
+                            self.data1.push(user)
+                        }
+                    }
+                    if (self.UsersAOption == 'InActived') { 
+                        if (user.status == 0) {
+                            self.data1.push(user)
+                        }
+                    }
+                    if (self.UsersAOption == 'All') {
+
+                        self.data1.push(user)
+                    }
+                } else {
+                    if (moment(user.createdAt).unix() >= FDate && moment(user.createdAt).unix() <= TDate && self.UsersAOption == 'Actived') {
+                        if (user.status == 1) {
+                            self.data1.push(user)
+                        }
+                    }
+                    if (moment(user.createdAt).unix() >= FDate && moment(user.createdAt).unix() <= TDate && self.UsersAOption == 'InActived') {
+                        console.log("D2");
+                        if (user.status == 0) {
+                            self.data1.push(user)
+                        }
+                    }
+                    if (moment(user.createdAt).unix() >= FDate && moment(user.createdAt).unix() <= TDate && self.UsersAOption == 'All') {
+
+                        self.data1.push(user)
+                    }
+                }
+            });
+        },
+        EXPORT_File: function () {
             let _g = this;
             let data = [];
-            _g.data1.forEach(user  => {
+            _g.data1.forEach(user => {
                 delete user.password;
-                 data.push( user);
+                data.push(user);
             });
- 
-        /* make the worksheet */
-        var ws = XLSX.utils.json_to_sheet(data);
-        
-        /* add to workbook */
-        var wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Users");
-        
-        /* generate an XLSX file */
-        XLSX.writeFile(wb, "ExportUsersData.xlsx");
+
+            /* make the worksheet */
+            var ws = XLSX.utils.json_to_sheet(data);
+
+            /* add to workbook */
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Users");
+
+            /* generate an XLSX file */
+            XLSX.writeFile(wb, "ExportUsersData.xlsx");
         },
-        CheckAlls:function (checkAll) {
-            let self =this; 
-            self.selectedUserIDs=[];
-            if(!checkAll){
-                self.data1 .forEach(user => {  
-                     self.selectedUserIDs.push(user.key)
-                 });
+        CheckAlls: function (checkAll) {
+            let self = this;
+            self.selectedUserIDs = [];
+            if (!checkAll) {
+                self.data1.forEach(user => {
+                    self.selectedUserIDs.push(user.key)
+                });
             }
         },
         deActive: function (key, index, event) {
             event.stopPropagation();
             let self = this;
-            if(self.userRef){
+            if (self.userRef) {
                 self.userRef.child(key).update({
                     status: 0
                 }, function (err) {
-                    if(err){
+                    if (err) {
                         console.log(err)
                     }
                 });
@@ -92,11 +143,11 @@ export default {
         active: function (key, index, event) {
             event.stopPropagation();
             let self = this;
-            if(self.userRef){
+            if (self.userRef) {
                 self.userRef.child(key).update({
                     status: 1
                 }, function (err) {
-                    if(err){
+                    if (err) {
                         console.log(err)
                     }
                 });
@@ -106,13 +157,13 @@ export default {
         block: function (key, index, event) {
             event.stopPropagation();
             let self = this;
-            if(self.userRef){
+            if (self.userRef) {
                 self.userRef.child(key).update({
                     blocked: true
                 }, function (err) {
-                    if(err){
+                    if (err) {
                         console.log(err)
-                    }else{
+                    } else {
 
                         self.data1.splice(index, 1);
                     }
@@ -122,13 +173,13 @@ export default {
         unblock: function (key, index, event) {
             event.stopPropagation();
             let self = this;
-            if(self.userRef){
+            if (self.userRef) {
                 self.userRef.child(key).update({
                     blocked: false
                 }, function (err) {
-                    if(err){
+                    if (err) {
                         console.log(err)
-                    }else{
+                    } else {
 
                         self.data1.splice(index, 1);
                     }
