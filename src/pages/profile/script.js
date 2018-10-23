@@ -1844,10 +1844,7 @@ export default {
                                 'durations': secondsToHms(duration)
                             });
                         } else {
-
-
                             if (time >= TimeFrom && time <= TimeTo) {
-
                                 self.totalTimes += duration;
                                 self.dataa.push({
                                     'days': day,
@@ -1871,10 +1868,6 @@ export default {
                 self.dataToShow.forEach(element => {
                     self.allLogsTSTime.add(element.duration);
                 });
-
-
-
-
                 self.isPrevAvaliableDAYS = false;
             }
         },
@@ -1926,8 +1919,7 @@ export default {
                 self.userReqRef.on('value', function (userReqSnap) {
                     userReqSnap.forEach(element => {
                         element.forEach(record => {
-                            let time = moment(record.val().createdAt).unix()
-
+                            let time = moment(record.val().createdAt).unix();
                             if (time >= TimeFrom && time <= TimeTo) {
                                 self.totalRequests++;
                             }
@@ -2110,8 +2102,7 @@ export default {
         },
         user_req_invoices: function (self, uid, driver_data) {
             self.userReqInvoiceRef.orderByChild('driver_uid').equalTo(uid).once('value').then(function (userReqInvoiceSnap) {
-                let userReqInvoiceData = userReqInvoiceSnap.val();
-                console.log(userReqInvoiceData);
+                let userReqInvoiceData = userReqInvoiceSnap.val(); 
                 if (userReqInvoiceData !== null) {
                     let keys = Object.keys(userReqInvoiceData);
                     let key_length = keys.length;

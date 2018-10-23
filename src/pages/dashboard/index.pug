@@ -3,11 +3,19 @@ aside.right-side(slot='right-side')
         h1
             | Dashboard&nbsp;
             small Control panel
+            small.form-inline
+                .form-group 
+                    date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='FromDate')                            
+                .form-group 
+                    date_picker(:typeable='true',:bootstrap-styling = 'true' ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select To Date', v-model='ToDate')                            
+
+                .form-group 
+                    input.form-control.btn.btn-default.mb-2(type="button",value = "Filter" ,@click="filterData")
         ol.breadcrumb
             li
                 router-link(to='/admin')
                     i.fa.fa-dashboard
-                    |  Dashboard
+                    |  Dashboard 
     section.content
         .row
             .col-lg-3.col-xs-6
@@ -118,3 +126,29 @@ aside.right-side(slot='right-side')
                     router-link.small-box-footer(to="/admin/requests/completed")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
+        .row
+            .col-lg-12.col-xs-12 
+ 
+                label.form-group 
+                    input.form-group(type="checkbox"  ,value="D", v-model = "ChartOpt" , name="chkbox")
+                |   Drivers    
+                label.form-group 
+                    input(type="checkbox"  ,value="U", v-model = "ChartOpt" , name="chkbox")
+                |   Users    
+                label.form-group 
+                    input(type="checkbox"  ,value="R", v-model = "ChartOpt" , name="chkbox")
+                |   Requests    
+                label.form-group 
+                    input.form-group(type="checkbox"  ,value="C", v-model = "ChartOpt" , name="chkbox")
+                |   Cancel Requests    
+                select.form-group(v-model = "ChartOpts")
+                    option(value="All", v-model = "ChartOpts") All
+                    option(value="Month", v-model = "ChartOpts") This Month
+                    option(value="Week", v-model = "ChartOpts") This Week 
+                    option(value="filter", v-model = "ChartOpts") Filtered
+                button.btn.btn-default(@click="RefreshChartx(ChartOpt,ChartOpts)") Show Chart
+ 
+        .row
+            .col-lg-12.col-xs-12 
+                gchart(type='AreaChart', :data='chartData', :options='chartOptions' ,:resizeDebounce="500")
+ 

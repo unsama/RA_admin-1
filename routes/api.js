@@ -583,80 +583,98 @@ router.post('/promocode', function (req, res, next) {
     });
 });
 
-function secondsToHms(mDuration) {
-    let hours = (mDuration.asHours().toString().length < 2) ? "0" + mDuration.asHours() : mDuration.asHours();
-    let min = (mDuration.get('m').toString().length < 2) ? "0" + mDuration.get('m') : mDuration.get('m');
-    let sec = (mDuration.get('s').toString().length < 2) ? "0" + mDuration.get('s') : mDuration.get('s');
-    return parseInt(hours) + ":" + min + ":" + sec;
-};
-router.get('/get_logs', function (req, res) {
+
+router.get('/test', function (req, res) {
+    try {
+        admin.auth().getUser(req.query['uid']).then(user => {
+            res.json({
+                "Time": user.metadata.createdAt,
+            });
+        }).catch(function(error) {
+            res.json({
+                "test": "data"
+            });
+          }); 
+    } catch (e) {
+        res.json({
+            "test": "data"
+        });
+    }
+});
+
+
+router.get('/get_logs_data', function (req, res) {
+
     let token = req.body.token || req.params.token || req.query.token;
     if (token && token !== "") {
         admin.auth().verifyIdToken(token)
             .then(function (decodeToken) {
                 req.query['uid'] = decodeToken.uid;
-               // req.query['uid'] = '-L0xblGLKyrUZA6ojx8k' //decodeToken.uid;
-                let dataOfDays = 7;
+
+                let dataOfDays = 10;
                 let lastdays = moment().subtract(dataOfDays, 'days');
                 let data = [];
-                let Temp_logDate = '';
-                let tempduration = '';
-                let totalTime = '';
+
+                let totalTime = moment.duration();
                 sessionsRef.orderByChild("userID").equalTo(req.query['uid']).once('value', function (snap) {
+
                     snap.forEach(log => {
-                        if (log.val().loginTime >= lastdays.valueOf()) {
-                            let login_time = '';
-                            let Logout_time = '';
-                            let duration = '';
-                            login_time = moment(log.val().loginTime);
-                            Logout_time = moment(log.val().logoutTime);
-                            duration = moment.duration(Logout_time.diff(login_time));
-                            try {
-                                if (moment(Temp_logDate).unix() == moment(login_time).startOf('day').unix()) {
-                                    if (totalTime != '') {
-                                        totalTime.add(duration);
-                                    } else {
-                                        totalTime = duration;
-                                    }
-                                    if (tempduration == '') {
-                                        tempduration = duration;
-                                    } else {
-                                        tempduration.add(duration);
-                                    }
-                                } else {
-                                    data.push({
-                                        'date': login_time.format('DD MMM YYYY'),
-                                        'time': secondsToHms(duration),
-                                    });
-                                    tempduration = '';
-                                }
-                            } catch (e) {
-                                console.log(e.message)
-                            }
-                            Temp_logDate = moment(log.val().loginTime).startOf('day');
+
+                        if (moment(log.val().loginTime).unix() >= lastdays.startOf('day').unix()) {
+                            let login_time = moment(log.val().loginTime);
+                            let Logout_time = moment(log.val().logoutTime);
+                            let duration = moment.duration(Logout_time.diff(login_time));
+                            totalTime = totalTime.add(duration)
+                            data.push({
+                                'date': login_time.startOf('day').format("DD MMM YYYY"),
+                                'time': duration,
+                            });
                         }
                     });
+                    data.push({
+                        'date': '',
+                        'time': "",
+                    })
+                    let br = [];
+                    data.forEach((element, index) => {
+
+                        if (index + 1 <= data.length) {
+                            if (data[index + 1] == undefined) {
+                                element.date = element.date;
+                                try {
+                                    element.time = secondsToHms(element.time)
+                                } catch (e) {}
+                            } else {
+                                if (element.date == data[index + 1].date) {
+                                    data[index + 1].time = moment.duration(data[index + 1].time).add(element.time);
+                                } else {
+
+                                    element.date = element.date;
+                                    try {
+                                        element.time = secondsToHms(element.time)
+                                    } catch (e) {}
+                                    br.push(element);
+
+                                }
+                            }
+                        }
+                    });
+                    data = br;
                     let bidsTotal = 0;
                     bidRef.once('value', function (driverBidsSnap) {
                         driverBidsSnap.forEach(key => {
-                            let isOK = false;
-                            Object.values(key.val()).forEach(bid => {
-                                if (bid.first_bid_time >= lastdays.valueOf()) {
-                                    isOK = true;
+                            key.forEach(bd => {
+                                if (bd.key == req.query['uid'] && moment(bd.val().first_bid_time).unix() >= lastdays.startOf('day').unix()) {
+                                    bidsTotal++;
                                 }
                             });
-                            Object.keys(key.val()).forEach(bid => {
-                                if (bid == req.query['uid'] && isOK) {
-                                    bidsTotal++;
-                                } else {}
-                            })
                         });
                         let totalReq = 0;
                         userReqRef.once('value', function (userReqSnap) {
                             userReqSnap.
                             forEach(req => {
                                 Object.values(req.val()).forEach(reqData => {
-                                    if (reqData.createdAt >= lastdays.valueOf()) {
+                                    if (moment(reqData.createdAt).unix() >= lastdays.startOf('day').unix()) {
                                         totalReq++;
                                     }
                                 });
@@ -686,7 +704,8 @@ router.get('/get_logs', function (req, res) {
     }
 
 });
- 
+
+
 router.get('/get_top_10', customTokenMW, function (req, res) {
     if (req.query.date && req.query.date !== "") {
         const sel_month = moment(req.query.date);
@@ -793,6 +812,14 @@ router.get('/get_top_10', customTokenMW, function (req, res) {
 });
 
 module.exports = router;
+
+function secondsToHms(mDuration) {
+    let hours = (mDuration.asHours().toString().length < 2) ? "0" + mDuration.asHours() : mDuration.asHours();
+    let min = (mDuration.get('m').toString().length < 2) ? "0" + mDuration.get('m') : mDuration.get('m');
+    let sec = (mDuration.get('s').toString().length < 2) ? "0" + mDuration.get('s') : mDuration.get('s');
+    return parseInt(hours) + ":" + min + ":" + sec;
+};
+
 
 function userMobCheck(mobNum, type, callback) {
     userRef.orderByChild('mob_no').equalTo(mobNum).once('value').then(function (userSnap) {

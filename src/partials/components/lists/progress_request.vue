@@ -21,6 +21,7 @@
                                 th Require Vehicle
                                 //th Parcel Images
                                 th Action
+                                th Track
                         template(slot="tbody")
                             tr(v-for='(row, ind) in all')
                                 td {{ ind+1 }}
@@ -44,6 +45,8 @@
                                         button.btn.btn-info(v-on:click='statusChange(row.pend_req_data.status, row.pend_req_data.user_uid)') Delivered
                                     template(v-if="row.pend_req_data.status === 'req.complete'")
                                         button.btn.btn-info(disabled) Completed!
+                                td
+                                  router-link(:to="{name:'track',  params:{ id: row.req_data.id }}") Track
         parcel_details(v-bind:parcel_obj="sel_parcel_obj")
         parcel_images(v-bind:images="sel_images")
 </template>
