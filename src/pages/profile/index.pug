@@ -553,15 +553,17 @@ aside.right-side
                                             th Balance
                                             //th Delete
                                     tbody
-                                        tr(v-for="(row, key, index) in walletData")
+                                        tr(v-for="(row, key, index) in walletData" , :id="key+'-tr'")
                                             td {{ index+1 }}
                                             td {{ row.addedAt }}
                                             td {{ row.narration }}
                                             td {{ row.debit }}
                                             td {{ row.credit }}
                                             td {{ row.balance }}
-                                            //td
-                                                a(href="/#") #[img(src='../../../images/trashcan.png', alt='Delete', width='20', height='20')] 
+                                            
+                                                a(style="float:right;color:red;cursor:pointer", @click="DeleteWallet(key)" ,v-if="isRoot" )
+                                                    i.fa.fa-ban
+                                                    //img(src='../../../images/trashcan.png', alt='Delete', width='20', height='20')
                                     tfoot
                                         tr
                                             td.text-right(colspan='3')

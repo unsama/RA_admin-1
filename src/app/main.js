@@ -6,6 +6,8 @@ import VueRouter from 'vue-router'
 import VueResource from "vue-resource"
 import SimpleVueValidation from 'simple-vue-validator'
 import firebase from 'firebase'
+import VeeValidate from 'vee-validate';
+
 
 import config_fb from '../../config/clientPrivate.json'
 firebase.initializeApp(config_fb.config_fb);
@@ -13,6 +15,7 @@ firebase.initializeApp(config_fb.config_fb);
 
 import routes from './routes'
 
+Vue.use(VeeValidate);
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(SimpleVueValidation);

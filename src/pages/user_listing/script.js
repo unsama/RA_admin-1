@@ -41,6 +41,14 @@ export default {
                 });
             }
         });
+        if (self.$route.query.Activeusers) {
+            self.UsersAOption = self.$route.query.Activeusers;
+            if (self.$route.query.FromDate || self.$route.query.ToDate) {
+                self.FromDate = moment.unix(self.$route.query.FromDate).format('DD/MMM/YYYY');
+                self.ToDate = moment.unix(self.$route.query.ToDate).format('DD/MMM/YYYY'); 
+            }
+            self.changeSearch();
+        }
     },
     data: function () {
         return {
@@ -88,7 +96,7 @@ export default {
                         }
                     }
                     if (moment(user.createdAt).unix() >= FDate && moment(user.createdAt).unix() <= TDate && self.UsersAOption == 'InActived') {
-                        console.log("D2");
+                         
                         if (user.status == 0) {
                             self.data1.push(user)
                         }

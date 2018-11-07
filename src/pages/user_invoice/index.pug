@@ -22,7 +22,7 @@ aside.right-side
                                 tbody
                                     tr
                                         td(height='50px' align='center')
-                                            img(style='border-bottom:3px solid #fcd519;')(src='http://roadioapp.com/images/roadio_logo_web.png', width='200', alt='Logo')
+                                            img(style='border-bottom:3px solid #fcd519;',src='http://roadioapp.com/images/roadio_logo_web.png', width='200', alt='Logo')
                                     tr
                                         td
                                             table(width='100%' align='center' cellspacing='0' style='font-family:"Helvetica","Arial",sans-serif')
@@ -140,10 +140,10 @@ aside.right-side
                                                                     tr
                                                                         td(style="border: 2px solid;padding: 5px;text-align:center;") From({{ invData.req_data.orgText }}) To({{ invData.req_data.desText }}) User({{ invData.client_data.first_name }}) Driver({{ invData.driver_data.first_name }})
                                                                         td(style="border: 2px solid;padding: 5px;text-align:center;") Rs.{{ invData.inv_data.amount }}
-                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;")(v-if='invData.inv_data.discountPrice < 1') Rs.0
-                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;")(v-else ) Rs.{{invData.inv_data.amount - invData.inv_data.discountPrice}}
-                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;")(v-if='invData.inv_data.discountPrice < 1') Rs.{{invData.inv_data.amount}}
-                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;")(v-else) Rs.{{invData.inv_data.discountPrice}}
+                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;", v-if='invData.inv_data.discountPrice < 1') Rs.0
+                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;", v-else ) Rs.{{invData.inv_data.amount - invData.inv_data.discountPrice}}
+                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;", v-if='invData.inv_data.discountPrice < 1') Rs.{{invData.inv_data.amount}}
+                                                                        td(style="border: 2px solid;padding: 5px;text-align:center;", v-else) Rs.{{invData.inv_data.discountPrice}}
 
                                                                         
                                                     tr

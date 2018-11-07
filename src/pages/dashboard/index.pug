@@ -27,7 +27,7 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Active Users
-                    router-link.small-box-footer(to="/admin/users")
+                    router-link.small-box-footer(:to="{path: '/admin/users',  query: {Activeusers:'Actived' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
             .col-lg-3.col-xs-6
@@ -39,7 +39,7 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Inactive Users
-                    router-link.small-box-footer(to="/admin/users")
+                    router-link.small-box-footer(:to="{path: '/admin/users',  query: {Activeusers:'InActived' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
             .col-lg-3.col-xs-6
@@ -51,7 +51,19 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Active Drivers
-                    router-link.small-box-footer(to="/admin/drivers")
+                    router-link.small-box-footer(:to="{path: '/admin/drivers',  query: {Activedrivers:'Actived' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
+                        | More info&nbsp;
+                        i.fa.fa-arrow-circle-right
+            .col-lg-3.col-xs-6
+                .small-box.bg-blue
+                    .inner.text-center
+                        h3
+                            template(v-if="!driver.loader")
+                                | {{ driver.blocked.count }}
+                            i.fa.fa-refresh.fa-spin(v-else)
+                        p
+                            | Total Blocked Drivers
+                    router-link.small-box-footer(:to="{path: '/admin/drivers',  query: { Blockeddrivers:'Blocked' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
             .col-lg-3.col-xs-6
@@ -63,7 +75,7 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Inactive Drivers
-                    router-link.small-box-footer(to="/admin/drivers/requests")
+                    router-link.small-box-footer(:to="{path: '/admin/drivers',  query: {Activedrivers:'InActived' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
             .col-lg-3.col-xs-6
@@ -75,7 +87,7 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Bikers Register
-                    router-link.small-box-footer(to="/admin/drivers")
+                    router-link.small-box-footer(:to="{path: '/admin/drivers',  query: {Vehicle:'Bike' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
             .col-lg-3.col-xs-6
@@ -87,7 +99,7 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Cars Register
-                    router-link.small-box-footer(to="/admin/drivers")
+                    router-link.small-box-footer(:to="{path: '/admin/drivers',  query: {Vehicle:'Car' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
             .col-lg-3.col-xs-6
@@ -99,7 +111,7 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Pickups Register
-                    router-link.small-box-footer(to="/admin/drivers")
+                    router-link.small-box-footer(:to="{path: '/admin/drivers',  query: {Vehicle:'Pickup' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
             .col-lg-3.col-xs-6
@@ -111,7 +123,7 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Trucks Register
-                    router-link.small-box-footer(to="/admin/drivers")
+                    router-link.small-box-footer(:to="{path: '/admin/drivers',  query: {Vehicle:'Truck' , FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
             .col-lg-3.col-xs-6
@@ -123,7 +135,31 @@ aside.right-side(slot='right-side')
                             i.fa.fa-refresh.fa-spin(v-else)
                         p
                             | Total Jobs
-                    router-link.small-box-footer(to="/admin/requests/completed")
+                    router-link.small-box-footer(:to="{path:'/admin/requests/All', query: {FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
+                        | More info&nbsp;
+                        i.fa.fa-arrow-circle-right
+            .col-lg-3.col-xs-6
+                .small-box.bg-aqua
+                    .inner.text-center
+                        h3
+                            template(v-if="!jobs.loader")
+                                | {{  jobs.total.count -  jobs.Canceled.count }}
+                            i.fa.fa-refresh.fa-spin(v-else)
+                        p
+                            | Completed Jobs
+                    router-link.small-box-footer(:to="{path:'/admin/requests/completed', query: {FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
+                        | More info&nbsp;
+                        i.fa.fa-arrow-circle-right
+            .col-lg-3.col-xs-6
+                .small-box.bg-aqua
+                    .inner.text-center
+                        h3
+                            template(v-if="!jobs.loader")
+                                | {{ jobs.Canceled.count  }}
+                            i.fa.fa-refresh.fa-spin(v-else)
+                        p
+                            | Canceled Jobs
+                    router-link.small-box-footer(:to="{path:'/admin/requests/canceled', query: {FromDate:timestamp(FromDate), ToDate:timestamp(ToDate) }}")
                         | More info&nbsp;
                         i.fa.fa-arrow-circle-right
         .row

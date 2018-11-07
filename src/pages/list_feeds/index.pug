@@ -1,0 +1,45 @@
+aside.right-side
+    section.content-header
+        h1  Feeds
+        ol.breadcrumb
+            li
+                router-link(to='/')
+                    i.fa.fa-dashboard
+                    |  Dashboard
+            li.active  Feeds
+    section.content
+        .row
+            .col-md-12
+                .box
+                    table.table
+                        thead.box-header
+                            tr
+                                th #
+                                th Created Date
+                                th Heading
+                                th Description
+                                th Download URL
+                                th End Date
+                                th Status
+                                th 
+                        tbody.box-footer
+                            tr(v-for="(feed ,key,index ) in feeds" )
+                                td {{  index+1 }}  
+                                td.open_row(v-bind:data-url="'/admin/feeds/'+key") {{  formatDate(feed.createdDate) }}
+                                td.open_row(v-bind:data-url="'/admin/feeds/'+key") {{  feed.heading}}
+                                td.open_row(v-bind:data-url="'/admin/feeds/'+key") {{  feed.description}}
+                                td
+                                    a(:href="feed.downloadURL") Open Image
+
+                                        
+
+                                td.open_row(v-bind:data-url="'/admin/feeds/'+key") {{  formatDate(feed.expDate)}}
+                                td
+                                    label.switch
+                                        input(type='checkbox', v-if='feed.status == "live"' v-on:click='statusChange(key,false)', :checked='feed.status == "live"')
+                                        input(type='checkbox', v-else ,  v-on:click='statusChange(key,true)', :checked='feed.status == "live"')
+                                        span.slider.round
+                                td
+                                    a
+                                        h1.fa.fa-ban(style=" margin-top: 0px; margin-bottom: 0px;color: #2196F3" ,@click="deleteNews(key)")
+            

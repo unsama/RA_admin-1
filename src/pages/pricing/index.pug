@@ -1,0 +1,84 @@
+aside.right-side
+    section.content-header
+        h1  Pricing and Commission
+        ol.breadcrumb
+            li
+                router-link(to='/')
+                    i.fa.fa-dashboard
+                    |  Dashboard
+            li.active  Pricing
+    section.content
+        .row
+            .col-md-8
+                .box
+                    table.table
+                        thead.box-header
+                            tr
+                                th #
+                                th vehicle
+                                th Empty / KM
+                                th Loaded / KM
+                                th Labour Charges
+                                th Per Floor Charges
+                                th Min Charges
+                                th Min Distance
+                        tbody.box-footer
+                            tr(v-for="(data ,key,index ) in pricingData",@click="GoForEdit(key, $event)" ,style="cursor: pointer;")
+                                td {{index+1}}
+                                td {{key}}
+                                td Rs. {{data.emptyPrice}}
+                                td Rs. {{data.loadedPrice}}
+                                td Rs. {{data.labourCharges}}
+                                td Rs. {{data.perFloorCharges}}
+                                td Rs. {{data.minCharges}}
+                                td {{data.minDistance}}km 
+            .col-md-4
+                .box 
+                    .box-header 
+                        h3  Commission is {{commission}}%
+                    .box-body
+                        p Updated At : {{TimeFormat(updatedAt)}} 
+                        br
+                        label Commission : 
+                            input(type="text" , v-model="commissionData")
+                        |%
+                        
+                    .box-footer 
+                        button.btn.btn-default(@click="UpdateCommission") Update
+        
+            
+                .box
+                    .box-header
+                        h3 Add New Priceing
+                    .box-body
+                        tr
+                            td Vehicle	
+                            td    
+                                input(type="text" , v-model="vehicleName",placeholder = "Vehicle Name")
+                        tr
+                            td Empty / KM 
+                            td    
+                                input(type="text" , v-model="emptyPrice")
+                        tr
+                            td Loaded / KM 
+                            td    
+                                input(type="text" , v-model="loadedPrice")
+                        tr
+                            td Labour Charges
+                            td    
+                                input(type="text" , v-model="labourCharges")
+                        tr
+                            td Per Floor Charges
+                            td    
+                                input(type="text" , v-model="perFloorCharges")
+                        tr
+                            td Min Charges
+                            td    
+                                input(type="text" , v-model="minCharges")
+                        tr
+                            td Min Distance
+                            td    
+                                input(type="text" , v-model="minDistance")
+                    .box-footer
+                        button.btn.btn-default(@click="AddPrice") {{btnValue}} 
+

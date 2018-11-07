@@ -19,19 +19,30 @@ export default {
         'vue-multiselect': vueMultiselect,
     },
     created: function () {
-
         let self = this;
+        if (self.$route.query.Activedrivers || self.$route.query.Blockeddrivers || self.$route.query.Vehicle) {
+
+            if (self.$route.query.Activedrivers) {
+                self.UsersAOption = self.$route.query.Activedrivers;
+            } else if (self.$route.query.Blockeddrivers) {
+                self.UsersBOption = self.$route.query.Blockeddrivers;
+            } else if (self.$route.query.Vehicle) { 
+                self.selectedVehicle = self.$route.query.Vehicle;
+            } 
+            if (self.$route.query.FromDate || self.$route.query.ToDate) {
+                self.FromDate = moment.unix(self.$route.query.FromDate).format('DD/MMM/YYYY');
+                self.ToDate = moment.unix(self.$route.query.ToDate).format('DD/MMM/YYYY'); 
+            }
+            self.changeSearch();
+            return;
+        }
         const db = firebase.database();
         self.userRef = db.ref('/users');
         self.addaRef = db.ref('/adda_list');
         self.onlineDriversRef = db.ref('/online_drivers');
-
         let DataA = [];
-
         self.addaRef.on('value', function (addasnap) {
-
             addasnap.forEach(function (addaitem) {
-
                 var dt = addaitem.val()
                 if (dt !== null) {
                     let d = Object.keys(dt);
@@ -59,16 +70,20 @@ export default {
                     item['key'] = val;
                     item['time'] = "";
                     item['place_name'] = "";
-                    if (item.hasOwnProperty("adda_ref")) {
-                        self.addaRef.orderByChild('id').equalTo(item.adda_ref).on('value', function (addasnap) {
-                            let addaData = addasnap.val();
-                            let addadatkeys = Object.keys(addaData);
-                            addadatkeys.forEach(function (val) {
+                    if (item.hasOwnProperty("adda_ref") && item.adda_ref != '' && item.adda_ref != undefined && item.adda_ref != null) {
 
-                                let addaitem = addaData[val];
-                                item['place_name'] = addaitem.place_name;
-                            });
-                        });
+                        self.addaRef.orderByChild('id').equalTo(item.adda_ref).on('value', function (addasnap) {
+                            if (addasnap.val()) {
+                                let addaData = addasnap.val();
+                                let addadatkeys = Object.keys(addaData);
+                                addadatkeys.forEach(function (val) {
+                                    let addaitem = addaData[val];
+                                    item['place_name'] = addaitem.place_name;
+                                });
+                            }
+
+                        })
+
                     }
                     var bar = Object.keys(item).length;
                     var percent = (bar * 100) / 22; //////
@@ -90,7 +105,7 @@ export default {
                 });
             }
 
-        });
+        })
 
     },
     data: function () {
@@ -153,7 +168,6 @@ export default {
 
             var startDate = this.FromDate === null ? '' : this.FromDate;
             var endDate = this.ToDate === null ? '' : this.ToDate;
-
             var UsersAO = this.UsersAOption;
             var UsersBO = this.UsersBOption;
             var UsersCO = this.UsersCOption;
@@ -204,16 +218,17 @@ export default {
                         item['key'] = val;
                         item['time'] = "";
                         item['place_name'] = "";
-                        if (item.hasOwnProperty("adda_ref")) {
+                        if (item.hasOwnProperty("adda_ref") && item.adda_ref != '' && item.adda_ref != undefined && item.adda_ref != null) {
 
                             self.addaRef.orderByChild('id').equalTo(item.adda_ref).on('value', function (addasnap) {
-                                let addaData = addasnap.val();
-                                let addadatkeys = Object.keys(addaData);
-                                addadatkeys.forEach(function (val) {
-
-                                    let addaitem = addaData[val];
-                                    item['place_name'] = addaitem.place_name;
-                                });
+                                if (addasnap.val()) {
+                                    let addaData = addasnap.val();
+                                    let addadatkeys = Object.keys(addaData);
+                                    addadatkeys.forEach(function (val) {
+                                        let addaitem = addaData[val];
+                                        item['place_name'] = addaitem.place_name;
+                                    });
+                                }
                             });
                         }
                         var bar = Object.keys(item).length;
@@ -369,7 +384,7 @@ export default {
             }
         },
         ExportData: function () {
-            let self = this; 
+            let self = this;
             let DriverS = [];
             self.data1.forEach((driver, index) => {
                 DriverS.push({
@@ -384,13 +399,13 @@ export default {
                     "Action": driver.status,
                     "Status": driver.blocked
                 })
-            }); 
-        var ws = XLSX.utils.json_to_sheet(DriverS);
-         
-        var wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Drivers");
-         
-        XLSX.writeFile(wb, "ExportDriversData.xlsx");
+            });
+            var ws = XLSX.utils.json_to_sheet(DriverS);
+
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Drivers");
+
+            XLSX.writeFile(wb, "ExportDriversData.xlsx");
         },
 
         active: function (key, index, event) {

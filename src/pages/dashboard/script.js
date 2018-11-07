@@ -45,23 +45,22 @@ export default {
                     self.driver.active.count = _.filter(snap.val(), {
                         status: 1
                     }).length;
+                    self.driver.blocked.count = _.filter(snap.val(), {
+                        blocked: true
+                    }).length;
                     self.driver.inactive.count = _.filter(snap.val(), {
                         status: 0
                     }).length;
                     self.driver.bikers.count = _.filter(snap.val(), {
-                        status: 1,
                         vehicle: "Bike"
                     }).length;
                     self.driver.cars.count = _.filter(snap.val(), {
-                        status: 1,
                         vehicle: "Car"
                     }).length;
                     self.driver.pickup.count = _.filter(snap.val(), {
-                        status: 1,
                         vehicle: "Pickup"
                     }).length;
                     self.driver.truck.count = _.filter(snap.val(), {
-                        status: 1,
                         vehicle: "Truck"
                     }).length;
                 }
@@ -71,6 +70,7 @@ export default {
 
                     if (snap.val() !== null) {
                         let grab = 0;
+                        let Canceled = 0;
                         snap.forEach(function (c_snap) {
                             let user_jobs = c_snap.val();
                             c_snap.forEach(function (reqsnap) {
@@ -80,12 +80,14 @@ export default {
                                 Request[reqKey] = reqData;
                                 self.requestsData.push(Request);
                                 if (reqData.hasOwnProperty('canceledAt')) {
+                                    Canceled++;
                                     self.canceledRequestData.push(Request);
                                 }
                             })
                             grab += Object.keys(user_jobs).length;
                         });
                         self.jobs.total.count = grab;
+                        self.jobs.Canceled.count = Canceled;
                     }
                     self.jobs.loader = false;
                 }).then(() => {
@@ -100,7 +102,7 @@ export default {
             FromDate: '',
             ToDate: '',
             startDate: 0,
-            endDate: 0,
+            endDate: 0, 
             requestsData: [],
             DriversData: [],
             UsersData: [],
@@ -157,6 +159,9 @@ export default {
                 loader: true
             },
             driver: {
+                blocked: {
+                    count: 0
+                },
                 bikers: {
                     count: 0
                 },
@@ -181,6 +186,9 @@ export default {
                 loader: true,
                 total: {
                     count: 0
+                },
+                Canceled:{
+                    count:0
                 }
             }
         }
@@ -189,7 +197,7 @@ export default {
         filterData: function () {
             let self = this;
             let Users = self.UsersData;
-
+ 
 
             if (Users.val() !== null) {
                 self.user.active.count = _.filter(Users.val(), {
@@ -263,16 +271,16 @@ export default {
                     if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate && driver.status == 0) return driver;
                 }).length;
                 self.driver.bikers.count = _.filter(DriversDataWithDate, function (driver) {
-                    if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate && driver.status == 1 && driver.vehicle == "Bike") return driver;
+                    if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate  && driver.vehicle == "Bike") return driver;
                 }).length;
                 self.driver.cars.count = _.filter(DriversDataWithDate, function (driver) {
-                    if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate && driver.status == 1 && driver.vehicle == "Car") return driver;
+                    if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate  && driver.vehicle == "Car") return driver;
                 }).length;
                 self.driver.pickup.count = _.filter(DriversDataWithDate, function (driver) {
-                    if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate && driver.status == 1 && driver.vehicle == "Pickup") return driver;
+                    if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate  && driver.vehicle == "Pickup") return driver;
                 }).length;
                 self.driver.truck.count = _.filter(DriversDataWithDate, function (driver) {
-                    if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate && driver.status == 1 && driver.vehicle == "Truck") return driver;
+                    if (driver.createdAt >= self.startDate && driver.createdAt <= self.endDate  && driver.vehicle == "Truck") return driver;
                 }).length;
 
 
@@ -283,6 +291,13 @@ export default {
 
                 }).length;
 
+                self.jobs.Canceled.count = _.filter(self.requestsData, function (req) {
+                    req = Object.values(req)[0];
+                    if (req.createdAt >= self.startDate && req.createdAt <= self.endDate && req.hasOwnProperty('canceledAt')) return req;
+
+                }).length;
+
+                
             }, 1000);
             self.ChartOpts = 'filter';
             self.RefreshChartx(self.ChartOpt, self.ChartOpts);
@@ -358,17 +373,7 @@ export default {
                 });
 
                 self.chartData.push(ChartdataRow);
-
-                /*   ChartdataRow.forEach(element => {
-                       console.log(element);
-                       while (tks[tks.length - 1] < element ) {
-                           if (tks[tks.length - 1] < element ) {
-                               tks.push((tks[tks.length - 1] + 25)) //aaa
-                           }
-                       }
-                   });*/
-
-                //'Users', 'Drivers', 'Requests', 'Canceled Requests'
+ 
                 startDATE_moment = startDATE_moment.add(1, SecQuence_type + 's').startOf(SecQuence_type);
 
             }
@@ -385,7 +390,10 @@ export default {
                 ['0', 0]
             ]
         },
-
+        timestamp:function(time){
+            return moment(time).unix();
+    
+        },
         createChart: function () {
             //'Users', 'Drivers', 'Requests', 'Canceled Requests'
             let self = this;
@@ -401,6 +409,7 @@ export default {
                 let Countrequests = 0;
 
 
+
                 let StartMonth = moment(next_date).startOf('month');
                 let EndMonth = moment(next_date).endOf('month');
 
@@ -411,7 +420,7 @@ export default {
                 });
                 self.requestListData.forEach(element => {
                     if (moment(element).unix() >= StartMonth.unix() && moment(element).unix() <= EndMonth.unix()) {
-                        Countrequests++;
+                        Countrequests++; 
                     }
                 });
                 self.driverListData.forEach(element => {
@@ -426,19 +435,10 @@ export default {
                 });
 
                 self.chartData.push([next_date.format('MMM YY'), Countusers, Countdrivers, Countrequests, Countcanceledrequests]);
-
-                /* while (tks[tks.length - 1] < Countusers || tks[tks.length - 1] < Countdrivers) {
-                     if (tks[tks.length - 1] < Countusers || tks[tks.length - 1] < Countdrivers) {
-                         tks.push((tks[tks.length - 1] + 100))
-                     }
-                 }*/
-
-                //'Users', 'Drivers', 'Requests', 'Canceled Requests'
+ 
                 next_date = next_date.add(1, 'months').startOf('month');
 
-            }
-
-            //console.log(Data);
+            } 
         },
 
         RefreshChartx: function (opt, opts) {
@@ -447,8 +447,7 @@ export default {
             let ENDDATE_timestemp = moment();
             let ChartHead = ['Date'];
             let dataChuks = 'month';
-
-            // tks = [0, 100];
+ 
             switch (opts) {
                 case "All":
                     {
@@ -498,7 +497,7 @@ export default {
                                 }
                             case 'C':
                                 {
-                                    ChartHead.push('Canceled Requests');self.chartOptions.colors.push('black');
+                                    ChartHead.push('Canceled Requests');self.chartOptions.colors.push('#db4437');
                                     break
                                 }
                         }
@@ -515,17 +514,9 @@ export default {
             } else {
                 self.AddDataInChart(startDATE_moment, ENDDATE_timestemp.unix(), ChartHead, dataChuks)
             }
-
-
-
-
-
-
             if (self.chartOptions.colors.length == 0) {
                 self.chartOptions.colors = ['#db4437']
-            }
-            // console.log(ChartHead);
-            //console.log(self.chartOptions.colors);
+            } 
         },
         RefreshChart: function (opt) {
             let self = this;
@@ -566,16 +557,7 @@ export default {
 
 
         setValues: function () {
-
-
             let self = this;
-
-
-            // self.chartData.push([parseInt(self.chartData[self.chartData.length - 1][0]) + 1, Math.floor(Math.random() * (max - min)) + min, Math.floor(Math.random() * (max - min)) + min, Math.floor(Math.random() * (max - min)) + min, Math.floor(Math.random() * (max - min)) + min]);
-
-            //console.log(self.requestsData[0]);
-            // console.log(self.canceledRequestData[0]);
-
             let canceledrequestListing = [];
             self.canceledRequestData.forEach(req => {
                 if (Object.values(req)[0].hasOwnProperty('createdAt') && (Object.values(req)[0].createdAt + "").length == 13) {
@@ -632,8 +614,7 @@ export default {
                 }
             });
 
-            setTimeout(function () {
-                console.log("RuN!")
+            setTimeout(function () { 
                 self.canceledrequestListData = _.sortBy(canceledrequestListing);
                 self.requestListData = _.sortBy(requestListing);
                 self.driverListData = _.sortBy(driverListing);

@@ -36,8 +36,12 @@ export default {
         self.driverCommissionInvoicesRef = db.ref('/driver_commission_invoices');
         self.deletedRequestsRef = db.ref('/deleted_requests');
         self.walletRef = db.ref('/wallet');
-
         self.completeRequestListener();
+        if (self.$route.query.FromDate || self.$route.query.ToDate) { 
+            self.FromDate = moment.unix(self.$route.query.FromDate ).format("DD/MMM/YYYY");
+            self.ToDate = moment.unix(self.$route.query.ToDate).format("DD/MMM/YYYY");
+            self.FilterData();
+        }
     },
     destroyed() {
         this.completeReqRef.off();

@@ -18,6 +18,9 @@ admin_firebase.initializeApp({
 });
 
 var api = require('./routes/api');
+
+var test = require('./routes/test');
+
 var web = require('./routes/web');
 var admin = require('./routes/admin');
 var drivers = require('./routes/drivers');
@@ -89,6 +92,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
 
 app.use('/api', api);
+app.use('/test', test);
 app.use('/', web);
 app.use('/admin/drivers', drivers);
 

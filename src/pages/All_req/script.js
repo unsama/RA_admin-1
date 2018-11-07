@@ -22,7 +22,7 @@ export default {
         let self = this;
         firebase.auth().onAuthStateChanged((user) => {
             switch (user.uid) {
- 
+
                 case LiverootUID:
                     {
                         self.isRoot = true;;
@@ -30,22 +30,10 @@ export default {
                     }
                 case LiveadminUID:
                     {
-                        self.isRoot = false;self.$router.push('/admin');;
+                        self.isRoot = false; //self.$router.push('/admin');;
                         break
                     }
 
-
-
-                case rootUID:
-                    {
-                        self.isRoot = true;
-                        break
-                    }
-                case adminUID:
-                    {
-                        self.isRoot = false;self.$router.push('/admin');
-                        break
-                    }
 
             }
         })
@@ -60,6 +48,13 @@ export default {
         self.deletedRequestsRef = db.ref('/deleted_requests');
         self.walletRef = db.ref('/wallet');
         self.cancelRequestListener();
+        if (self.$route.query.FromDate || self.$route.query.ToDate) {
+            self.FromDate = moment.unix(self.$route.query.FromDate ).format("DD/MMM/YYYY");
+            self.ToDate = moment.unix(self.$route.query.ToDate).format("DD/MMM/YYYY");
+            self.FilterData();
+        }
+
+
 
     },
     destroyed() {
@@ -67,7 +62,7 @@ export default {
     },
     data: function () {
         return {
-            selectedOption:'All',
+            selectedOption: 'All',
             isRoot: false,
             iti: 0,
             search_t: "",
@@ -138,7 +133,7 @@ export default {
                                 });
                             })
                             self.userRequestInvoicesRef.child(data.key).remove(e => {
-                               // console.log("Done>");
+                                // console.log("Done>");
                             }) //////////// Delete From 
                         });
 
@@ -311,14 +306,14 @@ export default {
             TextedFiltered.forEach(function (item, ind) {
 
                 if ((moment(item.reqData.createdAt).unix() >= startTime && moment(item.reqData.createdAt).unix() <= endTime) || (startTime == '' || endTime == '')) {
-                     
- 
-                    if (item.reqData.hasOwnProperty("canceledAt") && self.selectedOption=="Canceled")
-                    self.all.push(item); 
-                    if (!(item.reqData.hasOwnProperty("canceledAt")) && self.selectedOption=="Completed")
-                    self.all.push(item); 
-                    if (self.selectedOption=="All")
-                    self.all.push(item);
+
+
+                    if (item.reqData.hasOwnProperty("canceledAt") && self.selectedOption == "Canceled")
+                        self.all.push(item);
+                    if (!(item.reqData.hasOwnProperty("canceledAt")) && self.selectedOption == "Completed")
+                        self.all.push(item);
+                    if (self.selectedOption == "All")
+                        self.all.push(item);
 
                 }
             });
@@ -498,10 +493,10 @@ export default {
                     self.FilterData();
                 } else {
                     self.dataLoad = false;
-                     self.FilterData();
+                    self.FilterData();
                 }
             })
-            
+
         }
     }
 }

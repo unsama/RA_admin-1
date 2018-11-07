@@ -1,0 +1,43 @@
+aside.right-side
+    section.content-header
+        h1 Edit Feed
+        ol.breadcrumb
+            li
+                router-link(to='/')
+                    i.fa.fa-dashboard
+                    |  Dashboard
+            li.active Edit Feeds
+    section.content
+        .row
+            .col-md-12
+                .box
+                    .box-header
+                        h3.box-title Feed Information  
+                    .box-body
+                        .row 
+                            .col-md-6
+                                .form-group( v-bind:class="{'has-error': ERRs.has('Heading')  , 'has-success':Updated.has('Heading') }")
+                                    label Heading* 
+                                    input.form-control(type='text', v-model = "Heading",placeholder='Eg: Headings For Feed' ,maxlength="25" ,v-on:keyup="MaxLength()" )
+                            .col-md-3
+                                .form-group( v-bind:class="{'has-error': ERRs.has('ExpDate') , 'has-success':Updated.has('ExpDate') }")
+                                    label Expire Date*
+                                    date_picker(:typeable='true',:bootstrap-styling = 'true',:disabledDates="state.disabledDates" ,:format="customFormatter",:minimum-view="'day'", :maximum-view="'month'", :initial-view="'month'", placeholder='Select From Date', v-model='ExpDate')
+                            .col-md-3
+                                .form-group( v-bind:class="{'has-error': ERRs.has('IMG') , 'has-success':Updated.has('IMG')  }")
+                                    label Add Image only 1080 x 720*
+                                    input.form-control-file(v-validate="'dimensions:1080,720'" , data-vv-as='image',v-on:change="onChange" , id="file"   name='dimensions_field', type='file')
+ 
+                        .row            
+                            .col-md-6
+                                .form-group( v-bind:class="{'has-error': ERRs.has('Description') , 'has-success':Updated.has('Description') }")
+                                    label Description* 
+                                    textarea.form-control(rows='5',   v-model = "Description" placeholder='Eg: Description',maxlength="500")
+                            .col-md-6
+                                .form-group( v-bind:class="{'has-error': ERRs.has('TermsConditions'), 'has-success':Updated.has('TermsConditions')  }")
+                                    label Terms & Conditions* 
+                                    textarea.form-control(rows='5', v-model = "TermsConditions" placeholder='Eg: Terms & Conditions',maxlength="500")
+                    .box-footer
+                        button(type='button'  v-if="ERRs.size==0 && SubmitActions.has('NotDone')" @click="PushData()").btn.btn-primary Update
+                        button(type='button'  v-else-if="SubmitActions.size==0" disabled).btn.btn-success Data Saved 
+                        button(type='button'  v-else  disabled).btn.btn-warning Update

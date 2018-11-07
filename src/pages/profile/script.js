@@ -10,7 +10,9 @@ import XLSX from 'xlsx'
 import Datepicker from 'vuejs-datepicker';
 import SimpleVueValidation from 'simple-vue-validator'
 const Validator = SimpleVueValidation.Validator;
-
+ 
+let LiverootUID = 'DerqRbXa2iZYe8Lw3bTrxI4jtv92';
+let LiveadminUID = 'EqSMcc6A2yfgKAjiVnLMaGD82P93';
 //import driverLogsSection from '../../partials/components/sections/driver_logs/index.vue'
 
 export default {
@@ -21,6 +23,13 @@ export default {
     created: function () {
         let self = this;
 
+        firebase.auth().onAuthStateChanged((user) => {
+            switch (user.uid) { 
+ 
+                case LiverootUID:{self.isRoot = true; break}
+                case LiveadminUID:{self.isRoot = false; break}    
+            } 
+        })
         self.$watch('debitTxt', function (val, oldVal) {
             self.debitTxt = self.$root.isNumber(val, oldVal);
         });
@@ -106,6 +115,7 @@ export default {
 
         const db = firebase.database();
         return {
+            isRoot:false,
             loading: true,
             sessionCol: db.ref("sessions"),
             todayLogs: [],
@@ -2102,7 +2112,7 @@ export default {
         },
         user_req_invoices: function (self, uid, driver_data) {
             self.userReqInvoiceRef.orderByChild('driver_uid').equalTo(uid).once('value').then(function (userReqInvoiceSnap) {
-                let userReqInvoiceData = userReqInvoiceSnap.val(); 
+                let userReqInvoiceData = userReqInvoiceSnap.val();
                 if (userReqInvoiceData !== null) {
                     let keys = Object.keys(userReqInvoiceData);
                     let key_length = keys.length;
@@ -2128,7 +2138,7 @@ export default {
                                 if (processItem === key_length) {
                                     self.invoiceReqData = func.sortObj(self.invoiceReqData);
                                     self.dataLoad3 = false;
-                                } 
+                                }
                             });
                         });
                     });
@@ -2210,7 +2220,8 @@ export default {
                             narration: self.narrationTxt,
                             debit: self.debitTxt,
                             credit: self.creditTxt,
-                            type: "driver_w"
+                            type: "driver_w",
+
                         }, function (err) {
                             if (err) {
                                 self.mainErr = err.message;
@@ -2228,6 +2239,29 @@ export default {
                     }
                 });
             }
+        },
+        DeleteWallet: function (id) {
+            let self = this;
+            self.walletRef.child(id).remove().then(() => {
+
+                var element = document.getElementById(id + '-tr');
+
+
+                setTimeout(function () {
+                    $(element).css('background-color', 'black');
+                    $(element).fadeOut({
+                        duration: 800
+                    });
+
+                }, 1000);
+                $(element).css('background-color', 'red');
+
+
+
+
+
+            }).catch((e) => {});
+
         },
         getLastRow: function (obj) {
             let keys = Object.keys(obj);

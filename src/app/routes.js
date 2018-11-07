@@ -39,6 +39,21 @@ import promolist from '../pages/promo_list/promo_list.vue'
 import promoin from '../pages/promo-in/promo-in.vue'
 import edit_promo from '../pages/edit_promo/edit_promo.vue'
 
+
+import addFeeds from '../pages/add_feeds/add_feeds.vue'
+import listFeeds from '../pages/list_feeds/list_feeds.vue'
+import editFeeds from '../pages/edit_feeds/edit_feeds.vue'
+
+import createAlerts from '../pages/create_alert_template/create_alert_template.vue' 
+import sendAlerts from '../pages/send_alerts/send_alerts.vue' 
+import listAlerts from '../pages/list_alerts/list_alerts.vue' 
+
+
+import pricing from '../pages/pricing/pricing.vue' 
+import editPricing from '../pages/edit_pricing/edit_pricing.vue' 
+
+
+
 import advanceSearch from '../pages/advance_search/advance_search.vue'
 
 const routes = [
@@ -70,7 +85,7 @@ const routes = [
                         path: 'users',
                         component: parentComLayout,
                         children: [
-                            {path: '', component: userList},
+                            {path: '', component: userList, props: (route) => ({ query: route.query.q }) },
                             {path: 'profile/:id', component: user_profile}
                         ]
                     },
@@ -78,8 +93,10 @@ const routes = [
                         path: 'drivers',
                         component: parentComLayout,
                         children: [
-                            {path: '', component: driverList},
-                            {path: 'requests', component: driverListDeactive},
+                            {path: '', component: driverList, props: (route) => ({ query: route.query.q }) },
+                            //{name: 'searchDriver', path: ':id', component: driverList, props: true },
+                            //{path: ':search?', component: driverList ,props: (route) => ({ query: route.query.q })},
+                            {path: 'requests', component: driverListDeactive}, 
                             {path: 'profile/:id', component: profile},
                             {path: 'add_driver', component: addDriver},
                             {path: 'edit_driver/:id', component: editDriver}
@@ -129,6 +146,32 @@ const routes = [
                             {path: 'edit_promo/:id', component: edit_promo},
                         ]
                     },
+
+                    {
+                        path: 'feeds',
+                        component: parentComLayout,
+                        children: [
+                            {path: '', component: listFeeds},
+                            {path: 'new', component: addFeeds},
+                            {path: ':id',component: editFeeds},
+                        ]
+                    },
+                    {
+                        path: 'alerts',
+                        component: parentComLayout,
+                        children: [
+                            {path: '', component: listAlerts},
+                            {path: 'new', component: createAlerts}, 
+                            {path: 'send', component: sendAlerts},
+                        ]
+                    },                    {
+                        path: 'pricing',
+                        component: parentComLayout,
+                        children: [
+                            {path: '', component: pricing},
+                            {path: ':id', component: editPricing},
+                        ]
+                    }, 
                     {
                         path: 'advance_search',
                         component: parentComLayout,

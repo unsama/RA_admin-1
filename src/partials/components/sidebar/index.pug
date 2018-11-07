@@ -8,7 +8,7 @@ aside.left-side.sidebar-offcanvas
                 p Roadio admin
                 a(href='#')
                     i.fa.fa-circle.text-success
-                    |  Online
+                    |  Online 
         // sidebar menu: : style can be found in sidebar.less
         ul.sidebar-menu
             li
@@ -90,6 +90,52 @@ aside.left-side.sidebar-offcanvas
                                 router-link(to='/admin/accounts/driver')
                                     i.fa.fa-angle-double-right
                                     | Drivers
+            li.treeview
+                a(href='#')
+                    i.fa.fa-rss
+                    span News & Feeds 
+                    i.fa.fa-angle-left.pull-right
+                ul.treeview-menu
+                    li
+                        router-link(to='/admin/feeds/new')
+                            i.fa.fa-plus
+                            |  Create New
+                    li
+                        router-link(to='/admin/feeds')
+                            i.fa.fa-list-ol
+                            |  List All
+            li.treeview
+                a(href='#')
+                    i.fa.fa-money
+                    span Pricing
+                    i.fa.fa-angle-left.pull-right
+                ul.treeview-menu
+                    li
+                        router-link(to='/admin/pricing')
+                            i.fa.fa-plus
+                            |  Pricing
+                    //li
+                        router-link(to='/admin/feeds')
+                            i.fa.fa-list-ol
+                            |  List All
+            li.treeview
+                a(href='#')
+                    i.fa.fa-bolt
+                    span Engagement Alerts
+                    i.fa.fa-angle-left.pull-right
+                ul.treeview-menu
+                    li
+                        router-link(to='/admin/alerts/new')
+                            i.fa.fa-plus
+                            |  Create template
+                    li
+                        router-link(to='/admin/alerts/send/')
+                            i.fa.fa-envelope-o
+                            |  Send Alerts 
+                    li
+                        router-link(to='/admin/alerts')
+                            i.fa.fa-list-ol
+                            |  Sent List 
             li
                 router-link(to='/admin/leaderboard')
                     i.fa.fa-certificate
@@ -109,7 +155,6 @@ aside.left-side.sidebar-offcanvas
                         router-link(to='/admin/promocode')
                             i.fa.fa-angle-double-right
                             |  Add Promocode
-                    
             li
                 router-link(to='/admin/advance_search')
                     i.fa.fa-search

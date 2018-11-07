@@ -7,9 +7,20 @@ var bcrypt = require("bcrypt-nodejs");
 var saltRounds = 10;
 
 var admin = require("firebase-admin");
+
+
+var serviceAccount = require("../config/dev/serviceAccountKey.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: require('../config/dev/private.json').config_fb.databaseURL
+} , "other");
+
+
+
 var db = admin.database();
 var userRef = db.ref("users");
 var feedsRef = db.ref("news");
+var pricingRef = db.ref("pricing");
 var forgotPassToken = db.ref("forgot_pass_token");
 var sessionsRef = db.ref("sessions");
 var completeReqRef = db.ref("complete_requests");
@@ -602,6 +613,21 @@ router.get('/test', function (req, res) {
             "test": "data"
         });
     }
+});
+router.get('/priceing', function (req, res) {
+    
+pricingRef.once('value').then((snip)=>{
+            res.json({
+            "data": snip.val()
+        });
+}).catch((e)=>{
+    res.json({
+        "error": e
+    });
+})
+    
+
+    
 });
 
 
