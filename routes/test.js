@@ -6,21 +6,27 @@ var router = express.Router();
 var bcrypt = require("bcrypt-nodejs");
 var saltRounds = 10;
 
-var admin = require("firebase-admin");
+var admin2 = require("firebase-admin");
 
 
 var serviceAccount = require("../config/dev/serviceAccountKey.json");
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+var admin =admin2.initializeApp({
+    credential: admin2.credential.cert(serviceAccount),
     databaseURL: require('../config/dev/private.json').config_fb.databaseURL
 } , "other");
 
+
+var googleMapsClient = require('@google/maps').createClient({
+    key: 'AIzaSyCeDfncmN-9FXb-1Gv4wcRpDWZ4AUnrqws',
+    Promise: Promise
+  });
 
 
 var db = admin.database();
 var userRef = db.ref("users");
 var feedsRef = db.ref("news");
 var pricingRef = db.ref("pricing");
+var userLiveRequestsRef = db.ref("user_live_requests");
 var forgotPassToken = db.ref("forgot_pass_token");
 var sessionsRef = db.ref("sessions");
 var completeReqRef = db.ref("complete_requests");
@@ -28,6 +34,7 @@ var bidRef = db.ref("driver_bids");
 var promoRef = db.ref("promo_code");
 
 var userReqRef = db.ref("user_requests");
+var onlineDriversRef = db.ref("online_drivers");
 var twilioCred = require('../config/private').twilio;
 // var RestClient = require('twilio').RestClient;
 var LookupsClient = require('twilio').LookupsClient;
@@ -536,7 +543,7 @@ router.post('/login', function (req, res, next) {
 });
 
 router.post('/promocode', function (req, res, next) {
-    var params = req.body.promocode_text;
+    var params = req.body.promocode_text; 
 
     req.assert('promocode_text', 'Please Enter Promo Code!').notEmpty();
 
@@ -546,7 +553,28 @@ router.post('/promocode', function (req, res, next) {
         if (errors.length > 0) {
             res.json(errors);
         } else {
-            promoRef.orderByChild('promo').equalTo(params).once('value').then(function (userSnap) {
+            promoRef.orderByChild('promo').equalTo(params).once('value').then(function (promoSnap) { // userSnap
+ 
+                //if(promoSnap.val()){
+                    var Now  = moment().valueOf();
+                    var Exp  = parseInt(Object.values(promoSnap.val())[0].expdate) ;
+                if(Now>Exp){
+                    res.json({
+                        status: "failed",
+                        message: "This Promo Code is Expired!"
+                    });
+                }else{
+                    res.json({
+                        status: "ok",
+                        data:  _.filter(promoSnap.val()),
+                    });
+                }
+
+              //  }
+
+
+
+                /*
                 let userData = userSnap.val();
                 let new_snap = _.filter(userData);
                 if (userData !== null) {
@@ -589,8 +617,13 @@ router.post('/promocode', function (req, res, next) {
                         message: "Invalid Promo Code!"
                     });
                 }
+*/
 
-
+            }).catch((e)=>{
+                res.json({   
+                    status: "failed",
+                    message: "This Promo Code is not exist!"
+                });
             });
         }
     });
@@ -616,20 +649,168 @@ router.get('/test', function (req, res) {
 });
 router.get('/priceing', function (req, res) {
     
-pricingRef.once('value').then((snip)=>{
-            res.json({
-            "data": snip.val()
+    pricingRef.once('value').then((snip)=>{
+                res.json({
+                "data": snip.val()
+            });
+    }).catch((e)=>{
+        res.json({
+            "error": e
         });
-}).catch((e)=>{
-    res.json({
-        "error": e
-    });
-})
-    
-
-    
+    })
 });
 
+router.get('/prices', function (req, res) {
+    if(!req.query.uid){
+        res.json({"status": "failed",
+            uid:"null"
+        })
+    }
+    var drivers = [];
+    var request = [];
+    var pricing = [];
+    var PromoDATA = [];
+    userLiveRequestsRef.child(req.query.uid).once('value').then((requestSnap)=>{
+         
+        userReqRef.child(requestSnap.key).child(requestSnap.val().reqId).once('value').then((reqdataSnap)=>{
+            onlineDriversRef.once('value').then((driversSnap)=>{
+
+               drivers = driversSnap.val();
+               request = reqdataSnap.val();
+               reqId = reqdataSnap.key;
+               if(!request.hasOwnProperty("promoId")){ 
+                request["promoId"] = "null";
+               }  
+               
+               promoRef.child(request.promoId).once('value')
+               .then(function (promoSnap) {
+                PromoDATA =  promoSnap.val(); 
+               driver_origins = [];
+               request_origins =[];
+               _.forEach(drivers, function(value) {
+                driver_origins.push(value.lat+", "+ value.lng);
+             });  
+             request_origins.push(request.orgLat +", "+ request.orgLng) ; 
+
+             pricingRef.once('value').then((pricingSnap)=>{
+                 pricing = pricingSnap.val();
+
+             googleMapsClient.distanceMatrix({ origins : driver_origins, destinations :request_origins,  mode : 'driving'} , function(err, response) {
+                   if(!err){
+                       let data = []; 
+                    _.forEach(
+                        _.zipWith( Object.keys(driversSnap.val()), Object.values(driversSnap.val()), response.json.rows, (driverid,driverVal, distance) => ({ driverid,driverVal, distance})),
+                        (result) => { 
+ 
+                            let distance = result.distance.elements[0].distance;
+                            let duration = result.distance.elements[0].duration;
+                            let priceing = pricing[result.driverVal.vehicle];
+ 
+                            let arrivalPrice = Math.ceil(
+                                distance.value <= priceing.MinDistance.empty
+                                ? priceing.Price.min_empty
+                                : (((distance.value - priceing.MinDistance.empty)/1000)* priceing.Price.empty) + priceing.Price.min_empty
+                                );
+                            let departurePrice = Math.ceil(
+                                request.disValue <= priceing.MinDistance.loaded
+                                ? priceing.Price.min_loaded
+                                : (((request.disValue - priceing.MinDistance.loaded)/1000)* priceing.Price.loaded) + priceing.Price.min_loaded
+                            );
+      
+                            let labourPrice = Math.ceil(priceing.Price.labour * request.labours);
+                            let floorPrice = Math.ceil((priceing.Price.floor * request.floors) * request.labours);
+                            let driverPrice = Math.ceil(departurePrice + arrivalPrice);
+                            let labourLoadingPrice = Math.ceil(labourPrice + floorPrice);
+                            let totalPrice = Math.ceil(labourLoadingPrice+ driverPrice);
+                            let discountPrice = 0;
+                  //              console.log(departurePrice)
+                    //      console.log( labourPrice )
+                        //  console.log( floorPrice )
+                      //    console.log( driverPrice )
+                      //    console.log( labourLoadingPrice )
+                        //  console.log( totalPrice )
+                         // console.log( discountPrice )
+
+                            
+                            if(PromoDATA!=null){
+                                console.log(PromoDATA.type);
+                                discountPrice = Math.floor(PromoDATA.type == 'Rupees' ? PromoDATA.quantity  : PromoDATA.type == 'Percentage'  ?  totalPrice /100 * PromoDATA.quantity: 0 ) ;
+                            }
+                            let netTotalPrice = totalPrice - discountPrice;
+
+                            let price = {
+                                "arrivalPrice":  arrivalPrice,
+                                "departurePrice": departurePrice,
+                                "labourPrice": labourPrice,
+                                "floorPrice": floorPrice,
+                                "driverPrice" :driverPrice,
+                                "labourLoadingPrice" :labourLoadingPrice,
+                                "totalPrice" :totalPrice,
+                                "discountPrice" :discountPrice,
+                                "netTotalPrice" :netTotalPrice,
+                            }   
+                            let driver={};
+driver[result.driverid] = {
+"driver": {
+    "id": result.driverid,
+    "vehicle": result.driverVal.vehicle,
+    "lat": result.driverVal.lat,
+    "lng": result.driverVal.lng,
+    "distance": distance,
+    "duration": duration,
+    "pricing": priceing
+},
+"bill": price,
+"promo": PromoDATA == null ? "null" : {
+    "id": PromoDATA.id,
+    "quantity": parseInt(PromoDATA.quantity),
+    "type": PromoDATA.type,
+}
+};
+
+ 
+                           data.push(driver);
+                         
+                        },
+                      ); 
+                      let d = {};
+                     d = _.filter(data, dri=>{ 
+
+                          if(Object.values(dri)[0].driver.vehicle = request.vecType){
+                              let d={};
+                              d[Object.keys(dri)[0]]=Object.values(dri)[0];
+                               return d;
+                          }
+                        
+ 
+                     });
+                     
+                     d = _.orderBy(d, item => (Object.values(item)[0].driver.distance.value));
+
+                  
+ 
+                      res.json({
+                          "status": "ok",
+                          "reqId": reqId,
+                          "data": d
+                      });
+
+                        }
+                   res.json({"status": "failed",
+                "error":"Maps data failed"});
+                }) 
+             }).catch((e)=>{
+                res.json({"status": "failed",
+                "error":"pricing data failed"});
+             })
+            })
+            .catch(function (error) {res.json({"status": "failed",
+            "error":"pricing data failed"}); })
+        }).catch((e)=>{ res.json({"status": "failed",
+        "error":"online Drivers geting failed"})})
+        }).catch((e)=>{ res.json({"status": "failed","error": "Request Not Found"})});
+    }).catch((e)=>{ res.json({"status": "failed","error": "Request Not Found"})});
+})
 
 router.get('/get_logs_data', function (req, res) {
 

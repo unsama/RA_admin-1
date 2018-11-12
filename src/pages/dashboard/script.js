@@ -141,8 +141,7 @@ export default {
                     format: 'short',
                     gridlines: {
                         count: 4
-                    },
-                    // ticks: tks,
+                    }, 
                 },
 
             },

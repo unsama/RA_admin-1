@@ -9,7 +9,7 @@ aside.right-side
             li.active  Pricing
     section.content
         .row
-            .col-md-8
+            .col-md-12
                 .box
                     table.table
                         thead.box-header
@@ -20,18 +20,37 @@ aside.right-side
                                 th Loaded / KM
                                 th Labour Charges
                                 th Per Floor Charges
-                                th Min Charges
-                                th Min Distance
+
+                                th Min Empty Charges
+                                th Min Empty Distance / KM
+
+                                th Min Loaded Charges
+                                th Min Loaded Distance / KM
+
+                                th Driver Cancel Charges
+                                th Driver Cancel Duration
+
+                                th Client Cancel Charges
+                                th Client Cancel Duration
                         tbody.box-footer
                             tr(v-for="(data ,key,index ) in pricingData",@click="GoForEdit(key, $event)" ,style="cursor: pointer;")
                                 td {{index+1}}
                                 td {{key}}
-                                td Rs. {{data.emptyPrice}}
-                                td Rs. {{data.loadedPrice}}
-                                td Rs. {{data.labourCharges}}
-                                td Rs. {{data.perFloorCharges}}
-                                td Rs. {{data.minCharges}}
-                                td {{data.minDistance}}km 
+                                td Rs. {{data.Price.empty}}
+                                td Rs. {{data.Price.loaded}}
+                                td Rs. {{data.Price.labour}}
+                                td Rs. {{data.Price.floor}}
+                                td Rs. {{data.Price.min_empty}}
+                                td {{data.MinDistance.empty/1000}} km
+                                td Rs. {{data.Price.min_loaded}}
+                                td {{data.MinDistance.loaded/1000}} km
+                                td(v-if="data.CancelFees.driver.fee.isRs")  Rs. {{data.CancelFees.driver.fee.value}}
+                                td(v-else) {{data.CancelFees.driver.fee.value}}%
+                                td  {{data.CancelFees.driver.duration/60000}} mins
+                                td(v-if="data.CancelFees.client.fee.isRs") Rs. {{data.CancelFees.client.fee.value}}
+                                td(v-else) {{data.CancelFees.client.fee.value}}%
+                                td  {{data.CancelFees.client.duration/60000}} mins
+
             .col-md-4
                 .box 
                     .box-header 
@@ -55,30 +74,65 @@ aside.right-side
                             td Vehicle	
                             td    
                                 input(type="text" , v-model="vehicleName",placeholder = "Vehicle Name")
-                        tr
-                            td Empty / KM 
-                            td    
-                                input(type="text" , v-model="emptyPrice")
-                        tr
-                            td Loaded / KM 
-                            td    
-                                input(type="text" , v-model="loadedPrice")
-                        tr
-                            td Labour Charges
-                            td    
-                                input(type="text" , v-model="labourCharges")
-                        tr
-                            td Per Floor Charges
-                            td    
-                                input(type="text" , v-model="perFloorCharges")
-                        tr
-                            td Min Charges
-                            td    
-                                input(type="text" , v-model="minCharges")
-                        tr
-                            td Min Distance
-                            td    
-                                input(type="text" , v-model="minDistance")
+                        tr 
+                            td empty
+                            td
+                                input(type="text",v-model="vehicle_txt.Price.empty")
+                        tr 
+                            td loaded
+                            td
+                                input(type="text",v-model="vehicle_txt.Price.loaded")
+                        tr 
+                            td labour
+                            td
+                                input(type="text",v-model="vehicle_txt.Price.labour")
+                        tr 
+                            td floor
+                            td
+                                input(type="text",v-model="vehicle_txt.Price.floor")
+                        tr 
+                            td min_empty
+                            td
+                                input(type="text",v-model="vehicle_txt.Price.min_empty")
+                        tr 
+                            td empty
+                            td
+                                input(type="text",v-model="vehicle_txt.MinDistance.empty")
+                        tr 
+                            td min_loaded
+                            td
+                                input(type="text",v-model="vehicle_txt.Price.min_loaded")
+                        tr 
+                            td loaded
+                            td
+                                input(type="text",v-model="vehicle_txt.MinDistance.loaded")
+                        tr 
+                            td isRs
+                            td
+                                //input(type="text",v-model="vehicle_txt.CancelFees.driver.fee.isRs")
+                                input(type="checkbox",v-model="vehicle_txt.CancelFees.driver.fee.isRs"  )
+                        tr 
+                            td value
+                            td
+                                input(type="text",v-model="vehicle_txt.CancelFees.driver.fee.value")
+                        tr 
+                            td duration
+                            td
+                                input(type="text",v-model="vehicle_txt.CancelFees.driver.duration")
+                                
+                        tr 
+                            td isRs
+                            td
+                                //input(type="text",v-model="vehicle_txt.CancelFees.client.fee.isRs")
+                                input(type="checkbox",v-model="vehicle_txt.CancelFees.client.fee.isRs"  )
+                        tr 
+                            td value
+                            td
+                                input(type="text",v-model="vehicle_txt.CancelFees.client.fee.value")
+                        tr 
+                            td duration
+                            td
+                                input(type="text",v-model="vehicle_txt.CancelFees.client.duration")
                     .box-footer
                         button.btn.btn-default(@click="AddPrice") {{btnValue}} 
 

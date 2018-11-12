@@ -1,0 +1,25 @@
+aside.right-side
+    section.content-header(style="display:none")
+        ol.breadcrumb
+            li
+                router-link(to='/')
+                    i.fa.fa-dashboard
+                    |  Dashboard
+            li Deliveries
+            li Requests
+    section.content
+        .row
+            .col-xs-12
+                .box
+                    .box-header
+                        div  
+                            p.bxL Online Drivers : {{TotalliveDrivers}}  
+                            select.bxR(v-model="selectedDriver",@change="ShowPopUp(selectedDriver)")
+                                option Drivers List
+                                option(v-for='Driver in TotalliveDriverList', v-bind:value='Driver.id' ) {{ Driver.first_name }} {{ Driver.last_name }} 
+                #map(ref="map")
+                //new_request_new
+                //progress_request
+                // createdAtUndefiend in progress_request
+
+

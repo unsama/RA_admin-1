@@ -30,9 +30,6 @@ aside.right-side
                                 td.open_row(v-bind:data-url="'/admin/feeds/'+key") {{  feed.description}}
                                 td
                                     a(:href="feed.downloadURL") Open Image
-
-                                        
-
                                 td.open_row(v-bind:data-url="'/admin/feeds/'+key") {{  formatDate(feed.expDate)}}
                                 td
                                     label.switch
@@ -42,4 +39,3 @@ aside.right-side
                                 td
                                     a
                                         h1.fa.fa-ban(style=" margin-top: 0px; margin-bottom: 0px;color: #2196F3" ,@click="deleteNews(key)")
-            

@@ -10,6 +10,7 @@ var admin = require("firebase-admin");
 var db = admin.database();
 var userRef = db.ref("users");
 var feedsRef = db.ref("news");
+var pricingRef = db.ref("pricing");
 var forgotPassToken = db.ref("forgot_pass_token");
 var sessionsRef = db.ref("sessions");
 var completeReqRef = db.ref("complete_requests");
@@ -728,7 +729,23 @@ router.get('/get_logs_data', function (req, res) {
         })
     }
 })*/
-
+router.get('/priceing', function (req, res) {
+   try{
+    pricingRef.once('value').then((snip)=>{
+                res.json({
+                "data": snip.val()
+            });
+    }).catch((e)=>{
+        res.json({
+            "error": e
+        });
+    })
+} catch(e){
+    res.json({
+        "error": e
+    });
+}
+});
 router.get('/get_top_10', customTokenMW, function (req, res) {
     if (req.query.date && req.query.date !== "") {
         const sel_month = moment(req.query.date);

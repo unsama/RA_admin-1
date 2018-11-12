@@ -21,6 +21,7 @@ import completedRequests from '../pages/completed_req/completed_req.vue'
 import canceledRequest from '../pages/canceled_req/canceled_req.vue'
 import allRequests from '../pages/All_req/All_req.vue'
 import newRequests from '../pages/new_req/new_req.vue'
+import newRequestsNew from '../pages/new_reqnew/new_reqnew.vue'
 import trackRequests from '../pages/track_req/track_req.vue'
 
 import userAccount from '../pages/user_account/user_account.vue'
@@ -107,6 +108,7 @@ const routes = [
                         component: parentComLayout,
                         children: [
                             {path: '', component: newRequests},
+                            {path: 'new', component: newRequestsNew},
                             {path: 'track_req/:id',name: 'track', component: trackRequests},
                             {path: 'completed', component: completedRequests},
                             {path: 'canceled', component: canceledRequest},

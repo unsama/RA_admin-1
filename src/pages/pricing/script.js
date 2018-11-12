@@ -21,7 +21,41 @@ export default {
 
 
     },
+
     watch: {
+        vehicle_txt: {
+            handler(val, oldVal) {
+                let self = this;
+
+                self.vehicle = {
+                    Price: val.Price,
+                    MinDistance: {
+                        empty: val.MinDistance.empty * 1000,
+                        loaded: val.MinDistance.loaded * 1000,
+                    },
+                    CancelFees: {
+                        driver: {
+                            fee: {
+                                isRs:  val.CancelFees.driver.fee.isRs,
+                                value: val.CancelFees.driver.fee.value,
+                            },
+                            duration: val.CancelFees.driver.duration*60000,
+                        },
+                        client: {
+                            fee: {
+                                isRs:  val.CancelFees.client.fee.isRs,
+                                value: val.CancelFees.client.fee.value,
+                            },
+                            duration: val.CancelFees.client.duration*60000,
+                        },
+                    }
+                };
+                 
+            },
+            deep: true
+
+        },
+
         vehicleName: function (value) {
             let self = this;
             let forUpdate = false;
@@ -33,10 +67,12 @@ export default {
 
                 $(self.rowElement).css("background-color", "white");
 
-                self.rowElement = $("td").filter(function() { return $(this).html() ==  value.trim().toLowerCase().replace(/^\w/, c => c.toUpperCase()); } ).closest("tr");
+                self.rowElement = $("td").filter(function () {
+                    return $(this).html() == value.trim().toLowerCase().replace(/^\w/, c => c.toUpperCase());
+                }).closest("tr");
 
 
-               // self.rowElement = $("td:contains(" + value.trim().toLowerCase().replace(/^\w/, c => c.toUpperCase()) + ")").closest("tr")
+                // self.rowElement = $("td:contains(" + value.trim().toLowerCase().replace(/^\w/, c => c.toUpperCase()) + ")").closest("tr")
 
                 $(self.rowElement).css("background-color", "#C0C0C0");
             } else {
@@ -53,6 +89,7 @@ export default {
             pricingRef: db.ref('/pricing'),
             commissionRef: db.ref('/commission'),
             vehicleName: "",
+
             commission: 0,
             emptyPrice: 0,
             loadedPrice: 0,
@@ -60,6 +97,41 @@ export default {
             perFloorCharges: 0,
             minCharges: 0,
             minDistance: 0,
+
+            vehicle_txt: {
+                Price: {
+                    empty: 0,
+                    floor: 0,
+                    labour: 0,
+                    loaded: 0,
+                    min_empty: 0,
+                    min_loaded: 0,
+                },
+                MinDistance: {
+                    empty: 0,
+                    loaded: 0
+                },
+                CancelFees: {
+                    driver: {
+                        fee: {
+                            isRs: "true",
+                            value: 0,
+                        },
+                        duration: 0
+                    },
+                    client: {
+                        fee: {
+                            isRs: "true",
+                            value: 0,
+                        },
+                        duration: 0
+                    },
+                }
+            },
+            vehicle: {
+
+            },
+
             btnValue: "Add",
             rowElement: null,
             pricingData: [],
@@ -95,26 +167,72 @@ export default {
 
 
 
-
             self.vehicleName = key;
-            self.emptyPrice = self.pricingData[key].emptyPrice;
-            self.loadedPrice = self.pricingData[key].loadedPrice;
-            self.labourCharges = self.pricingData[key].labourCharges;
-            self.perFloorCharges = self.pricingData[key].perFloorCharges;
-            self.minCharges = self.pricingData[key].minCharges;
-            self.minDistance = self.pricingData[key].minDistance;
+            //self.vehicle_txt = self.pricingData[key];
+
+            self.vehicle_txt = {
+                Price: self.pricingData[key].Price,
+                MinDistance: {
+                    empty: self.pricingData[key].MinDistance.empty / 1000,
+                    loaded: self.pricingData[key].MinDistance.loaded / 1000,
+                },
+                CancelFees: {
+                    driver: {
+                        fee: {
+                            isRs:  self.pricingData[key].CancelFees.driver.fee.isRs,
+                            value: self.pricingData[key].CancelFees.driver.fee.value,
+                        },
+                        duration: self.pricingData[key].CancelFees.driver.duration/60000,
+                    },
+                    client: {
+                        fee: {
+                            isRs:  self.pricingData[key].CancelFees.client.fee.isRs,
+                            value: self.pricingData[key].CancelFees.client.fee.value,
+                        },
+                        duration: self.pricingData[key].CancelFees.client.duration/60000,
+                    },
+                }
+            };
+
+
         },
         AddPrice: function () {
             let self = this;
             let vehicleName = self.vehicleName.trim().toLowerCase().replace(/^\w/, c => c.toUpperCase());
+
+
             var pricing = {
-                emptyPrice: parseInt(self.emptyPrice),
-                loadedPrice: parseInt(self.loadedPrice),
-                labourCharges: parseInt(self.labourCharges),
-                perFloorCharges: parseInt(self.perFloorCharges),
-                minCharges: parseInt(self.minCharges),
-                minDistance: parseInt(self.minDistance),
+                Price: {
+                    empty: parseInt(self.vehicle.Price.empty),
+                    floor: parseInt(self.vehicle.Price.floor),
+                    labour: parseInt(self.vehicle.Price.labour),
+                    loaded: parseInt(self.vehicle.Price.loaded),
+                    min_empty: parseInt(self.vehicle.Price.min_empty),
+                    min_loaded: parseInt(self.vehicle.Price.min_loaded),
+                },
+                MinDistance: {
+                    empty: parseInt(self.vehicle.MinDistance.empty),
+                    loaded: parseInt(self.vehicle.MinDistance.loaded)
+                },
+                CancelFees: {
+                    driver: {
+                        fee: {
+                            isRs: self.vehicle.CancelFees.driver.fee.isRs,
+                            value: parseInt(self.vehicle.CancelFees.driver.fee.value),
+                        },
+                        duration: parseInt(self.vehicle.CancelFees.driver.duration),
+                    },
+                    client: {
+                        fee: {
+                            isRs: self.vehicle.CancelFees.client.fee.isRs,
+                            value: parseInt(self.vehicle.CancelFees.client.fee.value),
+                        },
+                        duration: parseInt(self.vehicle.CancelFees.client.duration),
+                    },
+                }
             }
+
+
             self.pricingRef.child(vehicleName).set(pricing).then(() => {}).catch((e) => {
                 console.log(e);
             })

@@ -19,6 +19,7 @@
   "dependencies": {
     "@google-cloud/common": "^0.13.4",
     "@google-cloud/storage": "^1.7.0",
+    "@google/maps": "^0.5.5",
     "ajv": "^5.2.2",
     "axios": "^0.18.0",
     "bcrypt-nodejs": "0.0.3",

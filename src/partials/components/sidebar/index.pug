@@ -55,9 +55,13 @@ aside.left-side.sidebar-offcanvas
                     i.fa.fa-angle-left.pull-right
                 ul.treeview-menu
                     li
+                        router-link(to='/admin/requests/new')
+                            i.fa.fa-angle-double-right
+                            |  New Requests (new)
+                    li
                         router-link(to='/admin/requests')
                             i.fa.fa-angle-double-right
-                            |  New Requests
+                            |  New Requests (old)
                     li
                         router-link(to='/admin/requests/completed')
                             i.fa.fa-angle-double-right
